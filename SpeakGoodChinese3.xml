@@ -45,7 +45,7 @@ button {
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
 	<p><audio id='Audio' controls="false" hidden="true" ></audio></p>
 	
-	<div style="color: black; position: fixed; top: 65%; left: 35%; width: 30%; font-size: 250%; text-align: center; " id="DisplayString" align="center">---</div>
+	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 250%; text-align: center; " id="DisplayString" align="center">---</div>
 	<div style="color: blue; position: fixed; bottom: 21%; left: 35%; width: 30%; font-size: 150%; text-align: center; " id="WordlistString" align="center">---</div>
 	
 	<button type="button" style="color: gray; bottom: 5%; left: 34%" id="RecordButton" disabled="true" ><div style="font-size: 100%; ">&#9679;<br />Record</div></button>
@@ -53,8 +53,16 @@ button {
 	<button type="button" style="color: black; bottom: 5%; left: 56%" id="ExampleButton" ><div style="font-size: 100%">&#9658;<br />Example</div></button>
 	<button type="button" style="color: black; bottom: 5%; left: 68%" id="PreviousButton" ><div style="font-size: 100%">&lt;<br />Previous</div></button>
 	<button type="button" style="color: black; bottom: 5%; left: 79%" id="NextButton" ><div style="font-size: 100%">&gt;<br />Next</div></button>
+	<button type="button" style="color: black; bottom: 66%; right: 5%" id="PreviousWordlist" ><div style="font-size: 100%">&#94;<br />Previous</div></button>
+	<button type="button" style="color: black; bottom: 50%; right: 5%" id="NextWordlist" ><div style="font-size: 100%">Next<br />V</div></button>
 
     <script>
+	// Global settings
+	var recSecs = 4;
+	var ttsSpeed = 110;
+	var ttsVariant = "f3";
+	var shuffleLists = false;
+
 	// Replace contents of displayed string
 	var write_CurrentString = function () {
 		//<![CDATA[
@@ -63,6 +71,7 @@ button {
 			currentPinyin = currentItem[0];
 			currentString = currentItem[0] + " " + currentItem[1] + " " + currentItem[2];
 		} else {
+			if(shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
 			currentString = "---";
 		};
@@ -80,7 +89,7 @@ button {
 	
 	var wordlistName = "20 basic tone combinations";
 	get_wordlist (wordlistName);
-	currentWordlist.shuffle();
+	if(shuffleLists) ListscurrentWordlist.shuffle();
 	var currentWord = 0;
 	var currentItem = currentWordlist[currentWord];
 	var currentPinyin = currentItem[0];
@@ -89,16 +98,14 @@ button {
 	write_WordlistName();
 	
 	// Set parameters
-	var recSecs = 4;
-	var ttsSpeed = 110;
-	var ttsVariant = "f3";
-
 	var recordingLight = document.getElementById('RecordingLight');
 	var record = document.getElementById('RecordButton');
 	var play = document.getElementById('PlayButton');
 	var example = document.getElementById('ExampleButton');
 	var previous = document.getElementById('PreviousButton');
 	var next = document.getElementById('NextButton');
+	var prevWordlist = document.getElementById('PreviousWordlist');
+	var nextWordlist = document.getElementById('NextWordlist');
 	var mediaElement = document.getElementById('Audio');
 	var stopRecording, playSound;
 	
@@ -121,6 +128,7 @@ button {
 		--currentWord;
  		if( currentWord < 0 ) {
 			currentWord = currentWordlist.length;
+			
 		};
 		write_CurrentString();
 		//]]>
@@ -137,6 +145,39 @@ button {
 		//]]>		 		
 	};
 
+	// Previous wordlist
+	prevWordlist.onclick = function() {
+		//<![CDATA[
+		--wordlistNumber;
+ 		if( wordlistNumber < 0 ) {
+			wordlistNumber = wordlists.length - 1;
+		};
+		wordlistName = wordlists[wordlistNumber][0];
+		get_wordlist (wordlistName);
+		if(shuffleLists) currentWordlist.shuffle();
+		currentWord = 0;
+		
+		write_WordlistName(wordlistName);
+		write_CurrentString();
+		//]]>
+	};
+
+	// Next wordlist
+	nextWordlist.onclick = function() {
+		//<![CDATA[
+		++wordlistNumber;
+ 		if( wordlistNumber >= wordlists.length ) {
+			wordlistNumber = 0;
+		};
+		wordlistName = wordlists[wordlistNumber][0];
+		get_wordlist (wordlistName);
+		if(shuffleLists) currentWordlist.shuffle();
+		currentWord = 0;
+		
+		write_WordlistName(wordlistName);
+		write_CurrentString();
+		//]]>		 		
+	};
 	var successCallback = function(mediaStream){
 		
 		if(!mediaStream){ 

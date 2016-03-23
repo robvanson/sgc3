@@ -1,8 +1,10 @@
 var currentWordlist = [];
+var wordlistNumber;
 function get_wordlist (wordlistName) {
 	var wordlistNum;
 	for(wordlistNum = 0; wordlists[wordlistNum][0] != wordlistName; wordlistNum++) { };
 	currentWordlist = wordlists[wordlistNum][1];
+	wordlistNumber = wordlistNum;
 };
 
 Array.prototype.shuffle = function() {
