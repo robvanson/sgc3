@@ -8,7 +8,7 @@ function get_wordlist (wordlistName) {
 };
 
 function add_wordlist_names_to_select () {
-	var selector = document.getElementById('SelectWordlist');
+	var selector = document.getElementById('SelectWordList');
 	var i = 0;
 	for(i=0; i < wordlists.length; ++i) {
 		var lastOption = selector.options.length - 1;

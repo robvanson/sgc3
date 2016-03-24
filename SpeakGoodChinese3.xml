@@ -40,6 +40,7 @@ button {
 <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"><p>No Audio</p></script>   
 <script src="mespeak/mespeak.full.js"><p>No TTS</p></script>   
 <script src="wordlists.js"><p>No wordlists</p></script>   
+<script src="internationalization_tables.js"><p>No internationalization</p></script>   
 </head>
 <body>
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
@@ -57,8 +58,8 @@ button {
 	<!-- Wordlists -->
 	<button type="button" style="color: black; bottom: 71%; right: 5%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%">&#94;<br /><span id="WordlistUp">Previous</span></span></button>
 	<button type="button" style="color: black; bottom: 50%; right: 5%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"><span id="WordlistDown" >Next</span><br />V</span></button>
-	<select id="SelectWordlist" style="position: fixed; color: black; bottom: 61%; right: 5%; height: 8%; width: 10%; font: large 'Helvetica'; background-color: rgb(220,220,220); " >
-		<option value="---" >-- <span id="SelectWords">Words</span> --</option>
+	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 5%; height: 8%; width: 10%; font: large 'Helvetica'; background-color: rgb(220,220,220); " >
+		<option value="---" ><span id="WordlistCaption" >Word List</span></option>
 	</select> 
 
 
@@ -72,15 +73,19 @@ button {
 	var next = document.getElementById('NextButton');
 	var prevWordlist = document.getElementById('PreviousWordlist');
 	var nextWordlist = document.getElementById('NextWordlist');
-	var selectWordlist = document.getElementById('SelectWordlist');
+	var selectWordlist = document.getElementById('SelectWordList');
 	var mediaElement = document.getElementById('Audio');
 	var stopRecording, playSound;
+	
 	
 	// Global settings
 	var recSecs = 4;
 	var ttsSpeed = 110;
 	var ttsVariant = "f3";
 	var shuffleLists = true;
+	// Set language (make that selectable)
+	var language = (userLanguage) ? userLanguage : "DE";
+	set_language (language);
 
 	// Replace contents of displayed string
 	var write_CurrentString = function () {
