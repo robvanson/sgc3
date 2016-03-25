@@ -11,7 +11,7 @@ body {
 	background-image: url("Background.png");
 	background-color: rgb(250,250,250);
     background-repeat: no-repeat;
-    background-position: 50% 50%;
+    background-position: 30% 10%;
     background-attachment: fixed;}
 h1 {
 	text-align: center;
