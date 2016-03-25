@@ -3,11 +3,11 @@
  */
  
 var wordlists_plus = [
-// Add your wordlists here
-	[
-		"Test", 
-		[["ni3hao3","nǐhǎo","你好","hello!","-","-"],["qing3wen4","qǐngwèn","请问","May I ask..?","-","-"]]
-	] 
+// Add your wordlists here like "New Wordlist"
+//	[
+//		"New Wordlist", 
+//		[["ni3hao3","nǐhǎo","你好","hello!","1","-"],["qing3wen4","qǐngwèn","请问","May I ask..?","1","-"]]
+//	] 
 ]
 
 
