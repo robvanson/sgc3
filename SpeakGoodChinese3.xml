@@ -5,12 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Language" content="en" />
-<title lang="en" xml:lang="en" dir="ltr">SpeakGoodChinese</title>
+<title lang="en" xml:lang="en" dir="ltr">SpeakGoodChinese 3</title>
 <style>
 body {
 	background-image: url("Background.png");
 	background-color: rgb(250,250,250);
     background-repeat: no-repeat;
+    background-size: cover; 
     background-position: center center;
     background-attachment: fixed;}
 h1 {
@@ -41,10 +42,10 @@ button {
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
-</head>
-<body>
 <script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
+</head>
+<body>
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
 	<p><audio id='Audio' controls="false" hidden="true" ></audio></p>
 	
