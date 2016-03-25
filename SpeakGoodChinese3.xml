@@ -17,8 +17,8 @@ h1 {
 	text-align: center;
 	}
 button {
-		position:absolute;
-		width:10%;
+		position: fixed;
+		width:17%;
 		height:15%;
 		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 		text-align:center;
@@ -37,10 +37,10 @@ button {
 	
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"><p>No Audio</p></script>   
-<script src="mespeak/mespeak.full.js"><p>No TTS</p></script>   
-<script src="wordlists.js"><p>No wordlists</p></script>   
-<script src="internationalization_tables.js"><p>No internationalization</p></script>   
+<script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
+<script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
+<script type="text/javascript" src="wordlists.js" ></script>   
+<script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
 <body>
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
@@ -48,22 +48,22 @@ button {
 	
 	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 250%; text-align: center; " id="DisplayString" align="center">
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic;">-</span></div>
-	<div style="color: blue; position: fixed; bottom: 21%; left: 35%; width: 30%; font-size: 150%; text-align: center; " id="WordlistString" align="center">---</div>
+	<div style="color: blue; position: fixed; bottom: 21%; left: 5%; width: 90%; font-size: 150%; text-align: center; " id="WordlistString" align="center">---</div>
 	
-	<button type="button" style="color: black; bottom: 5%; left: 23%" id="PreviousButton" ><span style="font-size: 100%">|&#9664;<br /><span id="Previous">Previous</span></span></button>
-	<button type="button" style="color: gray; bottom: 5%; left: 34%" id="RecordButton" disabled="true" ><span style="font-size: 100%; ">&#9679;<br /><span id="Record">Record</span></span></button>
-	<button type="button" style="color: gray; bottom: 5%; left: 45%" id="PlayButton" disabled="true" ><span style="font-size: 100%">&#9658;<br /><span id="Play">Play</span></span></button>
-	<button type="button" style="color: black; bottom: 5%; left: 56%" id="ExampleButton" ><span style="font-size: 100%">&#9658;<br /><span id="Example">Example</span></span></button>
-	<button type="button" style="color: black; bottom: 5%; left: 67%" id="NextButton" ><span style="font-size: 100%">&#9654;|<br /><span id="Next">Next</span></span></button>
+	<button type="button" style="color: black; bottom: 2%; left: 5%" id="PreviousButton" ><span style="font-size: 100%">|&#9664;<br /><span id="Previous">Previous</span></span></button>
+	<button type="button" style="color: gray; bottom: 2%; left: 23%" id="RecordButton" disabled="true" ><span style="font-size: 100%; ">&#9679;<br /><span id="Record">Record</span></span></button>
+	<button type="button" style="color: gray; bottom: 2%; left: 41%" id="PlayButton" disabled="true" ><span style="font-size: 100%">&#9658;<br /><span id="Play">Play</span></span></button>
+	<button type="button" style="color: black; bottom: 2%; left: 59%" id="ExampleButton" ><span style="font-size: 100%">&#9658;<br /><span id="Example">Example</span></span></button>
+	<button type="button" style="color: black; bottom: 2%; left: 77%" id="NextButton" ><span style="font-size: 100%">&#9654;|<br /><span id="Next">Next</span></span></button>
 	<!-- Wordlists -->
-	<button type="button" style="color: black; bottom: 71%; right: 5%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%">&#94;<br /><span id="WordlistUp">Previous</span></span></button>
-	<button type="button" style="color: black; bottom: 50%; right: 5%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"><span id="WordlistDown" >Next</span><br />V</span></button>
-	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 5%; height: 8%; width: 10%; font: large 'Helvetica'; background-color: rgb(220,220,220); " >
+	<button type="button" style="color: black; bottom: 71%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%">&#94;<br /><span id="WordlistUp">Previous</span></span></button>
+	<button type="button" style="color: black; bottom: 50%; right: 2%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"><span id="WordlistDown" >Next</span><br />V</span></button>
+	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " >
 		<option value="---" ><span id="WordlistCaption" >Word List</span></option>
 	</select> 
 
 
-    <script>
+    <script type="text/javascript">
 	// Set DOM parameters
 	var recordingLight = document.getElementById('RecordingLight');
 	var record = document.getElementById('RecordButton');
