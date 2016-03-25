@@ -6,6 +6,7 @@ function set_language (language) {
 	for(x in labels) {
 		if(document.getElementById(x)) {
 			document.getElementById(x).textContent = labels[x][0];
+			document.getElementById(x).parentNode.parentNode.title = labels[x][1];
 		};
 	};
 };
@@ -55,13 +56,13 @@ var internationalization_tables = {
 		WordlistDown: ["nächste", "Zur nächster Liste"]
 		},
 	NL: {
-		Record: ["Opnemen", ""],
-		Play: ["Afspelen", ""],
-		Example: ["Voorbeeld", ""],
-		Previous: ["Terug", ""],
-		Next: ["Vooruit", "Kies de woorden om te oefenen"],
+		Record: ["Opnemen", 'Neem je uitspraak op. Je hebt 4 seconden, let op het rode "lampje"'],
+		Play: ["Afspelen", "Speel je opgenomen uitspraak af"],
+		Example: ["Voorbeeld", "Speel een voorbeeld van deze toon af"],
+		Previous: ["Terug", "Vorige woord"],
+		Next: ["Vooruit", "Volgende woord"],
 		WordlistCaption: ["Woordenlijst", "Andere woordenlijst"],
-		SelectWords: ["Woorden", ""],
+		SelectWords: ["Woorden", "Kies de woorden om te oefenen"],
 		WordlistUp: ["Vorige", "Vorige woordenlijst"],
 		WordlistDown: ["Volgende", "Volgende woordenlijst"]
 	}
