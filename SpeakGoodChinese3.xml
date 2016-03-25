@@ -18,6 +18,8 @@ h1 {
 	}
 button {
 		position: fixed;
+		overflow: hidden;
+		text-overflow: clip clip;
 		width:17%;
 		height:15%;
 		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
@@ -37,18 +39,18 @@ button {
 	
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
-<script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
 <body>
+<script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
+<script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
 	<p><audio id='Audio' controls="false" hidden="true" ></audio></p>
 	
 	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 250%; text-align: center; " id="DisplayString" align="center">
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic;">-</span></div>
-	<div style="color: blue; position: fixed; bottom: 21%; left: 5%; width: 90%; font-size: 150%; text-align: center; " id="WordlistString" align="center">---</div>
+	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 150%; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<button type="button" style="color: black; bottom: 2%; left: 5%" id="PreviousButton" ><span style="font-size: 100%">|&#9664;<br /><span id="Previous">Previous</span></span></button>
 	<button type="button" style="color: gray; bottom: 2%; left: 23%" id="RecordButton" disabled="true" ><span style="font-size: 100%; ">&#9679;<br /><span id="Record">Record</span></span></button>
