@@ -55,10 +55,12 @@ button {
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic;">-</span></div>
 	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 150%; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
+	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 1%; "></canvas>
 	<button type="button" style="color: black; bottom: 2%; left: 5%" id="PreviousButton" ><span style="font-size: 100%">|&#9664;<br /><span id="Previous" >Previous</span></span></button>
 	<button type="button" style="color: gray; bottom: 2%; left: 23%" id="RecordButton" disabled="true" ><span style="font-size: 100%; ">&#9679;<br /><span id="Record" >Record</span></span></button>
 	<button type="button" style="color: gray; bottom: 2%; left: 41%" id="PlayButton" disabled="true" ><span style="font-size: 100%">&#9658;<br /><span id="Play" >Play</span></span></button>
 	<button type="button" style="color: black; bottom: 2%; left: 59%" id="ExampleButton" ><span style="font-size: 100%">&#9658;<br /><span id="Example" >Example</span></span></button>
+	<canvas id="RightProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 78%; width: 15%; height: 1%; "></canvas>
 	<button type="button" style="color: black; bottom: 2%; left: 77%" id="NextButton" ><span style="font-size: 100%">&#9654;|<br /><span id="Next" >Next</span></span></button>
 	<!-- Wordlists -->
 	<button type="button" style="color: black; bottom: 71%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%">&#94;<br /><span id="WordlistUp" >Previous</span></span></button>
@@ -86,7 +88,6 @@ button {
 	setDrawingParam("TonePlot")
 	testDrawing("green", 0)
 	testDrawing("red", 500)
-
 		
 	// Global settings
 	var recSecs = 2;
@@ -122,6 +123,20 @@ button {
 		var numSyllables = get_tones(currentPinyin).length;
 		recSecs = 2 + 1.0*Math.ceil((numSyllables - 2)/2);
 		
+		// Set progress bars
+		function setProgressBar (id, fraction) {
+			var rightProgress = document.getElementById(id);
+			var rightProgressCtx = rightProgress.getContext("2d");
+			rightProgressCtx.clearRect(0, 0, rightProgressCtx.width, rightProgressCtx.height);
+			rightProgressCtx.fillStyle = "rgb(250,250,250)";
+			rightProgressCtx.fillRect(0, 0, 1000, 2);
+			rightProgressCtx.beginPath();
+			rightProgressCtx.fillStyle = "green";
+			var fillFraction = currentWord / (currentWordlist.length - 1)
+			rightProgressCtx.fillRect(0, 0, 1000*fillFraction, 2);
+			rightProgressCtx.stroke();
+		};
+	
 		//]]>
 	};
 	
