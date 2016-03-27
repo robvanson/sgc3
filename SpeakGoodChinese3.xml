@@ -98,6 +98,24 @@ button {
 	var language = (userLanguage) ? userLanguage : "EN";
 	set_language (language);
 
+	// Set progress bars
+	function setProgressBar (id, fraction) {
+		//<![CDATA[
+		var progressBar = document.getElementById(id);
+		var progressBarCtx = progressBar.getContext("2d");
+		progressBarCtx.clearRect(0, 0, progressBarCtx.canvas.width, progressBarCtx.canvas.height);
+		progressBarCtx.fillStyle = "rgb(250,250,250)";
+		progressBarCtx.fillRect(0, 0, progressBarCtx.canvas.width, progressBarCtx.canvas.height);
+		progressBarCtx.beginPath();
+		progressBarCtx.fillStyle = "green";
+		if (fraction > 0) {
+			progressBarCtx.fillRect(0, 0, progressBarCtx.canvas.width*fraction, progressBarCtx.canvas.height);
+		} else {
+			progressBarCtx.fillRect(progressBarCtx.canvas.width*(1+fraction), 0, progressBarCtx.canvas.width, progressBarCtx.canvas.height);
+		};
+		progressBarCtx.stroke();
+		//]]>
+	};
 	// Replace contents of displayed string
 	var write_CurrentString = function () {
 		//<![CDATA[
@@ -124,19 +142,9 @@ button {
 		recSecs = 2 + 1.0*Math.ceil((numSyllables - 2)/2);
 		
 		// Set progress bars
-		function setProgressBar (id, fraction) {
-			var rightProgress = document.getElementById(id);
-			var rightProgressCtx = rightProgress.getContext("2d");
-			rightProgressCtx.clearRect(0, 0, rightProgressCtx.width, rightProgressCtx.height);
-			rightProgressCtx.fillStyle = "rgb(250,250,250)";
-			rightProgressCtx.fillRect(0, 0, 1000, 2);
-			rightProgressCtx.beginPath();
-			rightProgressCtx.fillStyle = "green";
-			var fillFraction = currentWord / (currentWordlist.length - 1)
-			rightProgressCtx.fillRect(0, 0, 1000*fillFraction, 2);
-			rightProgressCtx.stroke();
-		};
-	
+		var fillFraction = currentWord / (currentWordlist.length - 1);
+		setProgressBar ("LeftProgress", -1*fillFraction);
+		setProgressBar ("RightProgress", fillFraction);
 		//]]>
 	};
 	
