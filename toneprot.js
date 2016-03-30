@@ -426,7 +426,7 @@ function toneRules (topLine, frequencyRange, timeStart, lastFrequency, prevTone,
 	return currentToneContour;
 }
 
-// Add a tone movement to an existing tone contour
+// Create a syllable tone movement
 function addToneMovement (syllable, topLine, prevTone, nextTone) {
 	// Get tone
 	var toneSyllable = getTones(syllable);
