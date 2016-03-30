@@ -66,7 +66,7 @@ You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
-	<p><audio id='Audio' controls="false" hidden="true" ></audio></p>
+	<p><audio id='Audio' controls="false" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
 	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 250%; text-align: center; " id="DisplayString" align="center" >
@@ -285,7 +285,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	    record.style.color = "red";
 		
 		var recordRTC = RecordRTC(mediaStream, {
-			recorderType: StereoAudioRecorder // optionally force WebAudio API to record audio
+			recorderType: StereoAudioRecorder, // optionally force WebAudio API to record audio
+			sampleRate: 44100,
+			bufferSize: 4096
 		}); 
 		
 		
