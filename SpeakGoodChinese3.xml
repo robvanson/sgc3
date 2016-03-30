@@ -285,9 +285,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	    record.style.color = "red";
 		
 		var recordRTC = RecordRTC(mediaStream, {
-			recorderType: StereoAudioRecorder, // optionally force WebAudio API to record audio
-			sampleRate: 44100,
-			bufferSize: 4096
+			recorderType: StereoAudioRecorder // optionally force WebAudio API to record audio
 		}); 
 		
 		
