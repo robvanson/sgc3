@@ -11,4 +11,4 @@ var wordlists_plus = [
 ]
 
 
-wordlists.push.apply(wordlists, wordlists_plus);
+wordlists.push(wordlists, wordlists_plus);

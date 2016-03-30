@@ -156,7 +156,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		document.getElementById('Translation').textContent = translationText;
 		
 		// Plot tones and set recording time
-		var numSyllables = get_tones(currentPinyin).length;
+		var numSyllables = getTones(currentPinyin).length;
 		recSecs = 2 + 1.0*Math.ceil((numSyllables - 2)/2);
 		
 		// Set progress bars
@@ -165,7 +165,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		setProgressBar ("RightProgress", fillFraction);
 		
 		
-		//next.style = next.style.replace();
+		//Get tone contour
+		var pitch = word2tones (currentPinyin, 200);
+		var i = 0;
+		for(x in pitch) alert(i++ + ": "+pitch);
 		 
 		//]]>
 	};
