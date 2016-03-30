@@ -322,8 +322,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	};
 	
-	navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
-
+	if (navigator.mediaDevices.getUserMedia) {
+		navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
+	} else {
+		navigator.webkitGetUserMedia(mediaConstraints, successCallback, errorCallback);
+	};
+	
 	</script>
 </body>
 </html>
