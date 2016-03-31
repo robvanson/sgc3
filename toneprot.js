@@ -176,10 +176,10 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		}
 		
 		// Write tone points
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
 		++p;
 		time += voicedDuration;
-		syllableToneContour[p] = [time, endPoint];		
+		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
 	// Tone 2
 	else if(currentTone == 2) {
@@ -208,15 +208,15 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         }
         
 		// Write points
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
         // Next point flat to 1/3th of duration
 		++p;
 		time += voicedDuration / 3;
-		syllableToneContour[p] = [time, startPoint];		
+		syllableToneContour.push({"t": time, "f": startPoint});;		
         // Next point a end
  		++p;
 		time += voicedDuration * 2 / 3;
-		syllableToneContour[p] = [time, endPoint];		
+		syllableToneContour.push({"t": time, "f": endPoint});;		
  	}
 	// Tone 3
 	else if(currentTone == 3) {
@@ -251,19 +251,19 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         }
         
 		// Write points
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
         // Go 1/3 of the duration down
  		++p;
 	    time += (voicedDuration)*2/6
-		syllableToneContour[p] = [time, lowestPoint];
+		syllableToneContour.push({"t": time, "f": lowestPoint});;
         // Go half the duration low
  		++p;
 	    time += (voicedDuration)*3/6
-		syllableToneContour[p] = [time, lowestPoint];
+		syllableToneContour.push({"t": time, "f": lowestPoint});;
         // Return in 1/6th of the duration
  		++p;
 	    time += (voicedDuration)*1/6
-		syllableToneContour[p] = [time, endPoint];
+		syllableToneContour.push({"t": time, "f": endPoint});;
 	}
 	// Tone 3 with voice break
 	// Lowest frequencies are voiceless (F0 = 0)
@@ -299,11 +299,11 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         }
         
 		// Write points
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
         // Go 1/3 of the duration down
  		++p;
 	    time += (voicedDuration)*2/6
-		syllableToneContour[p] = [time, lowestPoint];
+		syllableToneContour.push({"t": time, "f": lowestPoint});;
 
         // voiceless break
  		++p;
@@ -319,11 +319,11 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
        
         // After voiceless break
  		++p;
-		syllableToneContour[p] = [time, lowestPoint];
+		syllableToneContour.push({"t": time, "f": lowestPoint});;
         // Return in 1/6th of the duration
  		++p;
 	    time += (voicedDuration)*1/6
-		syllableToneContour[p] = [time, endPoint];
+		syllableToneContour.push({"t": time, "f": endPoint});;
 	}
 	// Tone 4
 	else if(currentTone == 4) {
@@ -341,15 +341,15 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         var midPoint = startPoint
         
 		// Write points
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
         // Next point a 1/3th of duration
 		++p;
 		time += voicedDuration / 3;
-		syllableToneContour[p] = [time, startPoint];		
+		syllableToneContour.push({"t": time, "f": startPoint});;		
         // Next point a end
  		++p;
 		time += voicedDuration * 2 / 3;
-		syllableToneContour[p] = [time, endPoint];		
+		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
 	// Tone 0
 	else if(currentTone == 0) {
@@ -397,14 +397,14 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
                 
         
 		// Write points, first 2/3 then decaying 1/3
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
 		++p;
 		time += (voicedDuration - 1/startPoint) * 2 / 3;
-		syllableToneContour[p] = [time, midPoint];		
+		syllableToneContour.push({"t": time, "f": midPoint});;		
         // Next point a end
  		++p;
 		time += (voicedDuration - 1/startPoint) * 1 / 3;
-		syllableToneContour[p] = [time, endPoint];		
+		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
 	// Non-tone intonation
 	else {
@@ -418,10 +418,10 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         endPoint = startPoint * toneRules_oneSemit
         
 		// Write tone points
-		syllableToneContour[p] = [time, startPoint];
+		syllableToneContour.push({"t": time, "f": startPoint});;
 		++p;
 		time += voicedDuration;
-		syllableToneContour[p] = [time, endPoint];		
+		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
 	return syllableToneContour;
 }
@@ -447,10 +447,10 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	// Unvoiced part
 	if (voicingSyllable.match(/U/g)) {
 		time += toneScript_delta;
-		currentToneContour[p] = [time, 0];
+		currentToneContour.push({"t": time, "f": 0});;
 		++p;
 		time += toneScript_segmentDuration * toneFactor;
-		currentToneContour[p] = [time, 0];
+		currentToneContour.push({"t": time, "f": 0});;
 	}
 	
 	// Voiced part
@@ -466,7 +466,9 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	 * 
 	 */
     var voicedContour = toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, toneSyllable, nextTone);
-	currentToneContour.push(voicedContour);
+	for(var o =0; o < voicedContour.length; ++o) {
+		currentToneContour.push(voicedContour[o]);
+	};
     return currentToneContour;
 }
 
@@ -482,10 +484,10 @@ function word2tones (pinyin, topLine) {
 	// Start toneContour with margin
 	var time = 0;
 	var p = 0;
-	toneContour[p] = [time, 0];
+	toneContour.push({"t": time, "f": 0});;
 	++p;
 	time += toneScript_margin
-	toneContour[p] = [time, 0];
+	toneContour.push({"t": time, "f": 0});;
 	lastFrequency = 0;
 	for(s = 0; s < syllableList.length; ++s) {
 		var prevTone = -1;
@@ -494,10 +496,15 @@ function word2tones (pinyin, topLine) {
 		if(s-1 >= 0) prevTone = Number(syllableList[s-1].replace(/[^\d]+/g, ""));
 		if(s+1 < syllableList.length) nextTone = Number(syllableList[s+1].replace(/[^\d]+/g, ""));
 		var syllableContour = addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone);
-		toneContour.push(syllableContour);
-		time = toneContour[(toneContour.length - 1)][0];
-		lastFrequency = toneContour[(toneContour.length - 1)][1];
+		for(var o =0; o < syllableContour.length; ++o) {
+			toneContour.push(syllableContour[o]);
+		};
+		time = toneContour[(toneContour.length - 1)].t;
+		lastFrequency = toneContour[(toneContour.length - 1)].f;
 	};
+for(var o =0; o < toneContour.length; ++o) {
+	alert(toneContour[o].t + ", "+ toneContour[o].t);
+		};
 	return toneContour;
 }
 
