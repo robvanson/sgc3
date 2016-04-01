@@ -102,10 +102,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mediaElement = document.getElementById('Audio');
 	var stopRecording, playSound;
 	
-	// Canvas drawing functions
-	testDrawing("TonePlot", "green", 0)
-	testDrawing("TonePlot", "red", 500)
-		
 	// Global settings
 	var recSecs = 2;
 	var ttsSpeed = 110;
@@ -166,8 +162,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		//Get tone contour
 		var pitchTier = word2tones (currentPinyin, 200);
-		var items = pitchTier.points.items;
-		for(var i = 0; i < items.length; i+=10) alert(items[i].x + ", " + items[i].value);
+		plot_pitchTier ("TonePlot", "green", 200, pitchTier);
 		 
 		//]]>
 	};

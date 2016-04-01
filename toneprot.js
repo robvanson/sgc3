@@ -26,7 +26,7 @@ var setDrawingParam = function (canvasId) {
 
 var resetDrawingParam = function (drawingCtx) {
 	drawingCtx.clearRect(0, 0, drawingCtx.width, drawingCtx.height);
-	drawingCtx.lineWidth = 4;
+	drawingCtx.lineWidth = 8;
 	drawingCtx.strokeStyle = "green";
 	drawingCtx.lineCap = "round";
 	drawingCtx.lineJoin = "round";
@@ -511,8 +511,8 @@ function word2tones (pinyin, topLine) {
 
 function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 	var drawingCtx = setDrawingParam(canvasId);
-	var plotWidth = drawingCtx.width
-	var plotHeight = drawingCtx.height
+	var plotWidth = drawingCtx.canvas.width
+	var plotHeight = drawingCtx.canvas.height
 	
 	// Set parameters
 	drawingCtx.beginPath();
@@ -522,6 +522,21 @@ function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 	var tmin = pitchTier.xmin;
 	var tmax = pitchTier.xmax;
 	var tScale = plotWidth / (pitchTier.xmax - pitchTier.xmin);
-	var vScale = plotHeight / (1.5*topline - 0.75*toneRules_absoluteMinimum);
+	var vScale = plotHeight / (1.5*topLine - 0.9*toneRules_absoluteMinimum);
+	
+	var items = pitchTier.points.items;
+	for(var i = 1; i < items.length; i+=1) {
+		var prevTime = items[i-1].x;
+		var prevValue = items[i-1].value;
+		var currentTime = items[i].x;
+		var currentValue = items[i].value;
+		if(prevValue > 0 && currentValue > 0) {
+			drawingCtx.lineTo(currentTime * tScale, plotHeight - currentValue * vScale);
+		} else if (prevValue <= 0 && currentValue > 0) {
+			drawingCtx.moveTo(prevTime * tScale, plotHeight - prevValue * vScale);
+		} else if (prevValue > 0 && currentValue <= 0) {
+			drawingCtx.stroke();
+		};
+	};
 	
 };
