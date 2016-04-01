@@ -103,9 +103,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var stopRecording, playSound;
 	
 	// Canvas drawing functions
-	setDrawingParam("TonePlot")
-	testDrawing("green", 0)
-	testDrawing("red", 500)
+	testDrawing("TonePlot", "green", 0)
+	testDrawing("TonePlot", "red", 500)
 		
 	// Global settings
 	var recSecs = 2;
@@ -166,9 +165,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		
 		//Get tone contour
-		var pitch = word2tones (currentPinyin, 200);
-		var i = 0;
-		for(x in pitch) alert(i++ + ": "+pitch);
+		var pitchTier = word2tones (currentPinyin, 200);
+		var items = pitchTier.points.items;
+		for(var i = 0; i < items.length; i+=10) alert(items[i].x + ", " + items[i].value);
 		 
 		//]]>
 	};

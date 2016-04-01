@@ -16,15 +16,15 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
-var drawingArea;
 
 var setDrawingParam = function (canvasId) {
-	drawingArea = document.getElementById(canvasId);
-	resetDrawingParam();
+	var drawingArea = document.getElementById(canvasId);
+	var drawingCtx = drawingArea.getContext("2d");
+	resetDrawingParam(drawingCtx);
+	return drawingCtx;
 };
 
-var resetDrawingParam = function () {
-	var drawingCtx = drawingArea.getContext("2d");
+var resetDrawingParam = function (drawingCtx) {
 	drawingCtx.clearRect(0, 0, drawingCtx.width, drawingCtx.height);
 	drawingCtx.lineWidth = 4;
 	drawingCtx.strokeStyle = "green";
@@ -32,8 +32,8 @@ var resetDrawingParam = function () {
 	drawingCtx.lineJoin = "round";
 };
 
-var testDrawing = function (color, order) {
-	var drawingCtx = drawingArea.getContext("2d");
+var testDrawing = function (canvasId, color, order) {
+	var drawingCtx = setDrawingParam(canvasId)
 	drawingCtx.beginPath();
 	drawingCtx.strokeStyle = color;
 	drawingCtx.moveTo(250 + order,250);
@@ -85,6 +85,7 @@ var toneScript_delta = 0.00001;
 var	toneScript_segmentDuration = 0.150;
 var	toneScript_fixedDuration = 0.12;
 var toneScript_margin = 0.25
+var dx = 0.01;
 
 
 /*
@@ -160,7 +161,6 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 	 * 
 	 */
 	
-	var p = 0;
 	var startPoint, midPoint, lowestPoint, endPoint;
 	
 	// Tone 1
@@ -177,7 +177,6 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		
 		// Write tone points
 		syllableToneContour.push({"t": time, "f": startPoint});;
-		++p;
 		time += voicedDuration;
 		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
@@ -210,11 +209,9 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		// Write points
 		syllableToneContour.push({"t": time, "f": startPoint});;
         // Next point flat to 1/3th of duration
-		++p;
 		time += voicedDuration / 3;
 		syllableToneContour.push({"t": time, "f": startPoint});;		
         // Next point a end
- 		++p;
 		time += voicedDuration * 2 / 3;
 		syllableToneContour.push({"t": time, "f": endPoint});;		
  	}
@@ -253,15 +250,12 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		// Write points
 		syllableToneContour.push({"t": time, "f": startPoint});;
         // Go 1/3 of the duration down
- 		++p;
 	    time += (voicedDuration)*2/6
 		syllableToneContour.push({"t": time, "f": lowestPoint});;
         // Go half the duration low
- 		++p;
 	    time += (voicedDuration)*3/6
 		syllableToneContour.push({"t": time, "f": lowestPoint});;
         // Return in 1/6th of the duration
- 		++p;
 	    time += (voicedDuration)*1/6
 		syllableToneContour.push({"t": time, "f": endPoint});;
 	}
@@ -301,27 +295,22 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		// Write points
 		syllableToneContour.push({"t": time, "f": startPoint});;
         // Go 1/3 of the duration down
- 		++p;
 	    time += (voicedDuration)*2/6
 		syllableToneContour.push({"t": time, "f": lowestPoint});;
 
         // voiceless break
- 		++p;
        	var delta = time + 0.001
 		syllableToneContour[p] = [delta, 0];
 
         // Go half the duration low
 	    time += (voicedDuration)*3/6
 	    
- 		++p;
        	delta = time - 0.001
  		syllableToneContour[p] = [delta, 0];
        
         // After voiceless break
- 		++p;
 		syllableToneContour.push({"t": time, "f": lowestPoint});;
         // Return in 1/6th of the duration
- 		++p;
 	    time += (voicedDuration)*1/6
 		syllableToneContour.push({"t": time, "f": endPoint});;
 	}
@@ -343,11 +332,9 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		// Write points
 		syllableToneContour.push({"t": time, "f": startPoint});;
         // Next point a 1/3th of duration
-		++p;
 		time += voicedDuration / 3;
 		syllableToneContour.push({"t": time, "f": startPoint});;		
         // Next point a end
- 		++p;
 		time += voicedDuration * 2 / 3;
 		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
@@ -398,11 +385,9 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         
 		// Write points, first 2/3 then decaying 1/3
 		syllableToneContour.push({"t": time, "f": startPoint});;
-		++p;
 		time += (voicedDuration - 1/startPoint) * 2 / 3;
 		syllableToneContour.push({"t": time, "f": midPoint});;		
         // Next point a end
- 		++p;
 		time += (voicedDuration - 1/startPoint) * 1 / 3;
 		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
@@ -419,7 +404,6 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         
 		// Write tone points
 		syllableToneContour.push({"t": time, "f": startPoint});;
-		++p;
 		time += voicedDuration;
 		syllableToneContour.push({"t": time, "f": endPoint});;		
 	}
@@ -429,7 +413,6 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 // Create a syllable tone movement
 function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone) {
 	var currentToneContour = [];
-	var p = 0;
 	// Get tone
 	var toneSyllable = getTones(syllable);
 	// Tone sandhi: 3-3 => 2-3
@@ -448,7 +431,6 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	if (voicingSyllable.match(/U/g)) {
 		time += toneScript_delta;
 		currentToneContour.push({"t": time, "f": 0});;
-		++p;
 		time += toneScript_segmentDuration * toneFactor;
 		currentToneContour.push({"t": time, "f": 0});;
 	}
@@ -466,9 +448,7 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	 * 
 	 */
     var voicedContour = toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, toneSyllable, nextTone);
-	for(var o =0; o < voicedContour.length; ++o) {
-		currentToneContour.push(voicedContour[o]);
-	};
+    currentToneContour = currentToneContour.concat(voicedContour);
     return currentToneContour;
 }
 
@@ -483,9 +463,7 @@ function word2tones (pinyin, topLine) {
 	
 	// Start toneContour with margin
 	var time = 0;
-	var p = 0;
 	toneContour.push({"t": time, "f": 0});;
-	++p;
 	time += toneScript_margin
 	toneContour.push({"t": time, "f": 0});;
 	lastFrequency = 0;
@@ -496,19 +474,54 @@ function word2tones (pinyin, topLine) {
 		if(s-1 >= 0) prevTone = Number(syllableList[s-1].replace(/[^\d]+/g, ""));
 		if(s+1 < syllableList.length) nextTone = Number(syllableList[s+1].replace(/[^\d]+/g, ""));
 		var syllableContour = addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone);
-		for(var o =0; o < syllableContour.length; ++o) {
-			toneContour.push(syllableContour[o]);
-		};
+		toneContour = toneContour.concat(syllableContour);
 		time = toneContour[(toneContour.length - 1)].t;
 		lastFrequency = toneContour[(toneContour.length - 1)].f;
 	};
-for(var o =0; o < toneContour.length; ++o) {
-	alert(toneContour[o].t + ", "+ toneContour[o].t);
-		};
-	return toneContour;
+	// Trailing margin
+	time += toneScript_delta;
+	toneContour.push({"t": time, "f": 0});;
+	time += toneScript_margin
+	toneContour.push({"t": time, "f": 0});
+	/* Create PitchTier 
+	 * { "xmin": 0, "xmax": duration, "points": [{"t": t, "f":, f},{}]}
+	 * 
+	 */
+	// First create points
+	var points = [];
+	for(x = dx/2; x < time; x += dx) {
+		// Locate tone stretch
+		var i = 0;
+		for(i=0; i< toneContour.length && toneContour[i].t < x; ++i) ;
+		// Interpolate tone if BOTH are non-zero
+		var value = 0;
+		var prefT = toneContour[i-1].t;
+		var prefF = toneContour[i-1].f;
+		var nextT = toneContour[i].t;
+		var nextF = toneContour[i].f;
+		if(prefF > 0 && nextF > 0) {
+			value = prefF + (x - prefT)/(nextT - prefT)*(nextF - prefF);
+		}
+		points.push({"x": x, "value": value});
+	};
+	
+	pitchTier = {"xmin": 0, "xmax": time, "points": {"size": points.length, "items": points}};
+	return pitchTier;
 }
 
-function plot_example (pinyin) {
-	resetDrawingParam ();
+function plot_pitchTier (canvasId, color, topLine, pitchTier) {
+	var drawingCtx = setDrawingParam(canvasId);
+	var plotWidth = drawingCtx.width
+	var plotHeight = drawingCtx.height
+	
+	// Set parameters
+	drawingCtx.beginPath();
+	drawingCtx.strokeStyle = color;
+	
+	// Scale to plot area
+	var tmin = pitchTier.xmin;
+	var tmax = pitchTier.xmax;
+	var tScale = plotWidth / (pitchTier.xmax - pitchTier.xmin);
+	var vScale = plotHeight / (1.5*topline - 0.75*toneRules_absoluteMinimum);
 	
 };
