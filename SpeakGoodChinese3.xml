@@ -91,6 +91,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
+	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="change_language();" >
+		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
+	</select> 
+
     <script type="text/javascript">
 	// Set DOM parameters
 	var recordingLight = document.getElementById('RecordingLight');
