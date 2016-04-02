@@ -25,7 +25,7 @@ var setDrawingParam = function (canvasId) {
 };
 
 var resetDrawingParam = function (drawingCtx) {
-	drawingCtx.clearRect(0, 0, drawingCtx.width, drawingCtx.height);
+	drawingCtx.clearRect(0, 0, drawingCtx.canvas.width, drawingCtx.canvas.height);
 	drawingCtx.lineWidth = 8;
 	drawingCtx.strokeStyle = "green";
 	drawingCtx.lineCap = "round";
@@ -168,7 +168,7 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 		// Just a straight horizontal line
 		startPoint = toneRules_levelFive
 		endPoint = toneRules_levelFive
-		
+
 		// Two first tones, make them a little different
 		if(prevTone == 1) {
 			startPoint = startPoint * 0.999
@@ -522,21 +522,33 @@ function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 	var tmin = pitchTier.xmin;
 	var tmax = pitchTier.xmax;
 	var tScale = plotWidth / (pitchTier.xmax - pitchTier.xmin);
-	var vScale = plotHeight / (1.5*topLine - 0.9*toneRules_absoluteMinimum);
+	var vScale = plotHeight / (2*topLine - 0.4*topLine);
 	
+	var prevTime = -1;
+	var prevValue = 0;
 	var items = pitchTier.points.items;
 	for(var i = 1; i < items.length; i+=1) {
-		var prevTime = items[i-1].x;
-		var prevValue = items[i-1].value;
 		var currentTime = items[i].x;
 		var currentValue = items[i].value;
 		if(prevValue > 0 && currentValue > 0) {
 			drawingCtx.lineTo(currentTime * tScale, plotHeight - currentValue * vScale);
 		} else if (prevValue <= 0 && currentValue > 0) {
-			drawingCtx.moveTo(prevTime * tScale, plotHeight - prevValue * vScale);
+			drawingCtx.moveTo(currentTime * tScale, plotHeight - currentValue * vScale);
 		} else if (prevValue > 0 && currentValue <= 0) {
 			drawingCtx.stroke();
 		};
+		prevTime = currentTime;
+		prevValue = currentValue;
 	};
 	
+};
+
+function draw_example_pinyin (Id, pinyin) {
+	if (pinyin.match(/\d/)) {
+		topLine = getRegister();
+		var pitchTier = word2tones (pinyin, topLine);
+		plot_pitchTier (Id, "green", topLine, pitchTier);
+	} else {
+		setDrawingParam(Id);
+	};
 };

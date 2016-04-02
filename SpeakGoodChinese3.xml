@@ -11,7 +11,7 @@ body {
 	background-image: url("Background.png");
 	background-color: rgb(250,250,250);
     background-repeat: no-repeat;
-    background-position: center top;
+    background-position: center center;
     background-attachment: fixed;}
 h1 {
 	text-align: center;
@@ -87,6 +87,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
+	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="topLine = getRegister();" >
+		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
+	</select> 
 
     <script type="text/javascript">
 	// Set DOM parameters
@@ -107,6 +110,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var ttsSpeed = 110;
 	var ttsVariant = "f3";
 	var shuffleLists = true;
+	var topLine = 249;
+	
 	// Set language (make that selectable)
 	var language = (userLanguage) ? userLanguage : "EN";
 	set_language (language);
@@ -161,8 +166,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		
 		//Get tone contour
-		var pitchTier = word2tones (currentPinyin, 200);
-		plot_pitchTier ("TonePlot", "green", 200, pitchTier);
+		draw_example_pinyin ("TonePlot", currentPinyin);
 		 
 		//]]>
 	};

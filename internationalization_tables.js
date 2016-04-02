@@ -27,7 +27,27 @@ function set_language (language) {
 			document.getElementById(x).parentNode.parentNode.title = labels[x][1];
 		};
 	};
+	
+	labels = register_tables[language];
+	for(x in labels) {
+		if(document.getElementById(x)) {
+			document.getElementById(x).title = labels[x][1];
+			var defaultText = document.getElementById(x+"Caption");
+			defaultText.textContent = labels[x][0]
+		} else if (x.match(/_/)) {
+			var Id = x.replace(/_[^_]*$/, "");
+			var value = x.replace(/^[^_]*_/, "");
+			if(document.getElementById(Id)) {
+				var selector = document.getElementById(Id);
+				var newOption = selector.options[0].cloneNode(true);
+				newOption.value = value;
+				newOption.text = labels[x][0];
+				selector.add(newOption);
+			};
+		};
+	};
 };
+
 var internationalization_tables = {
 	ZH: {
 		Record: ["录音", "录音。录音时间为4秒钟，注意“录音指示灯”。"],
@@ -85,6 +105,66 @@ var internationalization_tables = {
 		WordlistDown: ["Volgende", "Volgende woordenlijst"]
 	}
 };
+
+function getRegister () {
+	var index = document.getElementById("Register").selectedIndex;
+	var value = document.getElementById("Register").options[index].value;
+	if (index <= 0) value = 249;
+	return value;
+}
+
+var register_tables = {
+	ZH: {
+		Register: ["Your Voice", "Select the category that fits your voice"],
+		Register_350: ["Woman High", "Pick this if you are a female with a high voice"],
+		Register_300: ["Woman Mid", "Pick this if you are a female with a mid-range voice"],
+		Register_250: ["Woman Low", "Pick this if you are a female with a low voice"],
+		Register_249: ["Man High", "Pick this if you are a male with a high voice"],
+		Register_180: ["Man Mid", "Pick this if you are a male with a mid-range voice"],
+		Register_150: ["Man Low", "Pick this if you are a male with a low voice"],
+		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"]
+		},
+	EN: {
+		Register: ["Your Voice", "Select the category that fits your voice"],
+		Register_350: ["Woman High", "Pick this if you are a female with a high voice"],
+		Register_300: ["Woman Mid", "Pick this if you are a female with a mid-range voice"],
+		Register_250: ["Woman Low", "Pick this if you are a female with a low voice"],
+		Register_249: ["Man High", "Pick this if you are a male with a high voice"],
+		Register_180: ["Man Mid", "Pick this if you are a male with a mid-range voice"],
+		Register_150: ["Man Low", "Pick this if you are a male with a low voice"],
+		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"]
+		},
+	JA: {
+		Register: ["Your Voice", "Select the category that fits your voice"],
+		Register_350: ["Woman High", "Pick this if you are a female with a high voice"],
+		Register_300: ["Woman Mid", "Pick this if you are a female with a mid-range voice"],
+		Register_250: ["Woman Low", "Pick this if you are a female with a low voice"],
+		Register_249: ["Man High", "Pick this if you are a male with a high voice"],
+		Register_180: ["Man Mid", "Pick this if you are a male with a mid-range voice"],
+		Register_150: ["Man Low", "Pick this if you are a male with a low voice"],
+		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"]
+		},
+	DE: {
+		Register: ["Your Voice", "Select the category that fits your voice"],
+		Register_350: ["Woman High", "Pick this if you are a female with a high voice"],
+		Register_300: ["Woman Mid", "Pick this if you are a female with a mid-range voice"],
+		Register_250: ["Woman Low", "Pick this if you are a female with a low voice"],
+		Register_249: ["Man High", "Pick this if you are a male with a high voice"],
+		Register_180: ["Man Mid", "Pick this if you are a male with a mid-range voice"],
+		Register_150: ["Man Low", "Pick this if you are a male with a low voice"],
+		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"]
+		},
+	NL: {
+		Register: ["Your Voice", "Select the category that fits your voice"],
+		Register_350: ["Woman High", "Pick this if you are a female with a high voice"],
+		Register_300: ["Woman Mid", "Pick this if you are a female with a mid-range voice"],
+		Register_250: ["Woman Low", "Pick this if you are a female with a low voice"],
+		Register_249: ["Man High", "Pick this if you are a male with a high voice"],
+		Register_180: ["Man Mid", "Pick this if you are a male with a mid-range voice"],
+		Register_150: ["Man Low", "Pick this if you are a male with a low voice"],
+		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"]
+		},
+}
 
 if(!internationalization_tables[userLanguage]) {
 	userLanguage = undefined;
