@@ -19,6 +19,34 @@
 var userLanguage = (navigator.language) ? navigator.language : navigator.userLanguage;
 userLanguage = userLanguage.substr(0,2).toUpperCase();
 
+
+
+function insert_and_update_options (labels) {
+	for(x in labels) {
+		if(document.getElementById(x)) {
+			document.getElementById(x).title = labels[x][1];
+			var defaultText = document.getElementById(x+"Caption");
+			defaultText.textContent = labels[x][0]
+		} else if (x.match(/_/)) {
+			var Id = x.replace(/_[^_]*$/, "");
+			var value = x.replace(/^[^_]*_/, "");
+			if (document.getElementById(x)) {
+				document.getElementById(x).value = value;
+				document.getElementById(x).text = labels[x][0];
+			} else {
+				if(document.getElementById(Id)) {
+					var selector = document.getElementById(Id);
+					var newOption = selector.options[0].cloneNode(true);
+					newOption.value = value;
+					newOption.text = labels[x][0];
+					newOption.id = x;
+					selector.add(newOption);
+				};
+			};
+		};
+	};
+};
+
 function set_language (language) {
 	var labels = internationalization_tables[language];
 	for(x in labels) {
@@ -29,42 +57,10 @@ function set_language (language) {
 	};
 	
 	labels = selector_tables[language];
-	for(x in labels) {
-		if(document.getElementById(x)) {
-			document.getElementById(x).title = labels[x][1];
-			var defaultText = document.getElementById(x+"Caption");
-			defaultText.textContent = labels[x][0]
-		} else if (x.match(/_/)) {
-			var Id = x.replace(/_[^_]*$/, "");
-			var value = x.replace(/^[^_]*_/, "");
-			if(document.getElementById(Id)) {
-				var selector = document.getElementById(Id);
-				var newOption = selector.options[0].cloneNode(true);
-				newOption.value = value;
-				newOption.text = labels[x][0];
-				selector.add(newOption);
-			};
-		};
-	};
+	insert_and_update_options (labels);
 	
 	labels = language_table;
-	for(x in language_table) {
-		if(document.getElementById(x)) {
-			document.getElementById(x).title = labels[x][1];
-			var defaultText = document.getElementById(x+"Caption");
-			defaultText.textContent = labels[x][0]
-		} else if (x.match(/_/)) {
-			var Id = x.replace(/_[^_]*$/, "");
-			var value = x.replace(/^[^_]*_/, "");
-			if(document.getElementById(Id)) {
-				var selector = document.getElementById(Id);
-				var newOption = selector.options[0].cloneNode(true);
-				newOption.value = value;
-				newOption.text = labels[x][0];
-				selector.add(newOption);
-			};
-		};
-	};
+	insert_and_update_options (labels);
 };
 
 function change_language () {

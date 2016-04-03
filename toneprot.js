@@ -48,6 +48,11 @@ function getTones (pinyin) {
 	return Number(tones);
 };
 
+function numSyllables (pinyin) {
+	var tones = pinyin.replace(/[^\d]+(\d)/g, "$1");
+	return tones.length;
+};
+
 function convertVoicing (pinyin) {
 	var voicing = pinyin.replace(/(ng|[wrlmny])/g, "C");
 	voicing = voicing.replace(/(sh|ch|zh|[fsxhktpgqdbzcj])/g, "U");
@@ -509,6 +514,31 @@ function word2tones (pinyin, topLine) {
 	return pitchTier;
 }
 
+// Filter pitchTier to get more realistic joins
+function smooth_pitchTier (pitchTier) {
+	var prevTime = -1;
+	var prevValue = 0;
+	var currentTime = -1;
+	var currentValue = 0;
+	var items = pitchTier.points.items;
+	for(var i = 1; i < items.length; i+=1) {
+		var nextTime = items[i].x;
+		var nextValue = items[i].value;
+		
+		// Change currentValue as the average of prev, current, and next
+		// NOTE: Do not use the changed value for the next round!!!
+		if (prevValue > 0 && currentValue > 0 && nextValue > 0) {
+			items[i-1].value = (prevValue + currentValue + nextValue) / 3;
+		};
+		
+		// Next round
+		prevTime = currentTime;
+		prevValue = currentValue;
+		currentTime = nextTime;
+		currentValue = nextValue;
+	};
+};
+
 function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 	var drawingCtx = setDrawingParam(canvasId);
 	var plotWidth = drawingCtx.canvas.width
@@ -547,6 +577,7 @@ function draw_example_pinyin (Id, pinyin) {
 	if (pinyin.match(/\d/)) {
 		topLine = getRegister();
 		var pitchTier = word2tones (pinyin, topLine);
+		smooth_pitchTier (pitchTier);
 		plot_pitchTier (Id, "green", topLine, pitchTier);
 	} else {
 		setDrawingParam(Id);
