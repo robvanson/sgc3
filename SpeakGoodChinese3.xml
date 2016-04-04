@@ -87,7 +87,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
-	<select id="Register" style="position: fixed; color: black; bottom: 49%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="topLine = getRegister();" >
+	<select id="Register" style="position: fixed; color: black; bottom: 49%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister();" >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
@@ -108,17 +108,24 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var selectWordlist = document.getElementById('SelectWordList');
 	var mediaElement = document.getElementById('Audio');
 	var stopRecording, playSound;
+	var clearRecordedData = function () { };
 	
 	// Global settings
-	var recSecs = 2;
-	var ttsSpeed = 110;
-	var ttsVariant = "f3";
-	var shuffleLists = true;
-	var topLine = 249;
+	var sgc3_settings = {
+		recSecs: 2,
+		ttsSpeed: 110,
+		ttsVariant: "f3",
+		shuffleLists: true,
+		topLine: 249,
+		wordList: "",
+		language: ""
+	};
 	
 	// Set language (make that selectable)
-	var language = (userLanguage) ? userLanguage : "EN";
-	set_language (language);
+	if (!sgc3_settings.language) {
+		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+	};
+	set_language (sgc3_settings.language);
 
 	// Set progress bars
 	function setProgressBar (id, fraction) {
@@ -152,7 +159,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			characterText = currentItem[2];
 			translationText = currentItem[3];
 		} else {
-			if(shuffleLists) currentWordlist.shuffle();
+			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
 		};
 		document.getElementById('Pinyin').textContent = pinyinText;
@@ -160,7 +167,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		document.getElementById('Translation').textContent = translationText;
 		
 		// Plot tones and set recording time
-		recSecs = 2 + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
+		sgc3_settings.recSecs = 2 + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
 		
 		// Set progress bars
 		var fillFraction = currentWord / (currentWordlist.length - 1);
@@ -171,10 +178,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		//Get tone contour
 		draw_example_pinyin ("TonePlot", currentPinyin);
 
-
-		// Remove play of last recording
-		play.disabled = true;
-		play.style.color = "gray";
+		// Remove last recording
+		clearRecordedData ();
 
 		//]]>
 	};
@@ -190,7 +195,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	var wordlistName = "20 basic tone combinations";
 	get_wordlist (wordlistName);
-	if(shuffleLists) currentWordlist.shuffle();
+	if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 	var currentWord = 0;
 	var currentItem = currentWordlist[currentWord];
 	var currentPinyin = currentItem[0];
@@ -207,7 +212,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	example.onclick = function() {
 		meSpeak.loadConfig("mespeak/mespeak_config.json"); 
 		meSpeak.loadVoice('mespeak/voices/zh.json'); 
-		meSpeak.speak(currentPinyin, {speed: ttsSpeed, variant: ttsVariant}); 		
+		meSpeak.speak(currentPinyin, {speed: sgc3_settings.ttsSpeed, variant: sgc3_settings.ttsVariant}); 		
 	};
 
 	// Previous word 
@@ -242,7 +247,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		wordlistName = wordlists[wordlistNumber][0];
 		get_wordlist (wordlistName);
-		if(shuffleLists) currentWordlist.shuffle();
+		if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
 		write_WordlistName();
@@ -259,7 +264,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		wordlistName = wordlists[wordlistNumber][0];
 		get_wordlist (wordlistName);
-		if(shuffleLists) currentWordlist.shuffle();
+		if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
 		write_WordlistName();
@@ -274,7 +279,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			wordlistName = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (wordlistName);
 			
-			if(shuffleLists) currentWordlist.shuffle();
+			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentWord = 0;
 			
 			write_WordlistName();
@@ -283,7 +288,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		//]]>		 		
 	};
 	
-	
+	// When the call to getUserMEdia is susccessfull
 	var successCallback = function(mediaStream){
 		
 		if(!mediaStream){ 
@@ -295,9 +300,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		var recordRTC = RecordRTC(mediaStream, {
 			recorderType: StereoAudioRecorder // optionally force WebAudio API to record audio
+			
 		}); 
+		recordRTC.mimeType = {audio: 'audio/wav'};
 		
-		
+		clearRecordedData = function () {
+			play.disabled = true;
+			play.style.color = "gray";
+			mediaElement.src = "";
+			recordRTC.clearRecordedData();
+		};
 		
 		// Play recorded sound
 		play.onclick = function() {
@@ -326,7 +338,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    recordingLight.style.color = "red";
 		    
 		    // Set Timeout for stop
-		    setTimeout(stopRecording, recSecs * 1000)
+		    setTimeout(stopRecording, sgc3_settings.recSecs * 1000)
 		}
 	
 	};

@@ -19,14 +19,12 @@
 var userLanguage = (navigator.language) ? navigator.language : navigator.userLanguage;
 userLanguage = userLanguage.substr(0,2).toUpperCase();
 
-
-
 function insert_and_update_options (labels) {
 	for(x in labels) {
 		if(document.getElementById(x)) {
 			document.getElementById(x).title = labels[x][1];
 			var defaultText = document.getElementById(x+"Caption");
-			defaultText.textContent = labels[x][0]
+			defaultText.textContent = labels[x][0];
 		} else if (x.match(/_/)) {
 			var Id = x.replace(/_[^_]*$/, "");
 			var value = x.replace(/^[^_]*_/, "");
