@@ -47,7 +47,7 @@ button {
 <script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
 </head>
-<body>
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();">
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -67,6 +67,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
 	<p><audio id='Audio' controls="false" hidden="true" ></audio></p>
+	<p><audio id='ExampleAudio' controls="false" hidden="true" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
 	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 250%; text-align: center; " id="DisplayString" align="center" >
@@ -96,6 +97,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	</select> 
 
     <script type="text/javascript">
+	//<![CDATA[
 	// Set DOM parameters
 	var recordingLight = document.getElementById('RecordingLight');
 	var record = document.getElementById('RecordButton');
@@ -107,9 +109,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var nextWordlist = document.getElementById('NextWordlist');
 	var selectWordlist = document.getElementById('SelectWordList');
 	var mediaElement = document.getElementById('Audio');
+	var exampleElement = document.getElementById('ExampleAudio');
 	var stopRecording, playSound;
+	var exampleURL = "-";
+	var voiceZH_CN = -1;
 	var clearRecordedData = function () { };
-	
+
 	// Global settings
 	var sgc3_settings = {
 		recSecs: 2,
@@ -118,7 +123,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		shuffleLists: true,
 		topLine: 249, // Must match Register_249 Id
 		wordList: "20 basic tone combinations",
-		language: ""
+		language: "",
+		localTTS: false
 	};
 	
 	// Store settings
@@ -143,12 +149,25 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	set_language (sgc3_settings.language);
 	
+	// Set TTS
+	function getTTSvoice(){
+		var voices = window.speechSynthesis.getVoices();
+		var selectedVoice;
+		for (x = 0; x < voices.length; ++x) {
+			if (voices[x].lang == "zh-CN") { 
+				voiceZH_CN = x;
+				selectedVoice = voices[x];
+			};
+		};
+		return selectedVoice;
+	}
+
+
 	// Set Register
 	setRegister (sgc3_settings.topLine);
 
 	// Set progress bars
 	function setProgressBar (id, fraction) {
-		//<![CDATA[
 		var progressBar = document.getElementById(id);
 		var progressBarCtx = progressBar.getContext("2d");
 		progressBarCtx.clearRect(0, 0, progressBarCtx.canvas.width, progressBarCtx.canvas.height);
@@ -162,11 +181,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			progressBarCtx.fillRect(progressBarCtx.canvas.width*(1+fraction), 0, progressBarCtx.canvas.width, progressBarCtx.canvas.height);
 		};
 		progressBarCtx.stroke();
-		//]]>
 	};
 	// Replace contents of displayed string
 	var write_CurrentString = function () {
-		//<![CDATA[
 		// Store current settings
 		store_SGC3_settings ()
 		
@@ -174,6 +191,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		var pinyinText = "-";
 		var characterText = "-";
 		var translationText = "-";
+		exampleURL = "-";
 		if( currentWord >= 0 && currentWord < currentWordlist.length ) {
 			currentItem = currentWordlist[currentWord];
 			
@@ -181,6 +199,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			pinyinText = currentItem[1]
 			characterText = currentItem[2];
 			translationText = currentItem[3];
+			exampleURL = currentItem[currentItem.length - 1];
 		} else {
 			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
@@ -204,7 +223,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		// Remove last recording
 		clearRecordedData ();
 
-		//]]>
 	};
 	
 	var write_WordlistName = function () {
@@ -222,6 +240,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var currentWord = 0;
 	var currentItem = currentWordlist[currentWord];
 	var currentPinyin = currentItem[0];
+	var currentCharacter = currentItem[1];
 	var currentString = currentItem[0] + " " + currentItem[1] + " " + currentItem[2];
 	write_CurrentString ();
 	write_WordlistName();
@@ -233,37 +252,45 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Play example 
 	example.onclick = function() {
-		meSpeak.loadConfig("mespeak/mespeak_config.json"); 
-		meSpeak.loadVoice('mespeak/voices/zh.json'); 
-		meSpeak.speak(currentPinyin, {speed: sgc3_settings.ttsSpeed, variant: sgc3_settings.ttsVariant}); 		
+		var voice;
+		if (window.speechSynthesis) voice = getTTSvoice();
+		if (exampleURL && exampleURL != "-") {
+			exampleElement.src = exampleURL;
+			exampleElement.play();
+		} else if (voiceZH_CN >= 0 && (voice.localService+"") == sgc3_settings.localTTS) {
+		    var msg = new SpeechSynthesisUtterance();
+		    msg.voice = voice;
+		    msg.rate = 0.7;
+		    msg.text = currentWordlist[currentWord][2];
+			speechSynthesis.speak(msg);
+		} else {
+			meSpeak.loadConfig("mespeak/mespeak_config.json"); 
+			meSpeak.loadVoice('mespeak/voices/zh.json'); 
+			meSpeak.speak(currentPinyin, {speed: sgc3_settings.ttsSpeed, variant: sgc3_settings.ttsVariant});
+		}; 		
 	};
 
 	// Previous word 
 	previous.onclick = function() {
-		//<![CDATA[
 		--currentWord;
  		if( currentWord < 0 ) {
 			currentWord = currentWordlist.length;
 			
 		};
 		write_CurrentString();
-		//]]>
 	};
 
 	// Next word 
 	next.onclick = function() {
-		//<![CDATA[
 		++currentWord;		
 		if(currentWord > currentWordlist.length) {
 			currentWord = 0;
 		};
 		write_CurrentString();
-		//]]>		 		
 	};
 
 	// Previous wordlist
 	prevWordlist.onclick = function() {
-		//<![CDATA[
 		--wordlistNumber;
  		if( wordlistNumber < 0 ) {
 			wordlistNumber = wordlists.length - 1;
@@ -275,12 +302,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		write_WordlistName();
 		write_CurrentString();
-		//]]>
 	};
 
 	// Next wordlist
 	nextWordlist.onclick = function() {
-		//<![CDATA[
 		++wordlistNumber;
  		if( wordlistNumber >= wordlists.length ) {
 			wordlistNumber = 0;
@@ -292,12 +317,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		write_WordlistName();
 		write_CurrentString();
-		//]]>		 		
 	};
 	
 	// select wordlist by name
 	selectWordlist.onchange = function() {
-		//<![CDATA[
 		if(selectWordlist.selectedIndex > 0) {
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);
@@ -308,7 +331,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			write_WordlistName();
 			write_CurrentString();
 		};
-		//]]>		 		
 	};
 	
 	// When the call to getUserMEdia is susccessfull
@@ -372,6 +394,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		navigator.webkitGetUserMedia(mediaConstraints, successCallback, errorCallback);
 	};
 	
+	//]]>	
 	</script>
 </body>
 </html>
