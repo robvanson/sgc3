@@ -91,7 +91,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 38%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="change_language();" >
+	<select id="Language" style="position: fixed; color: black; bottom: 38%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language();" >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
@@ -116,8 +116,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		ttsSpeed: 110,
 		ttsVariant: "f3",
 		shuffleLists: true,
-		topLine: 249,
-		wordList: "",
+		topLine: 249, // Must match Register_249 Id
+		wordList: "20 basic tone combinations",
 		language: ""
 	};
 	
@@ -126,6 +126,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
 	};
 	set_language (sgc3_settings.language);
+	
+	// Set Register
+	setRegister (sgc3_settings.topLine);
 
 	// Set progress bars
 	function setProgressBar (id, fraction) {
@@ -185,7 +188,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	var write_WordlistName = function () {
-		document.getElementById('WordlistString').textContent = wordlistName;
+		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
 		// Always reset the selection
 		selectWordlist.selectedIndex = 0;	
 	};
@@ -193,8 +196,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Create the list with wordlists
 	add_wordlist_names_to_select();
 	
-	var wordlistName = "20 basic tone combinations";
-	get_wordlist (wordlistName);
+	sgc3_settings.wordList = (sgc3_settings.wordList) ? sgc3_settings.wordList : "20 basic tone combinations";
+	get_wordlist (sgc3_settings.wordList);
 	if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 	var currentWord = 0;
 	var currentItem = currentWordlist[currentWord];
@@ -245,8 +248,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  		if( wordlistNumber < 0 ) {
 			wordlistNumber = wordlists.length - 1;
 		};
-		wordlistName = wordlists[wordlistNumber][0];
-		get_wordlist (wordlistName);
+		sgc3_settings.wordList = wordlists[wordlistNumber][0];
+		get_wordlist (sgc3_settings.wordList);
 		if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
@@ -262,8 +265,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  		if( wordlistNumber >= wordlists.length ) {
 			wordlistNumber = 0;
 		};
-		wordlistName = wordlists[wordlistNumber][0];
-		get_wordlist (wordlistName);
+		sgc3_settings.wordList = wordlists[wordlistNumber][0];
+		get_wordlist (sgc3_settings.wordList);
 		if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
@@ -276,8 +279,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	selectWordlist.onchange = function() {
 		//<![CDATA[
 		if(selectWordlist.selectedIndex > 0) {
-			wordlistName = selectWordlist.options[selectWordlist.selectedIndex].value;
-			get_wordlist (wordlistName);
+			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
+			get_wordlist (sgc3_settings.wordList);
 			
 			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentWord = 0;

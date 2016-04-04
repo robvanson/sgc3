@@ -59,6 +59,13 @@ function set_language (language) {
 	
 	labels = language_table;
 	insert_and_update_options (labels);
+	
+	// Set selector index
+	for(var x = 0; x < document.getElementById("Language").options.length; ++ x) {
+		if (document.getElementById("Language").options[x].value == language) {
+			document.getElementById("Language").selectedIndex = x;
+		};
+	};
 };
 
 function change_language () {
@@ -133,6 +140,14 @@ function getRegister () {
 	if (index <= 0) value = 249;
 	return value;
 }
+
+function setRegister (value) {
+	for(var x = 0; x < document.getElementById("Register").options.length; ++ x) {
+		if (document.getElementById("Register").options[x].value == value) {
+			document.getElementById("Register").selectedIndex = x;
+		};
+	};
+};
 
 var selector_tables = {
 	ZH: {
