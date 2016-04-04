@@ -91,7 +91,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 38%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language();" >
+	<select id="Language" style="position: fixed; color: black; bottom: 38%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); " >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
@@ -120,6 +120,22 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		wordList: "20 basic tone combinations",
 		language: ""
 	};
+	
+	// Store settings
+	function store_SGC3_settings () {
+		for (x in sgc3_settings) {
+			localStorage[x] = sgc3_settings[x];
+		};
+	};
+	
+	function load_SGC3_settings () {
+		for (x in sgc3_settings) {
+			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
+		};
+	};
+	
+	// Initialize to stored settings
+	load_SGC3_settings ();
 	
 	// Set language (make that selectable)
 	if (!sgc3_settings.language) {
@@ -151,6 +167,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Replace contents of displayed string
 	var write_CurrentString = function () {
 		//<![CDATA[
+		// Store current settings
+		store_SGC3_settings ()
+		
+		// Get texts
 		var pinyinText = "-";
 		var characterText = "-";
 		var translationText = "-";

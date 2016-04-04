@@ -21,10 +21,10 @@ userLanguage = userLanguage.substr(0,2).toUpperCase();
 
 function insert_and_update_options (labels) {
 	for(x in labels) {
-		if(document.getElementById(x)) {
+		if(document.getElementById(x) && ! x.match(/_/)) {
 			document.getElementById(x).title = labels[x][1];
 			var defaultText = document.getElementById(x+"Caption");
-			defaultText.textContent = labels[x][0];
+			if (defaultText) defaultText.textContent = labels[x][0];
 		} else if (x.match(/_/)) {
 			var Id = x.replace(/_[^_]*$/, "");
 			var value = x.replace(/^[^_]*_/, "");
@@ -66,6 +66,8 @@ function set_language (language) {
 			document.getElementById("Language").selectedIndex = x;
 		};
 	};
+	
+	localStorage.language = language;
 };
 
 function change_language () {

@@ -504,9 +504,11 @@ function word2tones (pinyin, topLine) {
 		var prefF = toneContour[i-1].f;
 		var nextT = toneContour[i].t;
 		var nextF = toneContour[i].f;
+		// When the second part is "0", it is treated as a string concatenation
 		if(prefF > 0 && nextF > 0) {
-			value = prefF + (x - prefT)/(nextT - prefT)*(nextF - prefF);
+			value = Number(prefF) + Number((x - prefT)/(nextT - prefT)*(nextF - prefF));
 		}
+
 		points.push({"x": x, "value": value});
 	};
 	
@@ -530,7 +532,6 @@ function smooth_pitchTier (pitchTier) {
 		if (prevValue > 0 && currentValue > 0 && nextValue > 0) {
 			items[i-1].value = (prevValue + currentValue + nextValue) / 3;
 		};
-		
 		// Next round
 		prevTime = currentTime;
 		prevValue = currentValue;
