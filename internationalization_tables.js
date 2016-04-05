@@ -80,6 +80,7 @@ function change_language () {
 
 var internationalization_tables = {
 	ZH: {
+		Config: ["设置 S", "切换到设置页面。"],
 		Record: ["录音", "录音。录音时间为4秒钟，注意“录音指示灯”。"],
 		Play: ["播放", "播放您的发音。"],
 		Example: ["参考发音", "播放软件提供的参考发音。"],
@@ -91,6 +92,7 @@ var internationalization_tables = {
 		WordlistDown: ["下一个", "切换到下一个单词表。"]
 		},
 	EN: {
+		Config: ["Settings", "Go to settings page"],
 		Record: ["Record", "Record your pronunciation. You have 4 seconds, watch the recording 'light'"],
 		Play: ["Play", "Play back of your recorded pronunciation"],
 		Example: ["Example", "Play example tone pronunciation"],
@@ -102,6 +104,7 @@ var internationalization_tables = {
 		WordlistDown: ["Next", "Next word list"]
 		},
 	JA: {
+		Config: ["設定 S", "設定画面に進みます。"],
 		Record: ["録音", "声を録音します。録音されるのは4秒間です。録音中“録音ライト”が表示されます。"],
 		Play: ["再生", "録音した声を再生します。"],
 		Example: ["発音例", "発音例を再生します。"],
@@ -113,6 +116,7 @@ var internationalization_tables = {
 		WordlistDown: ["次へ", "次の単語表に進みます。"]
 		},
 	DE: {
+		Config: ["Einstellungen", "Zur Seite 'Einstellungen'"],
 		Record: ["Aufnahme", "Machen Sie eine Sprachaufnahme. Sie haben 4 Sekunden bevor die Aufnahme beginnt; achten Sie auf das rote Licht."],
 		Play: ["Wiedergabe", "Abspielen der Aufnahme"],
 		Example: ["Vorbild", "Vorbild abspielen"],
@@ -124,6 +128,7 @@ var internationalization_tables = {
 		WordlistDown: ["nächste", "Zur nächster Liste"]
 		},
 	NL: {
+		Config: ["Instellingen", "Ga naar de pagina met instellingen"],
 		Record: ["Opnemen", 'Neem je uitspraak op. Je hebt 4 seconden, let op het rode "lampje"'],
 		Play: ["Afspelen", "Speel je opgenomen uitspraak af"],
 		Example: ["Voorbeeld", "Speel een voorbeeld van deze toon af"],

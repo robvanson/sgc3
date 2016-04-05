@@ -42,7 +42,7 @@ button {
 
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
-<body>
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();">
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -65,18 +65,23 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		Shuō hǎo Zhōngwén <br />
 		说好中文
 	</h2>
-	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister();" >
+	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" onclick="window.opener.focus(); " ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
+
+	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); " >
+	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); store_SGC3_settings (); " >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
     <script type="text/javascript">
 	//<![CDATA[
+	var mainWindow = localStorage.mainWindow;
+	
 	// Global settings
 	var sgc3_settings = {
+		settingsPage: "1",
 		recSecs: 2,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
@@ -89,6 +94,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Store settings
 	function store_SGC3_settings () {
+		sgc3_settings.settingsPage = 1;
 		for (x in sgc3_settings) {
 			localStorage[x] = sgc3_settings[x];
 		};
@@ -98,6 +104,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (x in sgc3_settings) {
 			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
 		};
+		sgc3_settings.settingsPage = "1";
+		localStorage.settingsPage = sgc3_settings.settingsPage;
+		
+		set_language (sgc3_settings.language);
+		setRegister (sgc3_settings.topLine);
 	};
 	
 	// Initialize to stored settings

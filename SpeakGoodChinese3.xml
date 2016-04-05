@@ -47,7 +47,7 @@ button {
 <script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
 </head>
-<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();">
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="if(settingsWindow)settingsWindow.close(); " >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -81,24 +81,28 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<button type="button" style="color: black; bottom: 2%; left: 59%" id="ExampleButton" ><span style="font-size: 100%">&#9658;<br /><span id="Example" >Example</span></span></button>
 	<canvas id="RightProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 78%; width: 15%; height: 4px; "></canvas>
 	<button type="button" style="color: black; bottom: 2%; left: 77%; " id="NextButton" ><span style="font-size: 100%">&#9654;|<br /><span id="Next" >Next</span></span></button>
+
+	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" onclick="if (!settingsWindow){settingsWindow= window.open('SpeakGoodChinese3_Settings.xml', '_blank');} else {settingsWindow.focus();}" ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
+
 	<!-- Wordlists -->
-	<button type="button" style="color: black; bottom: 81%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%"><span id="WordlistUp" >Previous</span> &#8593;</span></button>
-	<button type="button" style="color: black; bottom: 60%; right: 2%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"> <span id="WordlistDown" title="" >Next</span> &#8595;</span></button>
-	<select id="SelectWordList" style="position: fixed; color: black; bottom: 71%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); "  >
+	<button type="button" style="color: black; bottom: 71%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%"><span id="WordlistUp" >Previous</span> &#8593;</span></button>
+	<button type="button" style="color: black; bottom: 50%; right: 2%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"> <span id="WordlistDown" title="" >Next</span> &#8595;</span></button>
+	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); "  >
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
-	<select id="Register" style="position: fixed; color: black; bottom: 49%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister();" >
+	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister();" >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 38%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); " >
+	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); " >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
     <script type="text/javascript">
 	//<![CDATA[
 	// Set DOM parameters
+	var settingsWindow;
 	var recordingLight = document.getElementById('RecordingLight');
 	var record = document.getElementById('RecordButton');
 	var play = document.getElementById('PlayButton');
@@ -117,6 +121,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Global settings
 	var sgc3_settings = {
+		settingsPage: 0,
 		recSecs: 2,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
@@ -138,6 +143,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (x in sgc3_settings) {
 			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
 		};
+		sgc3_settings.settingsPage = "0";
+		localStorage.settingsPage = sgc3_settings.settingsPage;
+		
+		set_language (sgc3_settings.language);
+		setRegister (sgc3_settings.topLine);
+	};
+	
+	function updateSettings () {
+		if (localStorage.settingsPage == "1") {
+			load_SGC3_settings ();
+			localStorage.settingsPage = "0";
+			sgc3_settings.settingsPage = 0;
+		};	
 	};
 	
 	// Initialize to stored settings
@@ -290,7 +308,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    speakExample (voice, currentText, currentPinyin)
 		} else {
 			meSpeakExample (currentPinyin);
-		}; 		
+		};
 	};
 
 	// Previous word 
