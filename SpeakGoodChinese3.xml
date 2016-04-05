@@ -260,8 +260,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	example.onclick = function() {
 		var voice;
 		if (window.speechSynthesis) voice = getTTSvoice();
-		if (exampleURL && exampleURL != "-") {
+		if (exampleURL && exampleURL != "-" && sgc3_settings.localTTS == "false") {
 			exampleElement.src = exampleURL;
+			exampleElement.onerror = function (event) {
+				console.log('Errored ' + event);
+				meSpeakExample (currentPinyin); 
+			};
 			exampleElement.play();
 		} else if (voiceZH_CN >= 0 && sgc3_settings.localTTS == "false") {
 		    var msg = new SpeechSynthesisUtterance();
