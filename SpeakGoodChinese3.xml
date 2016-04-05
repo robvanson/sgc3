@@ -251,22 +251,31 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var errorCallback = function(err){console.log("Error: " + err.name);};
 	
 	// Play example 
+	function meSpeakExample (pinyin ) {
+			meSpeak.loadConfig("mespeak/mespeak_config.json"); 
+			meSpeak.loadVoice('mespeak/voices/zh.json'); 
+			meSpeak.speak(pinyin, {speed: sgc3_settings.ttsSpeed, variant: sgc3_settings.ttsVariant});	
+	};
+	
 	example.onclick = function() {
 		var voice;
 		if (window.speechSynthesis) voice = getTTSvoice();
 		if (exampleURL && exampleURL != "-") {
 			exampleElement.src = exampleURL;
 			exampleElement.play();
-		} else if (voiceZH_CN >= 0 && (voice.localService+"") == sgc3_settings.localTTS) {
+		} else if (voiceZH_CN >= 0 && sgc3_settings.localTTS == "false") {
 		    var msg = new SpeechSynthesisUtterance();
+		    msg.onerror = function (event) {
+				console.log('Errored ' + event);
+				speechSynthesis.cancel();
+				meSpeakExample (currentPinyin); 
+			};
 		    msg.voice = voice;
 		    msg.rate = 0.7;
 		    msg.text = currentWordlist[currentWord][2];
 			speechSynthesis.speak(msg);
 		} else {
-			meSpeak.loadConfig("mespeak/mespeak_config.json"); 
-			meSpeak.loadVoice('mespeak/voices/zh.json'); 
-			meSpeak.speak(currentPinyin, {speed: sgc3_settings.ttsSpeed, variant: sgc3_settings.ttsVariant});
+			meSpeakExample (currentPinyin);
 		}; 		
 	};
 
