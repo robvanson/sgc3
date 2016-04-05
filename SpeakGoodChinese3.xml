@@ -258,15 +258,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	function speakExample (voice, text, pinyin) {
-	    var msg = new SpeechSynthesisUtterance();
-	    msg.onerror = function (event) {
-			speechSynthesis.cancel();
+		if (window.speechSynthesis) {
+		    var msg = new SpeechSynthesisUtterance();
+		    msg.onerror = function (event) {
+				speechSynthesis.cancel();
+				meSpeakExample (pinyin); 
+			};
+		    msg.voice = voice;
+		    msg.rate = 0.7;
+		    msg.text = text;
+			speechSynthesis.speak(msg);
+		} else {
 			meSpeakExample (pinyin); 
 		};
-	    msg.voice = voice;
-	    msg.rate = 0.7;
-	    msg.text = text;
-		speechSynthesis.speak(msg);
 	};
 	
 	example.onclick = function() {
