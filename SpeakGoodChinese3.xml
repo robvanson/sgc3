@@ -257,27 +257,31 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			meSpeak.speak(pinyin, {speed: sgc3_settings.ttsSpeed, variant: sgc3_settings.ttsVariant});	
 	};
 	
+	function speakExample (voice, text, pinyin) {
+	    var msg = new SpeechSynthesisUtterance();
+	    msg.onerror = function (event) {
+			speechSynthesis.cancel();
+			meSpeakExample (pinyin); 
+		};
+	    msg.voice = voice;
+	    msg.rate = 0.7;
+	    msg.text = text;
+		speechSynthesis.speak(msg);
+	};
+	
 	example.onclick = function() {
 		var voice;
 		if (window.speechSynthesis) voice = getTTSvoice();
 		if (exampleURL && exampleURL != "-" && sgc3_settings.localTTS == "false") {
 			exampleElement.src = exampleURL;
 			exampleElement.onerror = function (event) {
-				console.log('Errored ' + event);
-				meSpeakExample (currentPinyin); 
+			    currentText = currentWordlist[currentWord][2];
+			    speakExample (voice, currentText, currentPinyin)
 			};
 			exampleElement.play();
 		} else if (voiceZH_CN >= 0 && sgc3_settings.localTTS == "false") {
-		    var msg = new SpeechSynthesisUtterance();
-		    msg.onerror = function (event) {
-				console.log('Errored ' + event);
-				speechSynthesis.cancel();
-				meSpeakExample (currentPinyin); 
-			};
-		    msg.voice = voice;
-		    msg.rate = 0.7;
-		    msg.text = currentWordlist[currentWord][2];
-			speechSynthesis.speak(msg);
+		    currentText = currentWordlist[currentWord][2];
+		    speakExample (voice, currentText, currentPinyin)
 		} else {
 			meSpeakExample (currentPinyin);
 		}; 		
