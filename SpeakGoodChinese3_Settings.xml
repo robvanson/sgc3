@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="xhtml-default.css" type="text/css" media="screen, aural, print" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
+    "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Language" content="en" />
+<title lang="en" xml:lang="en" dir="ltr">Settings - SpeakGoodChinese</title>
+<style>
+body {
+	background-image: url("Background.png");
+	background-color: rgb(250,250,250);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;}
+h1 {
+	text-align: center;
+	}
+button {
+		position: fixed;
+		overflow: hidden;
+		text-overflow: clip clip;
+		width:17%;
+		height:15%;
+		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+		text-align:center;
+		font: bold x-large "Helvetica";
+		background-color: rgb(220,220,220);
+		
+		-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+		-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+		box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+		
+		/*give the corners a small curve*/
+		-moz-border-radius: 7px;
+		-webkit-border-radius: 7px;
+		border-radius: 7px;
+		}
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<script type="text/javascript" src="internationalization_tables.js" ></script>   
+</head>
+<body>
+<!--
+SpeakGoodChinese 3
+Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You can find a copy of the GNU General Public License at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+-->
+	<h2 style='text-align: center' id="title">
+		SpeakGoodChinese 3 <br />
+		Shuō hǎo Zhōngwén <br />
+		说好中文
+	</h2>
+	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister();" >
+		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
+	</select> 
+
+	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); " >
+		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
+	</select> 
+
+    <script type="text/javascript">
+	//<![CDATA[
+	// Global settings
+	var sgc3_settings = {
+		recSecs: 2,
+		ttsSpeed: 110,
+		ttsVariant: "f3",
+		shuffleLists: true,
+		topLine: 249, // Must match Register_249 Id
+		wordList: "20 basic tone combinations",
+		language: "",
+		localTTS: false
+	};
+	
+	// Store settings
+	function store_SGC3_settings () {
+		for (x in sgc3_settings) {
+			localStorage[x] = sgc3_settings[x];
+		};
+	};
+	
+	function load_SGC3_settings () {
+		for (x in sgc3_settings) {
+			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
+		};
+	};
+	
+	// Initialize to stored settings
+	load_SGC3_settings ();
+	
+	// Set language (make that selectable)
+	if (!sgc3_settings.language) {
+		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+	};
+	set_language (sgc3_settings.language);
+	
+	// Set TTS
+	function getTTSvoice(){
+		var selectedVoice;
+		if (window.speechSynthesis) {
+			var voices = window.speechSynthesis.getVoices();
+			if (! voices) voices = window.speechSynthesis.getVoices();
+			for (x = 0; x < voices.length; ++x) {
+				if (voices[x].lang == "zh-CN") { 
+					voiceZH_CN = x;
+					selectedVoice = voices[x];
+				};
+			};
+		}
+		return selectedVoice;
+	}
+
+
+	// Set Register
+	setRegister (sgc3_settings.topLine);
+	//]]>	
+	</script>
+
+ 
+</body>
+</html>
