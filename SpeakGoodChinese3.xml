@@ -271,7 +271,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	example.onclick = function() {
 		var voice;
-		if (window.speechSynthesis) voice = getTTSvoice();
+		if (window.speechSynthesis) {
+			voice = getTTSvoice();
+			if (voiceZH_CN < 0) voice = getTTSvoice();
+		};
 		if (exampleURL && exampleURL != "-" && sgc3_settings.localTTS == "false") {
 			exampleElement.src = exampleURL;
 			exampleElement.onerror = function (event) {
