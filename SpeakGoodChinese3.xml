@@ -151,14 +151,17 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Set TTS
 	function getTTSvoice(){
-		var voices = window.speechSynthesis.getVoices();
 		var selectedVoice;
-		for (x = 0; x < voices.length; ++x) {
-			if (voices[x].lang == "zh-CN") { 
-				voiceZH_CN = x;
-				selectedVoice = voices[x];
+		if (window.speechSynthesis) {
+			var voices = window.speechSynthesis.getVoices();
+			if (! voices) voices = window.speechSynthesis.getVoices();
+			for (x = 0; x < voices.length; ++x) {
+				if (voices[x].lang == "zh-CN") { 
+					voiceZH_CN = x;
+					selectedVoice = voices[x];
+				};
 			};
-		};
+		}
 		return selectedVoice;
 	}
 
@@ -274,11 +277,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	example.onclick = function() {
-		var voice;
-		if (window.speechSynthesis) {
-			voice = getTTSvoice();
-			if (voiceZH_CN < 0) voice = getTTSvoice();
-		};
+		var voice = getTTSvoice();
 		if (exampleURL && exampleURL != "-" && sgc3_settings.localTTS == "false") {
 			exampleElement.src = exampleURL;
 			exampleElement.onerror = function (event) {
