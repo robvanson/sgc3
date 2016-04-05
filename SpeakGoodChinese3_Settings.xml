@@ -65,7 +65,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		Shuō hǎo Zhōngwén <br />
 		说好中文
 	</h2>
-	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" onclick="window.opener.focus(); " ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
+	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" onclick="console.log(window.self.opener); " ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
 
 	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
