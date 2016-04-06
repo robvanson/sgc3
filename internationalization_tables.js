@@ -25,6 +25,8 @@ function insert_and_update_options (labels) {
 			document.getElementById(x).title = labels[x][1];
 			var defaultText = document.getElementById(x+"Caption");
 			if (defaultText) defaultText.textContent = labels[x][0];
+			var defaultText2 = document.getElementById(x+"Caption2");
+			if (defaultText2) defaultText2.textContent = labels[x][0];
 		} else if (x.match(/_/)) {
 			var Id = x.replace(/_[^_]*$/, "");
 			var value = x.replace(/^[^_]*_/, "");

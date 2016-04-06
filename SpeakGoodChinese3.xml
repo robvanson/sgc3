@@ -126,7 +126,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		recSecs: 2,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
-		shuffleLists: true,
+		shuffleLists: "true",
 		topLine: 249, // Must match Register_249 Id
 		wordList: "20 basic tone combinations",
 		language: "",
@@ -223,7 +223,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			translationText = currentItem[3];
 			exampleURL = currentItem[currentItem.length - 1];
 		} else {
-			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
+			if(sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
 			currentPinyin = "";
 		};
 		document.getElementById('Pinyin').textContent = pinyinText;
@@ -258,7 +258,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	sgc3_settings.wordList = (sgc3_settings.wordList) ? sgc3_settings.wordList : "20 basic tone combinations";
 	get_wordlist (sgc3_settings.wordList);
-	if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
+	if(sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
 	var currentWord = 0;
 	var currentItem = currentWordlist[currentWord];
 	var currentPinyin = currentItem[0];
@@ -350,7 +350,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		sgc3_settings.wordList = wordlists[wordlistNumber][0];
 		get_wordlist (sgc3_settings.wordList);
-		if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
+		if (sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
 		currentWord = 0;
 		
 		write_WordlistName();
@@ -365,7 +365,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		sgc3_settings.wordList = wordlists[wordlistNumber][0];
 		get_wordlist (sgc3_settings.wordList);
-		if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
+		if (sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
 		currentWord = 0;
 		
 		write_WordlistName();
@@ -378,7 +378,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);
 			
-			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
+			if (sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
 			currentWord = 0;
 			
 			write_WordlistName();
