@@ -45,8 +45,8 @@ function insert_and_update_options (labels) {
 	};
 };
 
-function set_language (language) {
-	var labels = internationalization_tables[language];
+function set_mainpageLanguage (language) {
+	var labels = mainpage_tables[language];
 	for(x in labels) {
 		if(document.getElementById(x)) {
 			document.getElementById(x).textContent = labels[x][0];
@@ -70,15 +70,48 @@ function set_language (language) {
 	localStorage.language = language;
 };
 
-function change_language () {
+function set_configLanguage (language) {
+	var labels = config_tables[language];
+	for(x in labels) {
+		if(document.getElementById(x)) {
+			document.getElementById(x).textContent = labels[x][0];
+			document.getElementById(x).parentNode.parentNode.title = labels[x][1];
+		};
+	};
+	
+	labels = selector_tables[language];
+	insert_and_update_options (labels);
+	
+	labels = language_table;
+	insert_and_update_options (labels);
+	
+	// Set selector index
+	for(var x = 0; x < document.getElementById("Language").options.length; ++ x) {
+		if (document.getElementById("Language").options[x].value == language) {
+			document.getElementById("Language").selectedIndex = x;
+		};
+	};
+	
+	localStorage.language = language;
+};
+
+function change_mainpageLanguage () {
 	var index = document.getElementById("Language").selectedIndex;
 	var value = document.getElementById("Language").options[index].value;
 	userLanguage = value;
-	set_language (userLanguage);
+	set_mainpageLanguage (userLanguage);
 	return userLanguage;
 };
 
-var internationalization_tables = {
+function change_configLanguage () {
+	var index = document.getElementById("Language").selectedIndex;
+	var value = document.getElementById("Language").options[index].value;
+	userLanguage = value;
+	set_configLanguage (userLanguage);
+	return userLanguage;
+};
+
+var mainpage_tables = {
 	ZH: {
 		Config: ["设置 S", "切换到设置页面。"],
 		Record: ["录音", "录音。录音时间为4秒钟，注意“录音指示灯”。"],
@@ -140,6 +173,82 @@ var internationalization_tables = {
 		WordlistDown: ["Volgende", "Volgende woordenlijst"]
 	}
 };
+
+var config_tables = {
+	ZH: {
+		Wordlists: ["单词表", "单词表"],
+		WordlistCaption: ["单词表", "更换单词表。"],
+		SelectWords: ["选择单词", "选择要练习的单词"],
+		WordlistUp: ["上一个", "切换到上一个单词表。"],
+		WordlistDown: ["下一个", "切换到下一个单词表。"],
+		ShuffleLists: ["随机播放 S", "随机打乱单词表中的词，否则按顺序播放。"],
+		AdaptiveLists: ["适应性", "只练习有难度的词，即发音错误两次以上的单词。"],
+		UseSoundExample: ["实际发音 x", "如果提供了真人发音，选择此按键后，则播放真人发音，否则播放合成发音。"],
+		Synthesis_eSpeak: ["合成音 y", "使用合成发音（需要eSpeak:www.espeak.org）。"],
+		Voice: ["音质> ---", "选择合成音的种类"],
+		Recognition: ["汉语水平", "可设置为高级汉语水平或母语者水平。"],
+		Strict: ["水平 ---", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"]
+		},
+	EN: {
+		Wordlists: ["Word lists", "Word lists"],
+		WordlistCaption: ["Word List", "Change word list"],
+		SelectWords: ["Words", "Select words to practise"],
+		WordlistUp: ["Previous", "Previous word list"],
+		WordlistDown: ["Next", "Next word list"],
+		ShuffleLists: ["Shuffle", "Shuffle words in word lists (on) or use a fixed order (off)"],
+		AdaptiveLists: ["Adaptive", "Practice only words that required more than two attempts"],
+		UseSoundExample: ["Real example", "Use a real sound recording (on) if available or synthesized tones (off) as examples"],
+		Synthesis_eSpeak: ["Synthesis", "Use a synthetic voice as example (you need eSpeak: www.espeak.org)"],
+		Voice: ["Voice> ---", "Select a synthetic voice"],
+		Recognition: ["Proficiency", "Set to recognize advanced or native speakers"],
+		Strict: ["Level ---", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
+		},
+			
+	JA: {
+		Wordlists: ["単語表", "単語表"],
+		WordlistCaption: ["単語表", "単語表を変更します。"],
+		SelectWords: ["単語の選択", "練習で使う単語を選択します"],
+		WordlistUp: ["戻る", "一つ前の単語表に戻ります。"],
+		WordlistDown: ["次へ", "次の単語表に進みます。"],
+		ShuffleLists: ["シャッフル S", "オンにすると単語表はシャッフルされ、オフなら元の順序が維持されます。"],
+		AdaptiveLists: ["順応モード", "二回以内で合格できなかった単語だけ表示されるようになります。"],
+		UseSoundExample: ["実音声 x", "オンでかつ実音声が用意されていれば実音声を例として使用し、そうでないなら合成音声を使用します。"],
+		Synthesis_eSpeak: ["合成音声 y", "合成音声を例として使用します（eSpeakが必要です：www.espeak.org）。"],
+		Voice: ["声質> ---", "合成音声の声質を選択"],
+		Recognition: ["中国語レベル", "上級者や母語者レベルに設定できます。"],
+		Strict: ["レベル ---", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
+		},
+		
+	DE: {
+		Wordlists: ["Wortlisten", "Wortlisten"],
+		WordlistCaption: ["Wordliste", "Ändere Wordliste"],
+		SelectWords: ["Wörter", "Wähle die Wörter zum üben"],
+		WordlistUp: ["vorige", "Zur voriger Liste"],
+		WordlistDown: ["nächste", "Zur nächster Liste"],
+		ShuffleLists: ["Shuffle", "Shuffle Wörter in Wortlisten (ein) oder eine feste Reihenvolge (aus)"],
+		AdaptiveLists: ["Adaptiv", "Üben Sie nur Wörter die mehr als zwei Versuchen erforderten"],
+		UseSoundExample: ["Audio Vorbild", "Gebrauche echte Aufnahmen zum Vorbild wenn anwesend (ein) oder synthetische Töne (aus)"],
+		Synthesis_eSpeak: ["Synthese", "Gebrauche eine synthetische Stimme zum Vorbild (Sie brauchen eSpeak: www.espeak.org)"],
+		Voice: ["Stimme> ---", "Wähle eine synthetische Stimme"],
+		Recognition: ["Sprachkenntnisse", "Einstellung für fortgeschrittene Studenten"],
+		Strict: ["Stufe ---", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
+		},		
+	NL: {
+		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
+		WordlistCaption: ["Woordenlijst", "Andere woordenlijst"],
+		SelectWords: ["Woorden", "Kies de woorden om te oefenen"],
+		WordlistUp: ["Vorige", "Vorige woordenlijst"],
+		WordlistDown: ["Volgende", "Volgende woordenlijst"],
+		ShuffleLists: ["Woorden mixen", "Gebruik elke keer een andere volgorde van de woorden"],
+		AdaptiveLists: ["Adaptief", "Oefen alleen woorden waarvoor meer dan twee pogingen nodig waren"],
+		UseSoundExample: ["Spraakvoorbeeld", "Laat echte spraakopnamen (aan) of kunstmatige tonen (uit) horen als voorbeeld"],
+		Synthesis_eSpeak: ["Synthese", "Gebruik een synthetische stem als voorbeeld (eSpeak is hiervoor nodig: www.espeak.org)"],
+		Voice: ["Stem> ---", "Kies een synthetische stem"],
+		Recognition: ["Taalniveau", "Stel de herkenner in op gevorderde of moedertaal sprekers"],
+		Strict:	["Niveau ---", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."]
+		}
+};
+
 
 function getRegister () {
 	var index = document.getElementById("Register").selectedIndex;
@@ -222,6 +331,6 @@ var language_table = {
 	Language_NL: ["Nederlands", "Gebruik Nederlands"]	
 }
 
-if(!internationalization_tables[userLanguage]) {
+if(!mainpage_tables[userLanguage]) {
 	userLanguage = undefined;
 };

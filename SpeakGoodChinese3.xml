@@ -82,7 +82,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<canvas id="RightProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 78%; width: 15%; height: 4px; "></canvas>
 	<button type="button" style="color: black; bottom: 2%; left: 77%; " id="NextButton" ><span style="font-size: 100%">&#9654;|<br /><span id="Next" >Next</span></span></button>
 
-	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" onclick="if (!settingsWindow){settingsWindow= window.open('SpeakGoodChinese3_Settings.xml', '_blank');} else {settingsWindow.focus();}" ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
+	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
 
 	<!-- Wordlists -->
 	<button type="button" style="color: black; bottom: 71%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%"><span id="WordlistUp" >Previous</span> &#8593;</span></button>
@@ -95,7 +95,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); " >
+	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_mainpageLanguage(); " >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
@@ -114,6 +114,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var selectWordlist = document.getElementById('SelectWordList');
 	var mediaElement = document.getElementById('Audio');
 	var exampleElement = document.getElementById('ExampleAudio');
+	var settingsButton = document.getElementById('Settings');
 	var stopRecording, playSound;
 	var exampleURL = "-";
 	var voiceZH_CN = -1;
@@ -146,7 +147,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsPage = "0";
 		localStorage.settingsPage = sgc3_settings.settingsPage;
 		
-		set_language (sgc3_settings.language);
+		set_mainpageLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.topLine);
 	};
 	
@@ -165,7 +166,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	if (!sgc3_settings.language) {
 		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
 	};
-	set_language (sgc3_settings.language);
+	set_mainpageLanguage (sgc3_settings.language);
 	
 	// Set TTS
 	function getTTSvoice(){
@@ -270,6 +271,17 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mediaStream;
 	var mediaConstraints = { audio: true, video: false };
 	var errorCallback = function(err){console.log("Error: " + err.name);};
+	
+	// Settings button
+	settingsButton.onclick = function () {
+		if (localStorage.settingsWindow && settingsWindow) {
+			settingsWindow.focus();
+		} else {
+			if (settingsWindow) settingsWindow.close();
+			settingsWindow = window.open('SpeakGoodChinese3_Settings.xml', '_blank');
+			localStorage.settingsWindow = "true";
+		}
+	};
 	
 	// Play example 
 	function meSpeakExample (pinyin ) {

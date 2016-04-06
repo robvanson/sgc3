@@ -42,7 +42,7 @@ button {
 
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();">
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="localStorage.removeItem('settingsWindow');">
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -65,19 +65,22 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		Shuō hǎo Zhōngwén <br />
 		说好中文
 	</h2>
-	<button type="button" style="color: black; bottom: 84%; right: 2%; height: 10%" id="Settings" onclick="console.log(window.self.opener); " ><span style="font-size: 100%">&#8594; <span id="Config" >Settings</span></span></button>
+	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_configLanguage(); store_SGC3_settings (); " >
+		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
+	</select> 
 
 	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_language(); store_SGC3_settings (); " >
-		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
-	</select> 
+	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>
 
     <script type="text/javascript">
 	//<![CDATA[
 	var mainWindow = localStorage.mainWindow;
+	
+	var localSynthesis = document.getElementById('LocalSynthesis');
+
 	
 	// Global settings
 	var sgc3_settings = {
@@ -107,7 +110,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsPage = "1";
 		localStorage.settingsPage = sgc3_settings.settingsPage;
 		
-		set_language (sgc3_settings.language);
+		set_configLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.topLine);
 	};
 	
@@ -118,9 +121,27 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	if (!sgc3_settings.language) {
 		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
 	};
-	set_language (sgc3_settings.language);
+	set_configLanguage (sgc3_settings.language);
 	
 	// Set TTS
+	if (sgc3_settings.localTTS != "false") {
+		localSynthesis.style.color = "red";
+		localSynthesis.background = "rgb(256,245,245)";
+	};
+	localSynthesis.onclick = function () {
+		if (sgc3_settings.localTTS == "false") {
+			sgc3_settings.localTTS = "true";
+			localSynthesis.style.color = "red";
+			localSynthesis.background = "rgb(232,210,210)";
+		} else {
+			sgc3_settings.localTTS = "false";
+			localSynthesis.style.color = "black";
+			localSynthesis.background = "rgb(220,220,220)";
+		};
+		store_SGC3_settings ();
+	};
+	
+	
 	function getTTSvoice(){
 		var selectedVoice;
 		if (window.speechSynthesis) {
