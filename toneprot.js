@@ -595,6 +595,18 @@ function draw_test_signal (Id, pinyin) {
 	plot_pitchTier (Id, "blue", topLine, pitchTier);
 };
 
+function blob2array (blob) {
+	var resultArray;
+	var fileReader = new FileReader();
+	fileReader.onload = function() {
+	    resultArray = this.result;
+	};
+console.log(blob);
+	fileReader.readAsArrayBuffer(blob);
+	
+console.log(resultArray);
+	return resultArray;
+}
 
 // Pitch trackers 
 function testPitchTracker (duration, sampleRate) {

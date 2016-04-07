@@ -118,6 +118,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var selectWordlist = document.getElementById('SelectWordList');
 	var mediaElement = document.getElementById('Audio');
 	var recordedBlob;
+	var recordedArray;
 	var exampleElement = document.getElementById('ExampleAudio');
 	var settingsButton = document.getElementById('Settings');
 	var stopRecording, playSound;
@@ -236,6 +237,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		//Get tone contour
 		initializeDrawingParam ("TonePlot");
 		draw_example_pinyin ("TonePlot", currentPinyin);
+
 		// draw_test_signal ("TonePlot", currentPinyin);
 
 		// Remove last recording
@@ -415,6 +417,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			recordRTC.stopRecording(function(audioURL) { 
 				mediaElement.src = audioURL;
 				recordedBlob = recordRTC.getBlob();
+				recordedArray = blob2array (recordedBlob);
 			});
 		    play.disabled = false;
 		    record.disabled = false;
