@@ -45,8 +45,12 @@ button {
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 <script type="text/javascript" src="toneprot.js" ></script>   
 <script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
-<script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>   
+<script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>
+<script type="text/javascript" src="fft.js/lib/real.js" defer="true" ></script>
+<script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
+<script type="text/javascript" src="pitch.js/pitch.js" defer="true" ></script>
 </head>
+
 <body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="if(settingsWindow)settingsWindow.close(); " >
 <!--
 SpeakGoodChinese 3
@@ -91,7 +95,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
-	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister();" >
+	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
@@ -113,6 +117,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var nextWordlist = document.getElementById('NextWordlist');
 	var selectWordlist = document.getElementById('SelectWordList');
 	var mediaElement = document.getElementById('Audio');
+	var recordedBlob;
 	var exampleElement = document.getElementById('ExampleAudio');
 	var settingsButton = document.getElementById('Settings');
 	var stopRecording, playSound;
@@ -122,15 +127,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Global settings
 	var sgc3_settings = {
-		settingsPage: 0,
 		recSecs: 2,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
 		shuffleLists: "true",
-		topLine: 249, // Must match Register_249 Id
+		register: 249, // Must match Register_249 Id
 		wordList: "20 basic tone combinations",
 		language: "",
-		localTTS: false
+		synthesis_eSpeak: false
 	};
 	
 	// Store settings
@@ -144,19 +148,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (x in sgc3_settings) {
 			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
 		};
-		sgc3_settings.settingsPage = "0";
-		localStorage.settingsPage = sgc3_settings.settingsPage;
 		
 		set_mainpageLanguage (sgc3_settings.language);
-		setRegister (sgc3_settings.topLine);
-	};
-	
-	function updateSettings () {
-		if (localStorage.settingsPage == "1") {
-			load_SGC3_settings ();
-			localStorage.settingsPage = "0";
-			sgc3_settings.settingsPage = 0;
-		};	
+		setRegister (sgc3_settings.register);
 	};
 	
 	// Initialize to stored settings
@@ -186,7 +180,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 
 	// Set Register
-	setRegister (sgc3_settings.topLine);
+	setRegister (sgc3_settings.register);
 
 	// Set progress bars
 	function setProgressBar (id, fraction) {
@@ -240,7 +234,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		
 		//Get tone contour
+		initializeDrawingParam ("TonePlot");
 		draw_example_pinyin ("TonePlot", currentPinyin);
+		// draw_test_signal ("TonePlot", currentPinyin);
 
 		// Remove last recording
 		clearRecordedData ();
@@ -308,14 +304,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	example.onclick = function() {
 		var voice = getTTSvoice();
-		if (exampleURL && exampleURL != "-" && sgc3_settings.localTTS == "false") {
+		if (exampleURL && exampleURL != "-" && sgc3_settings.synthesis_eSpeak == "false") {
 			exampleElement.src = exampleURL;
 			exampleElement.onerror = function (event) {
 			    currentText = currentWordlist[currentWord][2];
 			    speakExample (voice, currentText, currentPinyin)
 			};
 			exampleElement.play();
-		} else if (voiceZH_CN >= 0 && sgc3_settings.localTTS == "false") {
+		} else if (voiceZH_CN >= 0 && sgc3_settings.synthesis_eSpeak == "false") {
 		    currentText = currentWordlist[currentWord][2];
 		    speakExample (voice, currentText, currentPinyin)
 		} else {
@@ -418,6 +414,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		stopRecording = function() {
 			recordRTC.stopRecording(function(audioURL) { 
 				mediaElement.src = audioURL;
+				recordedBlob = recordRTC.getBlob();
 			});
 		    play.disabled = false;
 		    record.disabled = false;

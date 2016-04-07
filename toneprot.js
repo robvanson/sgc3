@@ -15,9 +15,13 @@
  * You can find a copy of the GNU General Public License at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
-
-
 var setDrawingParam = function (canvasId) {
+	var drawingArea = document.getElementById(canvasId);
+	var drawingCtx = drawingArea.getContext("2d");
+	return drawingCtx;
+};
+
+var initializeDrawingParam = function (canvasId) {
 	var drawingArea = document.getElementById(canvasId);
 	var drawingCtx = drawingArea.getContext("2d");
 	resetDrawingParam(drawingCtx);
@@ -571,7 +575,7 @@ function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 		prevTime = currentTime;
 		prevValue = currentValue;
 	};
-	
+	drawingCtx.stroke();
 };
 
 function draw_example_pinyin (Id, pinyin) {
@@ -584,3 +588,76 @@ function draw_example_pinyin (Id, pinyin) {
 		setDrawingParam(Id);
 	};
 };
+
+function draw_test_signal (Id, pinyin) {
+	topLine = getRegister();
+	var pitchTier = testPitchTracker (2, 44100);
+	plot_pitchTier (Id, "blue", topLine, pitchTier);
+};
+
+
+// Pitch trackers 
+function testPitchTracker (duration, sampleRate) {
+	// Create a sound buffer
+	var audioCtx = new AudioContext();
+	var audioBuffer = audioCtx.createBuffer(1, duration*sampleRate, sampleRate);
+	var audioRecording = audioBuffer.getChannelData(0);
+	
+	// Do something with the recorded blob and the AudioContext.decodeAudioData
+	
+	// Fill it with a sum of sine waves
+	var harmonics = [185];
+	var numHarmonics = 10;
+	for (var h = 1; h < numHarmonics; ++h) {
+		harmonics [h] = h * harmonics [0];
+	}; 
+	var phase = 2 * Math.PI * Math.random();
+	var maxAmp = 0.71;
+	// Scale recording to [-1, 1]
+	var scale = maxAmp / harmonics.length;
+	for (var i = 0; i < duration * sampleRate; ++i) {
+		audioRecording [i] = 0.1*Math.random();
+		var fm = 1 + 0.1 * Math.sin (2 * Math.PI * i / (duration * sampleRate) + phase);
+		for (var h = 0; h < numHarmonics; ++h) {
+			audioRecording [i] += scale * Math.sin (2 * Math.PI * i * fm * harmonics [h] / sampleRate);
+		};
+	};
+
+	// make a PitchTier with 25.6 ms windows, step 10 ms
+	var windowDuration = 0.0256;
+	var dT = 0.010;
+	var windowLength = sampleRate * windowDuration;
+	var points = [];
+	var t = windowDuration / 2;
+	
+	// Step through sound
+	// Create an audio buffer
+	var bufferCtx = new AudioContext();
+	var bufBuffer = audioCtx.createBuffer(1, windowLength, sampleRate);
+	var buf = audioBuffer.getChannelData(0);
+	/* Create a new pitch detector */
+	var pitch = new PitchAnalyzer(sampleRate);
+	while (t < duration - windowDuration) {
+		
+		var x = Math.floor(t * sampleRate - windowLength / 2);
+		for (var i = 0; i < windowLength; ++i) {
+			buf [i] = audioRecording [x + i] // * Math.sin ( Math.PI * i / windowLength) ;
+		};
+	
+		/* Copy samples to the internal buffer */
+		pitch.input(buf);
+		
+		/* Process the current input in the internal buffer */
+		pitch.process();
+	
+		var pitchValue = pitch.findTone();
+
+console.log("x: " + t + ", value: " + pitchValue);
+		points.push({"x": t, "value": (pitchValue ? pitchValue.freq : 0)});
+
+		t += dT;
+	};
+	
+	pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+	return pitchTier;
+}

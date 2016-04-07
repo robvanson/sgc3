@@ -71,7 +71,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	</select> 
 
 	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: x-large 'Helvetica'; text-align: center " id="RegisterCaption">---</div>	
-	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.topLine = getRegister(); store_SGC3_settings (); " >
+	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
 	</select> 
 
@@ -88,20 +88,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Global settings
 	var sgc3_settings = {
-		settingsPage: "1",
 		recSecs: 2,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
 		shuffleLists: true,
-		topLine: 249, // Must match Register_249 Id
+		register: 249, // Must match Register_249 Id
 		wordList: "20 basic tone combinations",
 		language: "",
-		localTTS: false
+		synthesis_eSpeak: false
 	};
 	
 	// Store settings
 	function store_SGC3_settings () {
-		sgc3_settings.settingsPage = 1;
 		for (x in sgc3_settings) {
 			localStorage[x] = sgc3_settings[x];
 		};
@@ -111,11 +109,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (x in sgc3_settings) {
 			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
 		};
-		sgc3_settings.settingsPage = "1";
-		localStorage.settingsPage = sgc3_settings.settingsPage;
 		
 		set_configLanguage (sgc3_settings.language);
-		setRegister (sgc3_settings.topLine);
+		setRegister (sgc3_settings.register);
 	};
 	
 	// Initialize to stored settings
@@ -148,18 +144,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 
 	// Set TTS
-	if (sgc3_settings.localTTS != "false") {
+	if (sgc3_settings.synthesis_eSpeak != "false") {
 		localSynthesis.style.color = "red";
 		localSynthesis.background = "rgb(256,245,245)";
 	};
 	
 	localSynthesis.onclick = function () {
-		if (sgc3_settings.localTTS == "false") {
-			sgc3_settings.localTTS = "true";
+		if (sgc3_settings.synthesis_eSpeak == "false") {
+			sgc3_settings.synthesis_eSpeak = "true";
 			localSynthesis.style.color = "red";
 			localSynthesis.background = "rgb(232,210,210)";
 		} else {
-			sgc3_settings.localTTS = "false";
+			sgc3_settings.synthesis_eSpeak = "false";
 			localSynthesis.style.color = "black";
 			localSynthesis.background = "rgb(220,220,220)";
 		};
@@ -184,7 +180,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 
 	// Set Register
-	setRegister (sgc3_settings.topLine);
+	setRegister (sgc3_settings.register);
 	//]]>	
 	</script>
 
