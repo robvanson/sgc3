@@ -595,20 +595,61 @@ function draw_test_signal (Id, pinyin) {
 	plot_pitchTier (Id, "blue", topLine, pitchTier);
 };
 
-function blob2array (blob) {
-	var resultArray;
-	var fileReader = new FileReader();
-	fileReader.onload = function() {
-	    resultArray = this.result;
+// Decode the audio blob
+var audioProcessing_decodedArray;
+function processAudio (blob) {
+	var audioContext = new AudioContext();
+	var reader = new FileReader();
+	reader.onload = function(){
+		var arrayBuffer = reader.result;
+		audioContext.decodeAudioData(arrayBuffer, decodedDone);
 	};
-console.log(blob);
-	fileReader.readAsArrayBuffer(blob);
+	reader.readAsArrayBuffer(blob);
+};
+
+function decodedDone(decoded) {
+	var typedArray = new Float32Array(decoded.length);
+	typedArray = decoded.getChannelData(0);
+	recordedArray = typedArray;
+	var sampleRate = decoded.sampleRate;
+	var length = decoded.length;
+	var duration = decoded.duration;
 	
-console.log(resultArray);
-	return resultArray;
+	// Process and draw audio
+	draw_tone ("DrawingArea", "black", recordedArray, sampleRate, duration)
+};
+
+function draw_tone (id, color, recordedArray, sampleRate, duration) {
+	// Find start
+	// Silence thresshold is -30 dB
+	var thressHoldDb = 30;
+	var silenceThresshold = Math.pow(10, -1 * thressHoldDb / 20);
+	var soundLength = recordedArray.length;
+	var firstSample = soundLength;
+	var lastSample = 0;
+	for (var i = soundLength - 1; i >= 0; --i) {
+		if (Math.abs(recordedArray[i]) >= silenceThresshold) firstSample = i;
+	};
+	for (var i = 0; i < soundLength; ++i) {
+		if (Math.abs(recordedArray[i]) >= silenceThresshold) lastSample = i;
+	};
+	soundArray = recordedArray.subarray(firstSample, lastSample + 1);
+
+	
+	// Find start
+	var soundLength = soundArray.length;
+	var firstSample = -111;
+	var lastSample = soundLength;
+	for (var i = 0; i < soundArray.lengthsoundLength; ++i) {
+		if (firstSample <= 0 && Math.abs(soundArray[i]) >= silenceThresshold) firstSample = i;
+		if (Math.abs(soundArray[i]) >= silenceThresshold) lastSample = i;
+	};
+console.log("First sample: " + firstSample);
+console.log("Last sample: " + lastSample);
 }
 
 // Pitch trackers 
+
 function testPitchTracker (duration, sampleRate) {
 	// Create a sound buffer
 	var audioCtx = new AudioContext();

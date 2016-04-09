@@ -417,7 +417,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			recordRTC.stopRecording(function(audioURL) { 
 				mediaElement.src = audioURL;
 				recordedBlob = recordRTC.getBlob();
-				recordedArray = blob2array (recordedBlob);
+				// Do things with Blob!!!
+				processAudio (recordedBlob);
 			});
 		    play.disabled = false;
 		    record.disabled = false;
