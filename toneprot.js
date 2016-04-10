@@ -658,6 +658,8 @@ function display_recording_level (id, recordedArray) {
 	};
 	var power = sumSquare / recordedArray.length;
 	var dBpower = Math.log10(power) * -10
+	// limit power to between -6 and -55 dB)
+	dBpower = (dBpower > 6) ? dBpower - 6 : 0;
 	dBpower = Math.min(dBpower, 55);
 	
 	var recordingLight = document.getElementById(id);
