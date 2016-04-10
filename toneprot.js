@@ -616,15 +616,24 @@ function decodedDone(decoded) {
 	var duration = decoded.duration;
 	
 	// Process and draw audio
-	draw_tone ("DrawingArea", "black", recordedArray, sampleRate, duration)
+	var subArray = cut_silent_margins (recordedArray, sampleRate);
+	display_recording_level ("RecordingLight", subArray);
+	draw_tone ("DrawingArea", "black", subArray, sampleRate, duration)
 };
 
-function draw_tone (id, color, recordedArray, sampleRate, duration) {
-	// Find start
+function cut_silent_margins (recordedArray, sampleRate) {
+	// Find part with sound
+	var silentMargin = 0.1;
 	// Silence thresshold is -30 dB
-	var thressHoldDb = 30;
-	var silenceThresshold = Math.pow(10, -1 * thressHoldDb / 20);
 	var soundLength = recordedArray.length;
+	var thressHoldDb = 30;
+	var sumSquare = 0;
+	for (var i = 0; i < soundLength; ++i) {
+		sumSquare += recordedArray[i] * recordedArray[i];
+	};
+	var power = sumSquare / soundLength;
+	
+	var silenceThresshold = Math.pow(10, -1 * thressHoldDb / 20) * Math.sqrt (power);
 	var firstSample = soundLength;
 	var lastSample = 0;
 	for (var i = soundLength - 1; i >= 0; --i) {
@@ -633,19 +642,32 @@ function draw_tone (id, color, recordedArray, sampleRate, duration) {
 	for (var i = 0; i < soundLength; ++i) {
 		if (Math.abs(recordedArray[i]) >= silenceThresshold) lastSample = i;
 	};
+	firstSample -= silentMargin * sampleRate;
+	if (firstSample < 0) firstSample = 0;
+	lastSample += silentMargin * sampleRate;
+	if (lastSample >= soundLength) soundLength - 1;
 	soundArray = recordedArray.subarray(firstSample, lastSample + 1);
-
 	
-	// Find start
-	var soundLength = soundArray.length;
-	var firstSample = -111;
-	var lastSample = soundLength;
-	for (var i = 0; i < soundArray.lengthsoundLength; ++i) {
-		if (firstSample <= 0 && Math.abs(soundArray[i]) >= silenceThresshold) firstSample = i;
-		if (Math.abs(soundArray[i]) >= silenceThresshold) lastSample = i;
+	return soundArray;
+};
+
+function display_recording_level (id, recordedArray) {
+	var sumSquare = 0;
+	for (var i = 0; i < recordedArray.length; ++i) {
+		sumSquare += recordedArray[i] * recordedArray[i];
 	};
-console.log("First sample: " + firstSample);
-console.log("Last sample: " + lastSample);
+	var power = sumSquare / recordedArray.length;
+	var dBpower = Math.log10(power) * -10
+	dBpower = Math.min(dBpower, 55);
+	
+	var recordingLight = document.getElementById(id);
+	recordingLight.style.top = (5 + (10*dBpower / 600) * 6 ) + "%";
+	recordingLight.style.left = (5 + (10*dBpower / 600) * 2 ) + "%";
+	recordingLight.style.fontSize = (600 - 10*dBpower) + "%";
+};
+
+function draw_tone (id, color, typedArray, sampleRate, duration) {
+	console.log("Duration: " + typedArray.length / sampleRate);
 }
 
 // Pitch trackers 

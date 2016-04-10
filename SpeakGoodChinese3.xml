@@ -434,6 +434,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    record.disabled = true;
 		    record.style.color = "gray";
 		    play.style.color = "gray";
+			recordingLight.style.top = "5%";
+			recordingLight.style.left = "5%";
+			recordingLight.style.fontSize = "600%";
 		    recordingLight.style.color = "red";
 		    
 		    // Set Timeout for stop
