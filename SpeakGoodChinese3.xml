@@ -70,7 +70,6 @@ You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
-	<p><audio id='Audio' controls="false" hidden="true" ></audio></p>
 	<p><audio id='ExampleAudio' controls="false" hidden="true" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
@@ -116,9 +115,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var prevWordlist = document.getElementById('PreviousWordlist');
 	var nextWordlist = document.getElementById('NextWordlist');
 	var selectWordlist = document.getElementById('SelectWordList');
-	var mediaElement = document.getElementById('Audio');
-	var recordedBlob;
-	var recordedArray;
+	var recordedBlob, recordedBlobURL;
+	var recordedArray, currentAudioWindow;
+	var recordedSampleRate, recordedDuration;
 	var exampleElement = document.getElementById('ExampleAudio');
 	var settingsButton = document.getElementById('Settings');
 	var stopRecording, playSound;
@@ -403,19 +402,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		clearRecordedData = function () {
 			play.disabled = true;
 			play.style.color = "gray";
-			mediaElement.src = "";
 			recordRTC.clearRecordedData();
 		};
 		
 		// Play recorded sound
 		play.onclick = function() {
-			mediaElement.play();
+			play_soundArray (currentAudioWindow, recordedSampleRate);
 		};
 		
 		// Stop
 		stopRecording = function() {
 			recordRTC.stopRecording(function(audioURL) { 
-				mediaElement.src = audioURL;
+				recordingLight.style.color = "gray";
+				recordedBlobURL = audioURL;
 				recordedBlob = recordRTC.getBlob();
 				// Do things with Blob!!!
 				processAudio (recordedBlob);
