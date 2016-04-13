@@ -544,7 +544,7 @@ function smooth_pitchTier (pitchTier) {
 	};
 };
 
-function plot_pitchTier (canvasId, color, topLine, pitchTier) {
+function plot_pitchTier (canvasId, color, lineWidth, topLine, pitchTier) {
 	var drawingCtx = setDrawingParam(canvasId);
 	var plotWidth = drawingCtx.canvas.width
 	var plotHeight = drawingCtx.canvas.height
@@ -552,6 +552,7 @@ function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 	// Set parameters
 	drawingCtx.beginPath();
 	drawingCtx.strokeStyle = color;
+	drawingCtx.lineWidth = lineWidth;
 	
 	// Scale to plot area
 	var tmin = pitchTier.xmin;
@@ -578,21 +579,21 @@ function plot_pitchTier (canvasId, color, topLine, pitchTier) {
 	drawingCtx.stroke();
 };
 
-function draw_example_pinyin (Id, pinyin) {
+function draw_example_pinyin (id, pinyin) {
 	if (pinyin.match(/\d/)) {
 		topLine = getRegister();
 		var pitchTier = word2tones (pinyin, topLine);
 		smooth_pitchTier (pitchTier);
-		plot_pitchTier (Id, "green", topLine, pitchTier);
+		plot_pitchTier (id, "green", 8, topLine, pitchTier);
 	} else {
-		setDrawingParam(Id);
+		setDrawingParam(id);
 	};
 };
 
 function draw_test_signal (Id, pinyin) {
 	topLine = getRegister();
 	var pitchTier = testPitchTracker (2, 44100);
-	plot_pitchTier (Id, "blue", topLine, pitchTier);
+	plot_pitchTier (Id, "blue", 8, topLine, pitchTier);
 };
 
 function display_recording_level (id, recordedArray) {
@@ -613,7 +614,19 @@ function display_recording_level (id, recordedArray) {
 };
 
 function draw_tone (id, color, typedArray, sampleRate, duration) {
-	console.log("Duration: " + typedArray.length / sampleRate);
+	var fMin = 75;
+	var fMax = 600;
+	var dT = 0.01;
+	var topLine = getRegister();
+
+	var pitch = calculate_Pitch (typedArray, sampleRate, fMin, fMax, dT);
+	var points = [];
+	for (var i=0; i < pitch.length; ++ i) {
+		points.push({"x": i*dT, "value": pitch [i] });
+	};
+	var pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+	plot_pitchTier (id, color, 4, topLine, pitchTier);
+	
 }
 
 // Pitch trackers 
@@ -712,7 +725,10 @@ function decodedDone(decoded) {
 	recordedArray = cut_silent_margins (typedArray, recordedSampleRate);
 	currentAudioWindow = recordedArray;
 	display_recording_level ("RecordingLight", recordedArray);
-	draw_tone ("DrawingArea", "black", recordedArray, recordedSampleRate, duration)
+	
+	initializeDrawingParam ("TonePlot");
+	draw_example_pinyin ("TonePlot", currentPinyin);
+	draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate, duration)
 };
 
 function play_soundArray (soundArray, sampleRate) {
@@ -741,7 +757,7 @@ function cut_silent_margins (recordedArray, sampleRate) {
 	var silentMargin = 0.1;
 	// Silence thresshold is -30 dB
 	var soundLength = recordedArray.length;
-	var thressHoldDb = 30;
+	var thressHoldDb = 20;
 	// Crude calculation of maximum power
 	var maxAmp = 0;
 	for (var i = 0; i < soundLength; ++i) {
@@ -771,3 +787,98 @@ function cut_silent_margins (recordedArray, sampleRate) {
 	return soundArray;
 };
 
+// Calculate autocorrelation in a window (array!!!) around time
+// You should divide the result by the autocorrelation of the window!!!
+function autocorrelation (sound, sampleRate, time, window) {
+	// Calculate FFT
+	// This is stil just the power in dB.
+	var soundLength = sound.length;
+	var windowLength = (window) ? window.length : soundLength;
+	var FFT_N = Math.pow(2, Math.ceil(Math.log2(windowLength))) * 2;
+	var input = new Float32Array(FFT_N * 2);
+	var output = new Float32Array(FFT_N * 2);
+	// The window can get outside of the sound itself
+	var offset = Math.floor(time * sampleRate - Math.ceil(windowLength/2));
+	if (window) {
+		for (var i = 0; i < FFT_N; ++i) {
+			input [2*i] = (i < windowLength && (offset + i) > 0 && (offset + i) < soundLength) ? sound [offset + i] * window [i] : 0;
+			input [2*i + 1] = 0;
+		};
+	} else {
+		for (var i = 0; i < FFT_N; ++i) {
+			input [2*i] = (i < windowLength && (offset + i) > 0 && (offset + i) < soundLength) ? sound [offset + i] : 0;
+			input [2*i + 1] = 0;
+		};
+	};
+	var fft = new FFT.complex(FFT_N, false);
+	var ifft = new FFT.complex(FFT_N, true);
+	fft.simple(output, input, 1)
+
+	// Calculate H * H(cj)
+	// Scale per frequency
+	for(var i = 0; i < FFT_N; ++ i) {
+		var squareValue = (output[2*i]*output[2*i] + output[2*i+1]*output[2*i+1]);
+		input[2*i] = squareValue;
+		input[2*i+1] = 0;
+		output[2*i] = 0;
+		output[2*i+1] = 0;
+	};
+	
+	ifft.simple(output, input, 1);
+	
+	var autocorr = new Float32Array(FFT_N);
+	for(var i = 0; i < FFT_N; ++ i) {
+		 autocorr[i] = output[2*i] / windowLength;
+	};
+
+	return autocorr;
+};
+
+function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
+	var duration = sound.length / sampleRate;
+	var pitchArray = new Float32Array(Math.floor(duration / dT));
+	var lagMin = (fMax > 0) ? 1/fMax : 1/600;
+	var lagMax = (fMin > 0) ? 1/fMin : 1/60;
+	var thressHold = 0.05;
+	
+	// Set up window and calculate Autocorrelation of window
+	var windowDuration = lagMax * 6;
+	var windowSigma = 1/6;
+	var window = new Float32Array(windowDuration * sampleRate);
+	var windowCenter = (windowDuration * sampleRate -1) / 2;
+	var windowSumSq = 0;
+	for (var i = 0; i < windowDuration * sampleRate; ++i) {
+		var exponent = -0.5 * Math.pow( (i - windowCenter)/(windowSigma * windowCenter), 2);
+		window [i] = Math.exp(exponent);
+		windowSumSq += window [i]*window [i];
+	};
+	var WindowRMS = Math.sqrt(windowSumSq/window.length);
+
+	// calculate the autocorrelation of the window
+	var windowAutocorr = autocorrelation (window, sampleRate, windowDuration / 2, 0);
+	
+	// Step through the sound
+	var startLag = Math.floor(lagMin * sampleRate);
+	var endLag = Math.ceil(lagMax * sampleRate);
+	for (var t = 0; t < duration; t += dT) {
+		var autocorr = autocorrelation (sound, sampleRate, t, window);
+		for (var i = 0; i < autocorr.length; ++i) {
+			autocorr [i] /= (windowAutocorr [i]) ? (windowAutocorr [i] * WindowRMS) : 0;
+		};
+		
+		// Find the "real" pitch
+		var bestLag = 0;
+		var bestAmp = -100;
+		for (var j = startLag; j <= endLag; ++j) {
+			if (autocorr [j] > thressHold && autocorr [j] > bestAmp) {
+				bestAmp = autocorr [j];
+				bestLag = j;
+			};
+		};
+		var pitch = bestLag ? sampleRate / bestLag : 0;
+
+		// Add pitch
+		pitchArray [Math.floor(t / dT)] = pitch;
+	};
+	return pitchArray;
+};
