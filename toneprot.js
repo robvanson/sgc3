@@ -752,19 +752,23 @@ function play_soundArray (soundArray, sampleRate) {
 };
 
 // Cut off the silent margins
+// ISSUE: After the first recording, there is a piece at the start missing.
+// This is now cut off
 function cut_silent_margins (recordedArray, sampleRate) {
 	// Find part with sound
 	var silentMargin = 0.1;
-	// Silence thresshold is -30 dB
+	// Silence thresshold is -20 dB
 	var soundLength = recordedArray.length;
 	var thressHoldDb = 20;
 	// Crude calculation of maximum power
 	var maxAmp = 0;
+	var firstNonZero = -1;
 	for (var i = 0; i < soundLength; ++i) {
 		var currentValue = Math.abs(recordedArray[i]);
 		if(currentValue > maxAmp) {
 			maxAmp = currentValue;
 		};
+		if (firstNonZero < 0 && currentValue > 0) firstNonZero = i;
 	};
 	
 	var silenceThresshold = Math.pow(10, -1 * thressHoldDb / 20) * Math.sqrt (maxAmp);
@@ -778,10 +782,14 @@ function cut_silent_margins (recordedArray, sampleRate) {
 	};
 	firstSample -= silentMargin * sampleRate;
 	if (firstSample < 0) firstSample = 0;
+	// Remove non-recorded part
+	if (firstSample < firstNonZero) firstSample = firstNonZero;
 	lastSample += silentMargin * sampleRate;
 	if (lastSample >= soundLength) lastSample = soundLength - 1;
-	var soundArray = new Float32Array(lastSample + 1 - firstSample);
-	for (var i = 0; i < lastSample + 1; ++i) {
+	var newLength = lastSample - firstSample;
+
+	var soundArray = new Float32Array(newLength);
+	for (var i = 0; i < newLength; ++i) {
 		soundArray [i] = recordedArray[firstSample + i];
 	};
 	return soundArray;
