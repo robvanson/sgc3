@@ -45,7 +45,12 @@ var testDrawing = function (canvasId, color, order) {
 	drawingCtx.stroke();
 };
 	
-	
+// Handle sound after decoding (used in audioProcessing.js)
+function processRecordedSound () {
+	display_recording_level ("RecordingLight", recordedArray);
+	drawSignal ("TonePlot");
+};
+
 // Handle tone examples
 function getTones (pinyin) {
 	var tones = pinyin.replace(/[^\d]+(\d)/g, "$1");

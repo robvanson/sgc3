@@ -44,6 +44,7 @@ button {
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="wordlists_plus.js" ></script>   
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
+<script type="text/javascript" src="audioProcessing.js" ></script>   
 <script type="text/javascript" src="toneprot.js" ></script>   
 <script type="text/javascript" src="https://cdn.webrtc-experiment.com/RecordRTC.js" defer="true" ></script>   
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>
