@@ -117,9 +117,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var prevWordlist = document.getElementById('PreviousWordlist');
 	var nextWordlist = document.getElementById('NextWordlist');
 	var selectWordlist = document.getElementById('SelectWordList');
-	var recordedBlob, recordedBlobURL;
-	var recordedArray, currentAudioWindow;
-	var recordedSampleRate, recordedDuration;
 	var exampleElement = document.getElementById('ExampleAudio');
 	var settingsButton = document.getElementById('Settings');
 	var stopRecording, playSound;
@@ -127,6 +124,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var voiceZH_CN = -1;
 	var clearRecordedData = function () { };
 
+	/*
+	 * Global variables from audioProcessing.js
+	 * 
+	 * var recordedBlob, recordedBlobURL;
+	 * var recordedArray, currentAudioWindow;
+	 * var recordedSampleRate, recordedDuration;
+	 * 
+	 */
+	 
 	// Global settings
 	var sgc3_settings = {
 		recSecs: 2,
