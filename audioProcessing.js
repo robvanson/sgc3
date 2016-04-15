@@ -130,12 +130,12 @@ function cut_silent_margins (recordedArray, sampleRate) {
 	var silenceThresshold = maxInt - thressHoldDb;
 
 	var firstFrame = 0;
-	while (firstFrame < currentIntensity.length && (currentIntensity[firstFrame] == Number.NEGATIVE_INFINITY || currentIntensity[firstFrame] < silenceThresshold)) {
+	while (firstFrame < currentIntensity.length && currentIntensity[firstFrame] < silenceThresshold) {
 		++firstFrame;
 	};
 	
 	var lastFrame = currentIntensity.length - 1;
-	while (lastFrame > 0 && (currentIntensity[lastFrame] == Number.NEGATIVE_INFINITY || currentIntensity[lastFrame] < silenceThresshold)) {
+	while (lastFrame > 0 && currentIntensity[lastFrame] < silenceThresshold) {
 		--lastFrame;
 	};
 
@@ -276,24 +276,27 @@ function getPower (sound, sampleRate, time, window) {
 };
 
 function calculate_Intensity (sound, sampleRate, fMin, fMax, dT) {
-	if (!intensity) {
-		var duration = sound.length / sampleRate;
-		var lagMin = (fMax > 0) ? 1/fMax : 1/600;
-		var lagMax = (fMin > 0) ? 1/fMin : 1/60;
-		intensity = new Float32Array(Math.floor(duration / dT));
-		
-		// Set up window
-		var windowDuration = lagMax * 6;
-		var window = setupGaussWindow (sampleRate, fMin);
-		
-		// Step through the sound
-		var i = 0;
-		for (var t = 0; t < duration; t += dT) {
-			var power = getPower (sound, sampleRate, t, window);
-			var powerdB = (power > 0) ? Math.log10(power) * 10 : Number.NEGATIVE_INFINITY;
-			if (i < intensity.length) intensity [i] = powerdB;
-			++i;
-		};
+	var duration = sound.length / sampleRate;
+	var bitSize = 16;
+	var maxPower = Math.round(20*Math.log10(Math.pow(2,bitSize-1)));
+	var quantNoise = Math.round(20*Math.log10(0.5));
+	var dynamicRange = maxPower - quantNoise;
+	var lagMin = (fMax > 0) ? 1/fMax : 1/600;
+	var lagMax = (fMin > 0) ? 1/fMin : 1/60;
+	var intensity = new Float32Array(Math.floor(duration / dT));
+	
+	// Set up window
+	var windowDuration = lagMax * 6;
+	var window = setupGaussWindow (sampleRate, fMin);
+	
+	// Step through the sound
+	var i = 0;
+	for (var t = 0; t < duration; t += dT) {
+		var power = getPower (sound, sampleRate, t, window);
+		var powerdB = (power > 0) ? dynamicRange + Math.log10(power) * 10 : 0;
+		if (i < intensity.length) intensity [i] = powerdB;
+		++i;
 	};
+		
 	return intensity;
 };
