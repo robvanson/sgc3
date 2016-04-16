@@ -25,8 +25,9 @@ button {
 		height:15%;
 		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 		text-align:center;
-		font: bold x-large "Helvetica";
+		font: bold 4.5vmin "Helvetica";
 		background-color: rgb(220,220,220);
+		text-overflow: clip;
 		
 		-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
 		-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
@@ -71,13 +72,13 @@ GNU General Public License for more details.
 You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 600%" id="RecordingLight">&#9679;</div>
+	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 15vmin" id="RecordingLight">&#9679;</div>
 	<p><audio id='ExampleAudio' controls="false" hidden="true" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
-	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 250%; text-align: center; " id="DisplayString" align="center" >
+	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic;">-</span></div>
-	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 150%; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
+	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 5vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 4px; "></canvas>
 	<button type="button" style="color: black; bottom: 2%; left: 5%" id="PreviousButton" ><span style="font-size: 100%">|&#9664;<br /><span id="Previous" >Previous</span></span></button>
@@ -92,15 +93,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<!-- Wordlists -->
 	<button type="button" style="color: black; bottom: 71%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%"><span id="WordlistUp" >Previous</span> &#8593;</span></button>
 	<button type="button" style="color: black; bottom: 50%; right: 2%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"> <span id="WordlistDown" title="" >Next</span> &#8595;</span></button>
-	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); "  >
+	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 2%; height: 8%; width: 17%; font: 3vmin 'Helvetica'; background-color: rgb(220,220,220); "  >
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
-	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
+	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
 
-	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_mainpageLanguage(); " >
+	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_mainpageLanguage(); " >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
@@ -135,7 +136,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 
 	// Global settings
 	var sgc3_settings = {
-		recSecs: 2,
+		recSecs: 3,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
 		shuffleLists: "true",

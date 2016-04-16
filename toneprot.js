@@ -611,6 +611,7 @@ function draw_test_signal (Id, pinyin) {
 	plot_pitchTier (Id, "blue", 8, topLine, pitchTier);
 };
 
+var lightSize = 15;
 function display_recording_level (id, recordedArray) {
 	var sumSquare = 0;
 	for (var i = 0; i < recordedArray.length; ++i) {
@@ -620,12 +621,12 @@ function display_recording_level (id, recordedArray) {
 	var dBpower = Math.log10(power) * -10
 	// limit power to between -6 and -55 dB)
 	dBpower = (dBpower > 6) ? dBpower - 6 : 0;
-	dBpower = Math.min(dBpower, 55);
 	
 	var recordingLight = document.getElementById(id);
-	recordingLight.style.top = (5 + (10*dBpower / 600) * 6 ) + "%";
-	recordingLight.style.left = (5 + (10*dBpower / 600) * 2 ) + "%";
-	recordingLight.style.fontSize = (600 - 10*dBpower) + "%";
+	// positioning is not correct
+	recordingLight.style.top = (5 + (dBpower / 500) * 6 ) + "%";
+	recordingLight.style.left = (5 + (dBpower / 500) * 2 ) + "%";
+	recordingLight.style.fontSize = (lightSize*dBpower/30 + 1) + "vmin";
 };
 
 function draw_tone (id, color, typedArray, sampleRate, duration) {
