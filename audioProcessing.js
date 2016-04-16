@@ -28,10 +28,12 @@ var recordedSampleRate, recordedDuration;
  * 
  */
  
+// Only initialize ONCE
+var audioContext = new AudioContext();
+ 
 // Decode the audio blob
 var audioProcessing_decodedArray;
 function processAudio (blob) {
-	var audioContext = new AudioContext();
 	var reader = new FileReader();
 	reader.onload = function(){
 		var arrayBuffer = reader.result;
@@ -59,8 +61,7 @@ function decodedDone(decoded) {
 };
 
 function play_soundArray (soundArray, sampleRate) {
-	var audioCtx = new window.AudioContext;
-	var soundBuffer = audioCtx.createBuffer(1, soundArray.length, sampleRate);
+	var soundBuffer = audioContext.createBuffer(1, soundArray.length, sampleRate);
 	var buffer = soundBuffer.getChannelData(0);	
 	for (var i = 0; i < soundArray.length; i++) {
 	     buffer[i] = soundArray[i];
@@ -68,12 +69,12 @@ function play_soundArray (soundArray, sampleRate) {
 	
 	// Get an AudioBufferSourceNode.
 	// This is the AudioNode to use when we want to play an AudioBuffer
-	var source = audioCtx.createBufferSource();
+	var source = audioContext.createBufferSource();
 	// set the buffer in the AudioBufferSourceNode
 	source.buffer = soundBuffer;
 	// connect the AudioBufferSourceNode to the
 	// destination so we can hear the sound
-	source.connect(audioCtx.destination);
+	source.connect(audioContext.destination);
 	// start the source playing
 	source.start();
 };
