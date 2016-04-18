@@ -25,7 +25,7 @@ button {
 		height:15%;
 		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 		text-align:center;
-		font: bold x-large "Helvetica";
+		font: bold 4.5vmin "Helvetica";
 		background-color: rgb(220,220,220);
 		
 		-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
@@ -61,22 +61,26 @@ GNU General Public License for more details.
 You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-	<h2 style='text-align: center' id="title">
+	<div id='headertitle' style='position: center; font-size: 3vmin; '>
+		<h2 style='text-align: center' id="title">
 		SpeakGoodChinese 3 <br />
 		Shuō hǎo Zhōngwén <br />
 		说好中文
-	</h2>
-	<div style="position: fixed; color: black; bottom: 70%; left: 5%; height: 8%; width: 17%; font: x-large 'Helvetica'; text-align: center " id="LanguageCaption">---</div>	
-	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_configLanguage(); store_SGC3_settings (); " >
+		</h2>
+	</div>
+	<div style="position: fixed; color: black; bottom: 70%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="LanguageCaption">---</div>	
+	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin ; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_configLanguage(); store_SGC3_settings (); " >
 		<option value="---" ><span id="LanguageCaption2" title="" >---</span></option>
 	</select> 
 
-	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: x-large 'Helvetica'; text-align: center " id="RegisterCaption">---</div>	
-	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: large 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister(); store_SGC3_settings (); " >
+	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="RegisterCaption">---</div>	
+	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
 	</select> 
 
-	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>
+	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>
+	<div style="position: fixed; color: black; bottom: 55%; left: 45%; height: 8%; font-size: 4vmin; "  id="LocalRecSecs" ><span id="RecordingTime">Recording</span> <input type="text" style="font-size: 3vmin; text-align: center; " size='2' id="RecSecs" value="---" /></div>
+
 	<button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button>
 
     <script type="text/javascript">
@@ -84,12 +88,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mainWindow = localStorage.mainWindow;
 	
 	var localSynthesis = document.getElementById('LocalSynthesis');
+	var localRecSecs = document.getElementById('RecSecs');
+
 	var shuffleListsButton = document.getElementById('ShuffleListsButton');
 
 	
 	// Global settings
 	var sgc3_settings = {
-		recSecs: 2,
+		recSecs: 3,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
 		shuffleLists: true,
@@ -113,6 +119,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		set_configLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
+		localRecSecs.value = sgc3_settings.recSecs;
 	};
 	
 	// Initialize to stored settings
@@ -178,8 +185,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		}
 		return selectedVoice;
 	}
-
-
+	
+	// Recording time
+	localRecSecs.onchange = function () {
+		if (localRecSecs.value > 0 && localRecSecs.value <= 20) {
+			sgc3_settings.recSecs = localRecSecs.value;
+		};
+	};
+	
 	// Set Register
 	setRegister (sgc3_settings.register);
 	//]]>	

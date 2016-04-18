@@ -183,13 +183,14 @@ var config_tables = {
 		SelectWords: ["选择单词", "选择要练习的单词"],
 		WordlistUp: ["上一个", "切换到上一个单词表。"],
 		WordlistDown: ["下一个", "切换到下一个单词表。"],
-		ShuffleLists: ["随机播放 S", "随机打乱单词表中的词，否则按顺序播放。"],
+		ShuffleLists: ["随机播放", "随机打乱单词表中的词，否则按顺序播放。"],
 		AdaptiveLists: ["适应性", "只练习有难度的词，即发音错误两次以上的单词。"],
-		UseSoundExample: ["实际发音 x", "如果提供了真人发音，选择此按键后，则播放真人发音，否则播放合成发音。"],
-		Synthesis_eSpeak: ["合成音 y", "使用合成发音（需要eSpeak:www.espeak.org）。"],
+		UseSoundExample: ["实际发音", "如果提供了真人发音，选择此按键后，则播放真人发音，否则播放合成发音。"],
+		Synthesis_eSpeak: ["合成音", "使用合成发音（需要eSpeak:www.espeak.org）。"],
 		Voice: ["音质> ---", "选择合成音的种类"],
 		Recognition: ["汉语水平", "可设置为高级汉语水平或母语者水平。"],
-		Strict: ["水平 ---", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"]
+		Strict: ["水平 ---", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"],
+		RecordingTime: ["记录", "录音时间（秒）"]
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -204,6 +205,7 @@ var config_tables = {
 		Voice: ["Voice> ---", "Select a synthetic voice"],
 		Recognition: ["Proficiency", "Set to recognize advanced or native speakers"],
 		Strict: ["Level ---", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
+		RecordingTime: ["Recording", "Time of recording in seconds"]
 		},
 			
 	JA: {
@@ -212,13 +214,14 @@ var config_tables = {
 		SelectWords: ["単語の選択", "練習で使う単語を選択します"],
 		WordlistUp: ["戻る", "一つ前の単語表に戻ります。"],
 		WordlistDown: ["次へ", "次の単語表に進みます。"],
-		ShuffleLists: ["シャッフル S", "オンにすると単語表はシャッフルされ、オフなら元の順序が維持されます。"],
+		ShuffleLists: ["シャッフル", "オンにすると単語表はシャッフルされ、オフなら元の順序が維持されます。"],
 		AdaptiveLists: ["順応モード", "二回以内で合格できなかった単語だけ表示されるようになります。"],
-		UseSoundExample: ["実音声 x", "オンでかつ実音声が用意されていれば実音声を例として使用し、そうでないなら合成音声を使用します。"],
-		Synthesis_eSpeak: ["合成音声 y", "合成音声を例として使用します（eSpeakが必要です：www.espeak.org）。"],
+		UseSoundExample: ["実音声", "オンでかつ実音声が用意されていれば実音声を例として使用し、そうでないなら合成音声を使用します。"],
+		Synthesis_eSpeak: ["合成音声", "合成音声を例として使用します（eSpeakが必要です：www.espeak.org）。"],
 		Voice: ["声質> ---", "合成音声の声質を選択"],
 		Recognition: ["中国語レベル", "上級者や母語者レベルに設定できます。"],
 		Strict: ["レベル ---", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
+		RecordingTime: ["録音", "録音時間の秒数と録音タスク"]
 		},
 		
 	DE: {
@@ -234,6 +237,7 @@ var config_tables = {
 		Voice: ["Stimme> ---", "Wähle eine synthetische Stimme"],
 		Recognition: ["Sprachkenntnisse", "Einstellung für fortgeschrittene Studenten"],
 		Strict: ["Stufe ---", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
+		RecordingTime: ["Aufnahme", "Aufnahmezeit in Secunden"]
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -247,7 +251,8 @@ var config_tables = {
 		Synthesis_eSpeak: ["Synthese", "Gebruik een synthetische stem als voorbeeld (eSpeak is hiervoor nodig: www.espeak.org)"],
 		Voice: ["Stem> ---", "Kies een synthetische stem"],
 		Recognition: ["Taalniveau", "Stel de herkenner in op gevorderde of moedertaal sprekers"],
-		Strict:	["Niveau ---", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."]
+		Strict:	["Niveau ---", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."],
+		RecordingTime: ["Opname", "Opnametijd in seconden"]
 		}
 };
 

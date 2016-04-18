@@ -213,7 +213,7 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 	var pitchArray = new Float32Array(Math.floor(duration / dT));
 	var lagMin = (fMax > 0) ? 1/fMax : 1/600;
 	var lagMax = (fMin > 0) ? 1/fMin : 1/60;
-	var thressHold = 0.01;
+	var thressHold = 0.001;
 	
 	// Set up window and calculate Autocorrelation of window
 	var windowDuration = lagMax * 6;
