@@ -444,7 +444,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    play.style.color = "gray";
 			recordingLight.style.top = "5%";
 			recordingLight.style.left = "5%";
-			recordingLight.style.fontSize = "600%";
+			recordingLight.style.fontSize = "15vmin";
 		    recordingLight.style.color = "red";
 		    
 		    // Set Timeout for stop

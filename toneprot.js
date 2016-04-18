@@ -612,21 +612,32 @@ function draw_test_signal (Id, pinyin) {
 };
 
 var lightSize = 15;
+var maxPowerRecorded = 90;
+var thresshold = 0.1;
 function display_recording_level (id, recordedArray) {
 	var sumSquare = 0;
+	var nSamples = 0;
 	for (var i = 0; i < recordedArray.length; ++i) {
-		sumSquare += recordedArray[i] * recordedArray[i];
+		if(Math.abs(recordedArray[i]) > thresshold) {
+			sumSquare += recordedArray[i] * recordedArray[i];
+			++nSamples;
+		};
 	};
-	var power = sumSquare / recordedArray.length;
-	var dBpower = Math.log10(power) * -10
-	// limit power to between -6 and -55 dB)
-	dBpower = (dBpower > 6) ? dBpower - 6 : 0;
-	
+	var power = sumSquare / nSamples;
+	var dBpower = (power > 0) ? maxPowerRecorded + Math.log10(power) * 10 : 0;
 	var recordingLight = document.getElementById(id);
-	// positioning is not correct
-	recordingLight.style.top = (5 + (dBpower / 500) * 6 ) + "%";
-	recordingLight.style.left = (5 + (dBpower / 500) * 2 ) + "%";
-	recordingLight.style.fontSize = (lightSize*dBpower/30 + 1) + "vmin";
+	var currentWidth = 100*recordingLight.clientWidth/window.innerWidth;
+	var currentHeight = 100*recordingLight.clientHeight/window.innerHeight;
+	var horMidpoint = 5 + currentWidth/2;
+	var verMidpoint = 5 + currentHeight/2;
+	
+	// New fontSize
+	var fontSize = lightSize*dBpower/maxPowerRecorded + 1;
+	recordingLight.style.fontSize = fontSize + "vmin";
+	
+	// position = midpoint - newFontSize / 2
+	recordingLight.style.top = (verMidpoint - ((fontSize/lightSize)*currentHeight)/2) + "%";
+	recordingLight.style.left = (horMidpoint - ((fontSize/lightSize)*currentWidth)/2) + "%";
 };
 
 function draw_tone (id, color, typedArray, sampleRate, duration) {
