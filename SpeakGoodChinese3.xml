@@ -163,6 +163,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mouseUpCoordinates = {x: -1, y: -1};
 	function mouseDown (e) {
 		var event = e.isTouchEvent ? e.touches[0] : e;
+alert(event)
 		mouseDownCoordinates.x = event.clientX;
 		mouseDownCoordinates.y = event.clientY;
 		mouseUpCoordinates.x = -1;
