@@ -125,6 +125,30 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var exampleURL = "-";
 	var voiceZH_CN = -1;
 	var clearRecordedData = function () { };
+	
+	// Handle keypresses
+	window.onkeypress = function (e) {
+		if (e.key == "ArrowRight") {
+			next.onclick()
+		} else if (e.key == ">" || e.key == ".") {
+			next.onclick()
+		} else if (e.key == "ArrowLeft") {
+			previous.onclick()
+		} else if (e.key == "<" || e.key == ",") {
+			previous.onclick()
+		} else if (e.key == "ArrowUp") {
+			prevWordlist.onclick()
+		} else if (e.key == "ArrowDown") {
+			nextWordlist.onclick()
+		} else if (e.key == "Tab") {
+			play.onclick()
+		} else if (e.key == "Enter") {
+			record.onclick()
+		} else if (e.key == " ") {
+			example.onclick()
+		}  else {
+		};
+	};
 
 	/*
 	 * Global variables from audioProcessing.js

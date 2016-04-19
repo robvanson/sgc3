@@ -79,7 +79,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
 	</select> 
 
-	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>	
+	<div title=""><button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button></div>
 	
 	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 45%; height: 5%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" >
 		<span id="RecordingTimeCaption" style="vertical-align: middle; " >---</span> 
@@ -88,7 +88,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		</select>
 	</div>
 	
-	<button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button>
+	<div title=""><button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button></div>
 
     <script type="text/javascript">
 	//<![CDATA[
