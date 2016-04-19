@@ -112,9 +112,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var settingsWindow;
 	var recordingLight = document.getElementById('RecordingLight');
 	var tonePlotArea = document.getElementById('TonePlot');
-	tonePlotArea.addEventListener("touchstart", mouseDown, false);
-	tonePlotArea.addEventListener("touchend", mouseUp, false);
-	
 	var record = document.getElementById('RecordButton');
 	var play = document.getElementById('PlayButton');
 	var example = document.getElementById('ExampleButton');
@@ -156,11 +153,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	window.onkeydown = keyPress;
 	
-	// Swipes
+	// Swipes with mouse or touch
+	// Adde touch events
+	tonePlotArea.addEventListener("touchstart", mouseDown, false);
+	tonePlotArea.addEventListener("touchend", mouseUp, false);
+	// Parameters
 	var verticalThreshold = tonePlotArea.height / 10;
 	var horizontalThreshold = tonePlotArea.width / 10;
 	var mouseDownCoordinates = {x: -1, y: -1};
 	var mouseUpCoordinates = {x: -1, y: -1};
+	// Mouse down or touch start
 	function mouseDown (e) {
 		if (e.touches) e.preventDefault();
 		mouseDownCoordinates.x = e.touches ? e.touches[0].clientX : e.clientX;
@@ -168,6 +170,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		mouseUpCoordinates.x = -1;
 		mouseUpCoordinates.y = -1;
 	};
+	// Mouse up or touch end
 	function mouseUp (e) {
 		mouseUpCoordinates.x = e.touches ? e.touches[e.touches.length - 1].clientX : e.clientX;
 		mouseUpCoordinates.y = e.touches ? e.touches[e.touches.length - 1].clientY : e.clientY;
@@ -273,7 +276,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    getTTSvoice();
 		};
 	}
-
 
 	// Set Register
 	setRegister (sgc3_settings.register);
