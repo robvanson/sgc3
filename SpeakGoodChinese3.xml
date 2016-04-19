@@ -112,6 +112,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var settingsWindow;
 	var recordingLight = document.getElementById('RecordingLight');
 	var tonePlotArea = document.getElementById('TonePlot');
+	tonePlotArea.addEventListener("touchstart", mouseDown, false);
+	tonePlotArea.addEventListener("touchend", mouseUp, false);
+	
 	var record = document.getElementById('RecordButton');
 	var play = document.getElementById('PlayButton');
 	var example = document.getElementById('ExampleButton');
