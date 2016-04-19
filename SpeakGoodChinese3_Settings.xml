@@ -37,6 +37,7 @@ button {
 		-webkit-border-radius: 7px;
 		border-radius: 7px;
 		}
+
 </style>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -78,9 +79,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
 	</select> 
 
-	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>
-	<div style="position: fixed; color: black; bottom: 55%; left: 45%; height: 8%; font-size: 3vmin; "  id="LocalRecSecs" ><span id="RecordingTime">Recording</span> <input type="text" style="font-size: 3vmin; text-align: center; " size='2' id="RecSecs" value="---" /></div>
-
+	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>	
+	
+	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 45%; height: 5%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" >
+		<span id="RecordingTimeCaption" style="vertical-align: middle; " >---</span> 
+		<select id="RecordingTime"  style="font-size: 3vmin; vertical-align: middle;" onchange="sgc3_settings.recSecs = getRecordingTime(); store_SGC3_settings (); ">
+			<option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="10">10</option>
+		</select>
+	</div>
+	
 	<button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button>
 
     <script type="text/javascript">
@@ -88,7 +95,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mainWindow = localStorage.mainWindow;
 	
 	var localSynthesis = document.getElementById('LocalSynthesis');
-	var localRecSecs = document.getElementById('RecSecs');
+	var localRecordingTime = document.getElementById('RecordingTime');
 
 	var shuffleListsButton = document.getElementById('ShuffleListsButton');
 
@@ -121,7 +128,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		set_configLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
-		localRecSecs.value = sgc3_settings.recSecs;
+		setRecordingTime (sgc3_settings.recSecs);
+
+		localRecordingTime.value = sgc3_settings.recSecs;
 		store_SGC3_settings.settingsRead = "true";
 	};
 	
@@ -190,9 +199,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	}
 	
 	// Recording time
-	localRecSecs.onchange = function () {
-		if (localRecSecs.value > 0 && localRecSecs.value <= 20) {
-			sgc3_settings.recSecs = localRecSecs.value;
+	function getRecordingTime () {
+		var index = document.getElementById("RecordingTime").selectedIndex;
+		var value = document.getElementById("RecordingTime").options[index].value;
+		if (index <= 0) value = 3;
+		return value;
+	}
+	
+	function setRecordingTime (value) {
+		for(var x = 0; x < document.getElementById("RecordingTime").options.length; ++ x) {
+			if (document.getElementById("RecordingTime").options[x].value == value) {
+				document.getElementById("RecordingTime").selectedIndex = x;
+			};
 		};
 	};
 	

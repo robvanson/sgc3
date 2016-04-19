@@ -190,7 +190,6 @@ var config_tables = {
 		Voice: ["音质> ---", "选择合成音的种类"],
 		Recognition: ["汉语水平", "可设置为高级汉语水平或母语者水平。"],
 		Strict: ["水平 ---", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"],
-		RecordingTime: ["记录", "录音时间（秒）"]
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -205,7 +204,6 @@ var config_tables = {
 		Voice: ["Voice> ---", "Select a synthetic voice"],
 		Recognition: ["Proficiency", "Set to recognize advanced or native speakers"],
 		Strict: ["Level ---", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
-		RecordingTime: ["Recording", "Time of recording in seconds"]
 		},
 			
 	JA: {
@@ -221,7 +219,6 @@ var config_tables = {
 		Voice: ["声質> ---", "合成音声の声質を選択"],
 		Recognition: ["中国語レベル", "上級者や母語者レベルに設定できます。"],
 		Strict: ["レベル ---", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
-		RecordingTime: ["録音", "録音時間の秒数と録音タスク"]
 		},
 		
 	DE: {
@@ -237,7 +234,6 @@ var config_tables = {
 		Voice: ["Stimme> ---", "Wähle eine synthetische Stimme"],
 		Recognition: ["Sprachkenntnisse", "Einstellung für fortgeschrittene Studenten"],
 		Strict: ["Stufe ---", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
-		RecordingTime: ["Aufnahme", "Aufnahmezeit in Secunden"]
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -252,7 +248,6 @@ var config_tables = {
 		Voice: ["Stem> ---", "Kies een synthetische stem"],
 		Recognition: ["Taalniveau", "Stel de herkenner in op gevorderde of moedertaal sprekers"],
 		Strict:	["Niveau ---", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."],
-		RecordingTime: ["Opname", "Opnametijd in seconden"]
 		}
 };
 
@@ -282,7 +277,8 @@ var selector_tables = {
 		Register_249:	["男性 高 M", "如果发音人为男性且声音较高，那么选择此项。"],
 		Register_180:	["男性 中 a", "如果发音人为男性且声音高度适中，那么选择此项。"],
 		Register_150:	["男性 低 L", "如果发音人为男性且声音较低，那么选择此项。"],
-		Register_125:	["男性 超低", "如果发音人为男性且声音很低，那么选择此项。"]
+		Register_125:	["男性 超低", "如果发音人为男性且声音很低，那么选择此项。"],
+		RecordingTime: ["记录", "录音时间（秒）"]
 		},
 	EN: {
 		Language: ["Language", "Select a language"],
@@ -293,7 +289,8 @@ var selector_tables = {
 		Register_249: ["Man High", "Pick this if you are a male with a high voice"],
 		Register_180: ["Man Mid", "Pick this if you are a male with a mid-range voice"],
 		Register_150: ["Man Low", "Pick this if you are a male with a low voice"],
-		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"]
+		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"],
+		RecordingTime: ["Recording", "Time of recording in seconds"]
 		},
 	JA: {
 		Language: ["言語", "表示言語を設定します。"],
@@ -304,7 +301,8 @@ var selector_tables = {
 		Register_249:	["男性　高め M", "発話者が男性でかつ声が高めのとき選択します。"],
 		Register_180:	["男性　中間 a", "発話者が男性でかつ声が中間の高さのとき選択します。"],
 		Register_150:	["男性　低め L", "発話者が男性でかつ声が低めのとき選択します。"],
-		Register_125:	["男性　更に低め", "発話者が男性でかつ声が更に低めのとき選択します。"]
+		Register_125:	["男性　更に低め", "発話者が男性でかつ声が更に低めのとき選択します。"],
+		RecordingTime: ["録音", "録音時間の秒数と録音タスク"]
 		},
 	DE: {
 		Language: ["Sprache", "Wähle die gewünschte Sprache"],
@@ -315,7 +313,8 @@ var selector_tables = {
 		Register_249:	["Man hoch", "Wähle diesen Knopf wenn Sie ein Mann mit eine hohe Stimme sind"],
 		Register_180:	["Man mittel", "Wähle diesen Knopf wenn Sie ein Mann mit eine mittle-hohe Stimme sind"],
 		Register_150:	["Man tief", "Wähle diesen Knopf wenn Sie ein Mann mit eine tiefe Stimme sind"],
-		Register_125:	["Man Xtr tief", "Wähle diesen Knopf  wenn Sie ein Mann mit eine sehr tiefe Stimme sind"]
+		Register_125:	["Man Xtr tief", "Wähle diesen Knopf  wenn Sie ein Mann mit eine sehr tiefe Stimme sind"],
+		RecordingTime: ["Aufnahme", "Aufnahmezeit in Secunden"]
 		},
 	NL: {
 		Language: ["Taal", "Selecteer de gewenste taal"],
@@ -326,7 +325,8 @@ var selector_tables = {
 		Register_249:	["Man Hoog", "Kies dit als u een man bent met een hoge stem"],
 		Register_180:	["Man Mid", "Kies dit als u een man bent met een middel-lage stem"],
 		Register_150:	["Man Laag", "Kies dit als u een man bent met een lage stem"],
-		Register_125:	["Man Xtr Laag", "Kies dit als u een man bent met een zeer lage stem"]
+		Register_125:	["Man Xtr Laag", "Kies dit als u een man bent met een zeer lage stem"],
+		RecordingTime: ["Opname", "Opnametijd in seconden"]
 		},
 }
 
