@@ -111,6 +111,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Set DOM parameters
 	var settingsWindow;
 	var recordingLight = document.getElementById('RecordingLight');
+	var tonePlotArea = document.getElementById('TonePlot');
 	var record = document.getElementById('RecordButton');
 	var play = document.getElementById('PlayButton');
 	var example = document.getElementById('ExampleButton');
@@ -149,7 +150,53 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		}  else {
 		};
 	};
-
+	
+	// Swipes
+	var verticalThreshold = tonePlotArea.height / 10;
+	var horizontalThreshold = tonePlotArea.width / 10;
+	var mouseDownCoordinates = {x: -1, y: -1};
+	var mouseUpCoordinates = {x: -1, y: -1};
+	function mouseDown (e) {
+		mouseDownCoordinates.x = e.clientX;
+		mouseDownCoordinates.y = e.clientY;
+		mouseUpCoordinates.x = -1;
+		mouseUpCoordinates.y = -1;
+	};
+	function mouseUp (e) {
+		mouseUpCoordinates.x = e.clientX;
+		mouseUpCoordinates.y = e.clientY;
+		
+		if (mouseDownCoordinates.x > -1 && mouseDownCoordinates.y > -1) {
+			// Horizontal
+			if (Math.abs(mouseUpCoordinates.y - mouseDownCoordinates.y) < verticalThreshold) {
+				// To the left
+				if(mouseUpCoordinates.x - mouseDownCoordinates.x < -2*horizontalThreshold) {
+					next.onclick();
+				// To the right
+				} else if(mouseUpCoordinates.x - mouseDownCoordinates.x > 2*horizontalThreshold) {
+					previous.onclick();
+				};
+			} else if (Math.abs(mouseUpCoordinates.x - mouseDownCoordinates.x) < horizontalThreshold) {
+			// Vertical
+				// Up
+				if(mouseUpCoordinates.y - mouseDownCoordinates.y < -2*verticalThreshold) {
+					nextWordlist.onclick();
+				// Down
+				} else if(mouseUpCoordinates.y - mouseDownCoordinates.y > 2*verticalThreshold) {
+					prevWordlist.onclick();
+				};
+			};
+		};
+		mouseDownCoordinates.x = -1;
+		mouseDownCoordinates.y = -1;
+		mouseUpCoordinates.x = -1;
+		mouseUpCoordinates.y = -1;
+		
+	};
+	tonePlotArea.onmousedown = mouseDown;
+	tonePlotArea.onmouseup = mouseUp;
+	tonePlotArea.onmouseout = mouseUp;
+	
 	/*
 	 * Global variables from audioProcessing.js
 	 * 
@@ -287,8 +334,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		//Get tone contour
 		initializeDrawingParam ("TonePlot");
 		draw_example_pinyin ("TonePlot", currentPinyin);
-
-		// draw_test_signal ("TonePlot", currentPinyin);
 
 		// Remove last recording
 		clearRecordedData ();
