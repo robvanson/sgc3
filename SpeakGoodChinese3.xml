@@ -162,15 +162,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mouseDownCoordinates = {x: -1, y: -1};
 	var mouseUpCoordinates = {x: -1, y: -1};
 	function mouseDown (e) {
-alert(e);
-		mouseDownCoordinates.x = e.clientX;
-		mouseDownCoordinates.y = e.clientY;
+		var event = e.isTouchEvent ? e.touches[0] : e;
+		mouseDownCoordinates.x = event.clientX;
+		mouseDownCoordinates.y = event.clientY;
 		mouseUpCoordinates.x = -1;
 		mouseUpCoordinates.y = -1;
 	};
 	function mouseUp (e) {
-		mouseUpCoordinates.x = e.clientX;
-		mouseUpCoordinates.y = e.clientY;
+		var event = e.isTouchEvent ? e.touches[0] : e;
+		mouseUpCoordinates.x = event.clientX;
+		mouseUpCoordinates.y = event.clientY;
 		
 		if (mouseDownCoordinates.x > -1 && mouseDownCoordinates.y > -1) {
 			// Horizontal
