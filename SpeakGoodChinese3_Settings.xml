@@ -4,7 +4,7 @@
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<link rel="shortcut icon" href="sgc.png" />
+<link rel="shortcut icon" href="Background.png" />
 <meta http-equiv="Content-Language" content="en" />
 <title lang="en" xml:lang="en" dir="ltr">Settings - SpeakGoodChinese</title>
 <style>
@@ -25,7 +25,7 @@ button {
 		height:15%;
 		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 		text-align:center;
-		font: bold 4.5vmin "Helvetica";
+		font: bold 3vmin "Helvetica";
 		background-color: rgb(220,220,220);
 		
 		-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
@@ -68,18 +68,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		说好中文
 		</h2>
 	</div>
-	<div style="position: fixed; color: black; bottom: 70%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="LanguageCaption">---</div>	
+	<div style="position: fixed; color: black; bottom: 70%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="LanguageCaption">---</div>	
 	<select id="Language" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin ; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_configLanguage(); store_SGC3_settings (); " >
 		<option value="---" ><span id="LanguageCaption2" title="" >---</span></option>
 	</select> 
 
-	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="RegisterCaption">---</div>	
+	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="RegisterCaption">---</div>	
 	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
 	</select> 
 
 	<button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button>
-	<div style="position: fixed; color: black; bottom: 55%; left: 45%; height: 8%; font-size: 4vmin; "  id="LocalRecSecs" ><span id="RecordingTime">Recording</span> <input type="text" style="font-size: 3vmin; text-align: center; " size='2' id="RecSecs" value="---" /></div>
+	<div style="position: fixed; color: black; bottom: 55%; left: 45%; height: 8%; font-size: 3vmin; "  id="LocalRecSecs" ><span id="RecordingTime">Recording</span> <input type="text" style="font-size: 3vmin; text-align: center; " size='2' id="RecSecs" value="---" /></div>
 
 	<button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button>
 
@@ -95,6 +95,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Global settings
 	var sgc3_settings = {
+		settingsRead: "false",
 		recSecs: 3,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
@@ -107,6 +108,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Store settings
 	function store_SGC3_settings () {
+		sgc3_settings.settingsRead = "true";
 		for (x in sgc3_settings) {
 			localStorage[x] = sgc3_settings[x];
 		};
@@ -120,6 +122,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		set_configLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
 		localRecSecs.value = sgc3_settings.recSecs;
+		store_SGC3_settings.settingsRead = "true";
 	};
 	
 	// Initialize to stored settings

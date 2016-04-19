@@ -4,7 +4,7 @@
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<link rel="shortcut icon" href="sgc.png" />
+<link rel="shortcut icon" href="Background.png" />
 <meta http-equiv="Content-Language" content="en" />
 <title lang="en" xml:lang="en" dir="ltr">SpeakGoodChinese 3</title>
 <style>
@@ -25,7 +25,7 @@ button {
 		height:15%;
 		cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 		text-align:center;
-		font: bold 4.5vmin "Helvetica";
+		font: bold 4vmin "Helvetica";
 		background-color: rgb(220,220,220);
 		text-overflow: clip;
 		
@@ -136,6 +136,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 
 	// Global settings
 	var sgc3_settings = {
+		settingsRead: "false",
 		recSecs: 3,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
@@ -160,6 +161,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		set_mainpageLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
+		if (sgc3_settings.settingsRead == "true") hideSelectors();
 	};
 	
 	// Initialize to stored settings
@@ -185,11 +187,25 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		}
 		return selectedVoice;
+	};
+	
+	if (window.speechSynthesis) {
+		window.speechSynthesis.onvoiceschanged = function() {
+		    getTTSvoice();
+		};
 	}
 
 
 	// Set Register
 	setRegister (sgc3_settings.register);
+	
+	// Hide Language and Register when settings page has been opened
+	function hideSelectors () {
+		var languageElement = document.getElementById('Language');
+		var registerElement = document.getElementById('Register');
+		languageElement.style.display = 'none' ;
+		registerElement.style.display = 'none' ;
+	};
 
 	// Set progress bars
 	function setProgressBar (id, fraction) {
@@ -207,6 +223,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		progressBarCtx.stroke();
 	};
+	
 	// Replace contents of displayed string
 	var write_CurrentString = function () {
 		// Store current settings
