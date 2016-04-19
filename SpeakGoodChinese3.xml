@@ -162,6 +162,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mouseDownCoordinates = {x: -1, y: -1};
 	var mouseUpCoordinates = {x: -1, y: -1};
 	function mouseDown (e) {
+alert(e);
 		mouseDownCoordinates.x = e.clientX;
 		mouseDownCoordinates.y = e.clientY;
 		mouseUpCoordinates.x = -1;
