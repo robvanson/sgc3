@@ -107,9 +107,13 @@ function change_mainpageLanguage () {
 
 function change_configLanguage () {
 	var index = document.getElementById("Language").selectedIndex;
-	var value = document.getElementById("Language").options[index].value;
-	userLanguage = value;
-	set_configLanguage (userLanguage);
+	if (index > 0) {
+		var value = document.getElementById("Language").options[index].value;
+		userLanguage = value;
+		set_configLanguage (userLanguage);
+	} else {
+		set_configLanguage (userLanguage)
+	};
 	return userLanguage;
 };
 

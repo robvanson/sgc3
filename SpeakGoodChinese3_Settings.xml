@@ -44,7 +44,7 @@ button {
 
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
-<body onload="window.onresize();" onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');">
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');">
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -81,16 +81,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button></div>
 	
-	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 25%; height: 6%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalStrict" title="">
-		<span id="Recognition" style="vertical-align: middle; " >---</span> 
+	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 25%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalStrict" title="">
+		<span id="Recognition" style="vertical-align: middle; " >---</span><br />
+		<span id="StrictPost" style="vertical-align: middle; " >---</span>
 		<select id="Strict"  style="font-size: 2vmin; vertical-align: middle; background-color: rgb(220,220,220);" onchange="sgc3_settings.strict = getStrict(); store_SGC3_settings (); ">
-			<option value="-1"><span id="StrictPost" style="vertical-align: middle; " >---</span></option> 
 			<option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
 		</select>
 	</div>
 	
-	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 45%; height: 6%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" title="">
-		<span id="RecordingTimeCaption" style="vertical-align: middle; " >---</span> 
+	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 45%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" title="">
+		<span id="RecordingTimeCaption" style="vertical-align: middle; " >---</span><br />
 		<select id="RecordingTime"  style="font-size: 2vmin; vertical-align: middle; background-color: rgb(220,220,220);" onchange="sgc3_settings.recSecs = getRecordingTime(); store_SGC3_settings (); ">
 			<option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="10">10</option>
 		</select>
@@ -250,20 +250,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	setRegister (sgc3_settings.register);
 	
 	// Rescale texts when the window gets too small
-	function resizeSelect () {
-		var recognition = document.getElementById("Recognition").getBoundingClientRect();
-		var strictRec = document.getElementById("Strict").getBoundingClientRect();
-		if (strictRec.bottom > recognition.bottom) {
-			document.getElementById("StrictPost").textContent = "-";
-			document.getElementById("Recognition").style.fontSize = "2vmin";
-		};
-		var recordingTime = document.getElementById("RecordingTimeCaption").getBoundingClientRect();
-		var recPost = document.getElementById("RecordingTimePost").getBoundingClientRect();
-		if (recPost.bottom > recordingTime.bottom) {
-			document.getElementById("RecordingTimePost").textContent = "";
-		};
-	};
-	window.onresize = resizeSelect;
 	//]]>	
 	</script>
 
