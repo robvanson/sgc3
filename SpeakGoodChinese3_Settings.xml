@@ -44,7 +44,7 @@ button {
 
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');">
+<body onload="window.onresize();" onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');">
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -250,7 +250,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	setRegister (sgc3_settings.register);
 	
 	// Rescale texts when the window gets too small
-	window.onresize = function () {
+	function resizeSelect () {
 		var recognition = document.getElementById("Recognition").getBoundingClientRect();
 		var strictRec = document.getElementById("Strict").getBoundingClientRect();
 		if (strictRec.bottom > recognition.bottom) {
@@ -263,7 +263,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			document.getElementById("RecordingTimePost").textContent = "";
 		};
 	};
-	
+	window.onresize = resizeSelect;
 	//]]>	
 	</script>
 
