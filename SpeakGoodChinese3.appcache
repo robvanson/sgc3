@@ -1,0 +1,28 @@
+CACHE MANIFEST
+# Version 1
+
+CACHE:
+Background.png
+sgc.png
+SpeakGoodChinese3.appcache
+SpeakGoodChinese3.xml
+SpeakGoodChinese3_Settings.xml
+audioProcessing.js
+internationalization_tables.js
+manifest.json
+mespeak/mespeak.full.js
+fft.js/lib/real.js
+fft.js/lib/complex.js
+toneprot.js
+wordlists.js
+wordlists_plus.js
+xhtml-default.css
+
+FALLBACK:
+# This will enable imagename4.png to be as a replacement for 
+# all resources under the images dir when there is no network connectivity.
+images/ sgc.png
+
+NETWORK:
+# This will prevent other network resources from being accessed.
+sgc.png
