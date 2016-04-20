@@ -16,6 +16,7 @@ fft.js/lib/complex.js
 toneprot.js
 wordlists.js
 wordlists_plus.js
+https://cdn.webrtc-experiment.com/RecordRTC.js
 xhtml-default.css
 
 FALLBACK:
