@@ -226,7 +226,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		register: 249, // Must match Register_249 Id
 		wordList: "20 basic tone combinations",
 		language: "",
-		synthesis_eSpeak: false
+		synthesis_eSpeak: false,
+		strict: 1
 	};
 	
 	// Store settings
@@ -332,7 +333,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		document.getElementById('Translation').textContent = translationText;
 		
 		// Plot tones and set recording time
-		sgc3_settings.recSecs = 2 + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
+		var currentRecordingTime = sgc3_settings.recSecs + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
 		
 		// Set progress bars
 		var fillFraction = currentWord / (currentWordlist.length - 1);
@@ -544,7 +545,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    recordingLight.style.color = "red";
 		    
 		    // Set Timeout for stop
-		    setTimeout(stopRecording, sgc3_settings.recSecs * 1000)
+		    setTimeout(stopRecording, currentRecordingTime * 1000)
 		}
 	
 	};
