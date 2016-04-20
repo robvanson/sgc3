@@ -1,0 +1,12 @@
+{
+  "short_name": "SpeakGoodChinese 3",
+  "name": "SpeakGoodChinese 3",
+  "icons": [
+    {
+      "src": "sgc.png",
+      "type": "image/png"
+    },
+  ],
+  "display": "standalone",
+  "orientation": "landscape"
+}

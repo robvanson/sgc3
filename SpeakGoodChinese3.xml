@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <link rel="shortcut icon" href="sgc.png" />
+<link rel="manifest" href="manifest.json">
 <meta http-equiv="Content-Language" content="en" />
 <title lang="en" xml:lang="en" dir="ltr">SpeakGoodChinese 3</title>
 <style>
@@ -158,8 +159,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	tonePlotArea.addEventListener("touchstart", mouseDown, false);
 	tonePlotArea.addEventListener("touchend", mouseUp, false);
 	// Parameters
-	var verticalThreshold = tonePlotArea.height / 10;
-	var horizontalThreshold = tonePlotArea.width / 10;
+	var verticalThreshold = tonePlotArea.height / 20;
+	var horizontalThreshold = tonePlotArea.width / 20;
 	var mouseDownCoordinates = {x: -1, y: -1};
 	var mouseUpCoordinates = {x: -1, y: -1};
 	// Mouse down or touch start
