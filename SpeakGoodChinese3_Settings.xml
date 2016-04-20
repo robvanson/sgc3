@@ -81,7 +81,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 45%; height: 8%;" id="LocalSynthesis" ><span id="Synthesis_eSpeak" >Synthesis</span></button></div>
 	
-	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 25%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalStrict" title="">
+	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 54%; left: 25%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalStrict" title="">
 		<span id="Recognition" style="vertical-align: middle; " >---</span><br />
 		<span id="StrictPost" style="vertical-align: middle; " >---</span>
 		<select id="Strict"  style="font-size: 2vmin; vertical-align: middle; background-color: rgb(220,220,220);" onchange="sgc3_settings.strict = getStrict(); store_SGC3_settings (); ">
@@ -89,7 +89,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		</select>
 	</div>
 	
-	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 55%; left: 45%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" title="">
+	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 54%; left: 45%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" title="">
 		<span id="RecordingTimeCaption" style="vertical-align: middle; " >---</span><br />
 		<select id="RecordingTime"  style="font-size: 2vmin; vertical-align: middle; background-color: rgb(220,220,220);" onchange="sgc3_settings.recSecs = getRecordingTime(); store_SGC3_settings (); ">
 			<option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="10">10</option>

@@ -79,7 +79,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic;">-</span></div>
-	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 5vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
+	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 3vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 4px; "></canvas>
 	<button type="button" style="color: black; bottom: 2%; left: 5%" id="PreviousButton" ><span style="font-size: 100%">|&#9664;<br /><span id="Previous" >Previous</span></span></button>
