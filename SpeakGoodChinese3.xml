@@ -129,6 +129,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var stopRecording, playSound;
 	var exampleURL = "-";
 	var voiceZH_CN = -1;
+	var currentRecordingTime = 3;
 	var clearRecordedData = function () { };
 	
 	// Handle keypresses
@@ -337,7 +338,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		document.getElementById('Translation').textContent = translationText;
 		
 		// Plot tones and set recording time
-		var currentRecordingTime = sgc3_settings.recSecs + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
+		currentRecordingTime = sgc3_settings.recSecs + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
 		
 		// Set progress bars
 		var fillFraction = currentWord / (currentWordlist.length - 1);
