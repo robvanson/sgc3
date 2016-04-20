@@ -7,6 +7,7 @@
       "type": "image/png"
     },
   ],
-  "display": "standalone",
+  "start_url": "SpeakGoodChinese3.xml",
+    "display": "standalone",
   "orientation": "landscape"
 }
