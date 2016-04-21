@@ -2,7 +2,7 @@
 <?xml-stylesheet href="xhtml-default.css" type="text/css" media="screen, aural, print" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" manifest="SpeakGoodChinese3.appcache">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" manifest="SpeakGoodChinese3.appcache" >
 <head>
 <link rel="shortcut icon" href="sgc.png" />
 <link rel="manifest" href="manifest.json" />
@@ -48,7 +48,7 @@ button {
 
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');">
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');" >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
