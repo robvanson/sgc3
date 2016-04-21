@@ -68,22 +68,24 @@ function decodedDone(decoded) {
 };
 
 function play_soundArray (soundArray, sampleRate) {
-	var soundBuffer = audioContext.createBuffer(1, soundArray.length, sampleRate);
-	var buffer = soundBuffer.getChannelData(0);	
-	for (var i = 0; i < soundArray.length; i++) {
-	     buffer[i] = soundArray[i];
+	if (soundArray) {
+		var soundBuffer = audioContext.createBuffer(1, soundArray.length, sampleRate);
+		var buffer = soundBuffer.getChannelData(0);	
+		for (var i = 0; i < soundArray.length; i++) {
+		     buffer[i] = soundArray[i];
+		};
+		
+		// Get an AudioBufferSourceNode.
+		// This is the AudioNode to use when we want to play an AudioBuffer
+		var source = audioContext.createBufferSource();
+		// set the buffer in the AudioBufferSourceNode
+		source.buffer = soundBuffer;
+		// connect the AudioBufferSourceNode to the
+		// destination so we can hear the sound
+		source.connect(audioContext.destination);
+		// start the source playing
+		source.start();
 	};
-	
-	// Get an AudioBufferSourceNode.
-	// This is the AudioNode to use when we want to play an AudioBuffer
-	var source = audioContext.createBufferSource();
-	// set the buffer in the AudioBufferSourceNode
-	source.buffer = soundBuffer;
-	// connect the AudioBufferSourceNode to the
-	// destination so we can hear the sound
-	source.connect(audioContext.destination);
-	// start the source playing
-	source.start();
 };
 
 // Set up window 
