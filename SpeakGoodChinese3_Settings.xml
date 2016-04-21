@@ -253,7 +253,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Set Register
 	setRegister (sgc3_settings.register);
 	
-	// Rescale texts when the window gets too small
 	//]]>	
 	</script>
 

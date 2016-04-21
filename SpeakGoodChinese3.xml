@@ -336,8 +336,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		document.getElementById('Character').textContent = characterText;
 		document.getElementById('Translation').textContent = translationText;
 		
-		// Plot tones and set recording time
-		currentRecordingTime = sgc3_settings.recSecs + 1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2);
+		// Plot tones and set recording time (Watch out for text appending: "3" + 0 can become "30")
+		currentRecordingTime = Number(sgc3_settings.recSecs) + Number(1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2));
 		
 		// Set progress bars
 		var fillFraction = currentWord / (currentWordlist.length - 1);
@@ -549,7 +549,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		    recordingLight.style.color = "red";
 		    
 		    // Set Timeout for stop
-		    setTimeout(stopRecording, currentRecordingTime * 1000)
+		    setTimeout(stopRecording, currentRecordingTime * 1000);
 		}
 	
 	};
