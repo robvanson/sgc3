@@ -16,7 +16,7 @@ fft.js/lib/complex.js
 toneprot.js
 wordlists.js
 wordlists_plus.js
-RecordRTC.js/RecordRTC.js
+RecordRTC.min.js
 xhtml-default.css
 
 FALLBACK:
