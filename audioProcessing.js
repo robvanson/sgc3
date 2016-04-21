@@ -22,6 +22,13 @@ var recordedBlob, recordedBlobURL;
 var recordedArray, currentAudioWindow;
 var recordedSampleRate, recordedDuration;
 
+var clearRecording = function () { 
+	recordedBlob = undefined;
+	recordedBlobURL = undefined;
+	recordedArray = currentAudioWindow = undefined;
+	recordedSampleRate = recordedDuration = undefined;
+};
+
 /*
  * 
  * Audio processing code

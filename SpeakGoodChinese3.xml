@@ -513,6 +513,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			play.disabled = true;
 			play.style.color = "gray";
 			recordRTC.clearRecordedData();
+			clearRecording ();
 		};
 		
 		// Play recorded sound
