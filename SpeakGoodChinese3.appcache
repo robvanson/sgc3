@@ -12,6 +12,8 @@ audioProcessing.js
 internationalization_tables.js
 manifest.json
 mespeak/mespeak.full.js
+mespeak/mespeak_config.json
+mespeak/voices/zh.json
 fft.js/lib/real.js
 fft.js/lib/complex.js
 toneprot.js
