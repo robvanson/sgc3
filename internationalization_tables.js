@@ -88,12 +88,13 @@ function set_configLanguage (language) {
 	insert_and_update_options (labels);
 	
 	// Set selector index
-	for(var x = 0; x < document.getElementById("Language").options.length; ++ x) {
-		if (document.getElementById("Language").options[x].value == language) {
-			document.getElementById("Language").selectedIndex = x;
+	if (document.getElementById("Language")) {
+		for(var x = 0; x < document.getElementById("Language").options.length; ++ x) {
+			if (document.getElementById("Language").options[x].value == language) {
+				document.getElementById("Language").selectedIndex = x;
+			};
 		};
 	};
-	
 	localStorage.language = language;
 };
 

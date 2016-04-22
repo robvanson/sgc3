@@ -148,7 +148,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 		localRecordingTime.value = sgc3_settings.recSecs;
 		localStrict.value = sgc3_settings.strict;
-		store_SGC3_settings.settingsRead = "true";
+		sgc3_settings.settingsRead = "true";
 	};
 	
 	// Initialize to stored settings
