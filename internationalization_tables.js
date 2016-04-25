@@ -356,3 +356,59 @@ var language_table = {
 if(!mainpage_tables[userLanguage]) {
 	userLanguage = undefined;
 };
+
+
+/*
+ * GENERAL FUNCTIONS 
+ * 
+ */
+ 
+// Read from CSV URL/File.
+// This should handel processing in handleData!!!
+var csvDelimiter = ';';
+function readDelimitedTextFile(url, handleData, delimiter)
+{
+	var rawFile = new XMLHttpRequest();
+	rawFile.open("GET", url, true);
+	rawFile.onreadystatechange = function ()
+	{
+		if(rawFile.readyState === 4)
+		{
+			if(rawFile.status === 200 || rawFile.status == 0)
+			{
+				var allText = rawFile.responseText;
+				var data = handleData(allText, delimiter);
+				console.log(data);
+			}
+		}
+	}
+	rawFile.send(null);
+}
+
+function processCSV(allText, delimiter) {
+	var del = delimiter? delimiter : csvDelimiter;
+	var allTextLines = allText.split(/\r\n|\n/);
+	var lines = [];
+	for (var i=0; i<allTextLines.length; i++) {
+		// Skip comments
+		if (! allTextLines[i].match(/^\s*#/)) {
+			var data = allTextLines[i].split(del);
+			var tarr = [];
+			for (var j=0; j<data.length; j++) {
+				tarr.push(data[j]);
+			}
+		lines.push(tarr);
+		};
+	}
+	return lines;
+}
+
+
+// Read and write tab-separated-values tables
+function readCSV (url) {
+	var delimiter = csvDelimiter;
+	if (url.match(/\.(tsv|Table)\s*$/i)) {
+		delimiter = "\t";
+	};
+	readDelimitedTextFile(url, processCSV, delimiter);
+};
