@@ -103,6 +103,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button></div>
 
+	<input type="file" id="OpenWordlist"  style="color: black; bottom: 5%; left: 5%; height: 8%" name="OpenWordlist" />
+
     <script type="text/javascript">
 	//<![CDATA[
 	var mainWindow = localStorage.mainWindow;

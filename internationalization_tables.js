@@ -196,6 +196,7 @@ var config_tables = {
 		Recognition: ["汉语水平", "可设置为高级汉语水平或母语者水平。"],
 		StrictPost: ["水平", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"],
 		RecordingTimePost: ["（秒）", "录音时间（秒）"],
+		OpenWordlist: ["打开单词表+", "选择并打开单词表"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -211,6 +212,7 @@ var config_tables = {
 		Recognition: ["Proficiency", "Set to recognize advanced or native speakers"],
 		StrictPost: ["Level", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
 		RecordingTimePost: ["(sec)", "Time of recording in seconds"],
+		OpenWordlist: ["Open List+", "Select and read a single wordlist "],
 		},
 			
 	JA: {
@@ -227,6 +229,7 @@ var config_tables = {
 		Recognition: ["中国語レベル", "上級者や母語者レベルに設定できます。"],
 		StrictPost: ["レベル", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
 		RecordingTimePost: ["（秒）", "録音時間の秒数"],
+		OpenWordlist: ["単語表読み込み+", "単語表を選択し読み込みます"],
 		},
 		
 	DE: {
@@ -243,6 +246,7 @@ var config_tables = {
 		Recognition: ["Sprachkenntnisse", "Einstellung für fortgeschrittene Studenten"],
 		StrictPost: ["Stufe", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
 		RecordingTimePost: ["(sec)", "Aufnahmezeit in Secunden"],
+		OpenWordlist: ["\O"fne Liste+", "W\a"hle und \o"fne eine einzige Wortliste"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -258,6 +262,7 @@ var config_tables = {
 		Recognition: ["Taalniveau", "Stel de herkenner in op gevorderde of moedertaal sprekers"],
 		StrictPost:	["Niveau", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."],
 		RecordingTimePost: ["(sec)", "Opnametijd in seconden"],
+		OpenWordlist: ["Open Lijst+", "Selecteer en lees een enkele woordlijst"],
 		}
 };
 
