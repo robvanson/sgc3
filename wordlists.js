@@ -52,7 +52,10 @@ Array.prototype.shuffle = function() {
 	return input;
 }
 
- 
+// Code for handling CSV wordlists
+
+
+
 var wordlists = [
 		[
 		"20 basic tone combinations", [
