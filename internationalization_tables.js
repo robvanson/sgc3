@@ -402,41 +402,6 @@ function processCSV (url, allText, delimiter) {
 	return lines;
 }
 
-function processWordlist (url, allText, delimiter) {
-	var rows = processCSV (url, allText, delimiter);
-	var wordlistPath = url.replace(/[^\/]+$/g, "");
-	wordlistName = url.substring(wordlistPath.length);
-	wordlistName = wordlistName.replace(/\.[^\.]*$/g, "");
-	wordlistName = wordlistName.replace(/_/g, " ");
-	var wordlist = [wordlistName];
-	var wordlistEntries = [];
-	var header = rows.shift();
-	var columnNums = {Pinyin: -1, Marks: -1, Character: -1, Translation: -1, Sound: -1};
-	for (var c in header) {
-		columnNums [header[c]] = c;
-	};
-	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Sound"];
-	for (var r=0; r < rows.length; ++r) {
-		var currentRow = rows[r];
-		var newEntry = []
-		for (var c=0; c < nameList.length; ++c) {
-			var value = "-";
-			if (columnNums[nameList[c]] > -1) {
-				value = currentRow[columnNums[nameList[c]]];
-				// Prepend the URL path to sounds
-				if (nameList[c] == "Sound" && value.match(/\w/) && ! value.match(/:\/\//)) {
-					value = wordlistPath+value;
-				};
-			};
-			newEntry.push(value)
-		};
-		wordlistEntries.push(newEntry);
-	};
-	wordlist.push(wordlistEntries); 
-	wordlists_plus.push(wordlist);
-console.log(wordlists_plus);
-};
-
 // Read and write tab-separated-values tables
 function readCSV (url) {
 	var delimiter = csvDelimiter;
@@ -455,4 +420,4 @@ function readWordlist (url) {
 };
 
 // Example use
-// readWordlist ("file:///Users/robvanson/Werk/Software/sgc3/20_basic_tone_combinations.Table");
+ readWordlist ("file:///Users/robvanson/Werk/Software/sgc3/20_basic_tone_combinations.Table");

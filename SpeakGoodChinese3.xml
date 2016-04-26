@@ -222,33 +222,34 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 
 	// Global settings
 	var sgc3_settings = {
-		settingsRead: "false",
+		settingsRead: false,
 		recSecs: 3,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
-		shuffleLists: "true",
+		shuffleLists: true,
 		register: 249, // Must match Register_249 Id
 		wordList: "20 basic tone combinations",
 		language: "",
 		synthesis_eSpeak: false,
-		strict: 1
+		strict: 1,
+		personalWordlists: []
 	};
 	
 	// Store settings
 	function store_SGC3_settings () {
 		for (x in sgc3_settings) {
-			localStorage[x] = sgc3_settings[x];
+			localStorage[x] = JSON.stringify(sgc3_settings[x]);
 		};
 	};
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
-			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
+			if (localStorage[x]) sgc3_settings[x] = JSON.parse(localStorage[x]);
 		};
 		
 		set_mainpageLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
-		if (sgc3_settings.settingsRead == "true") hideSelectors();
+		if (sgc3_settings.settingsRead) hideSelectors();
 	};
 	
 	// Initialize to stored settings
@@ -329,7 +330,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			translationText = currentItem[3];
 			exampleURL = currentItem[currentItem.length - 1];
 		} else {
-			if(sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
+			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
 		};
 		document.getElementById('Pinyin').textContent = pinyinText;
@@ -365,7 +366,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	sgc3_settings.wordList = (sgc3_settings.wordList) ? sgc3_settings.wordList : "20 basic tone combinations";
 	get_wordlist (sgc3_settings.wordList);
-	if(sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
+	if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 	var currentWord = 0;
 	var currentItem = currentWordlist[currentWord];
 	var currentPinyin = currentItem[0];
@@ -386,7 +387,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else {
 			if (settingsWindow) settingsWindow.close();
 			settingsWindow = window.open('SpeakGoodChinese3_Settings.xml', '_blank');
-			localStorage.settingsWindow = "true";
+			localStorage.settingsWindow = true;
 		}
 	};
 	
@@ -415,14 +416,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	example.onclick = function() {
 		var voice = getTTSvoice();
-		if (exampleURL && exampleURL != "-" && sgc3_settings.synthesis_eSpeak == "false") {
+		if (exampleURL && exampleURL != "-" && ! sgc3_settings.synthesis_eSpeak) {
 			exampleElement.src = exampleURL;
 			exampleElement.onerror = function (event) {
 			    currentText = currentWordlist[currentWord][2];
 			    speakExample (voice, currentText, currentPinyin)
 			};
 			exampleElement.play();
-		} else if (voiceZH_CN >= 0 && sgc3_settings.synthesis_eSpeak == "false") {
+		} else if (voiceZH_CN >= 0 && ! sgc3_settings.synthesis_eSpeak) {
 		    currentText = currentWordlist[currentWord][2];
 		    speakExample (voice, currentText, currentPinyin)
 		} else {
@@ -457,7 +458,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		sgc3_settings.wordList = wordlists[wordlistNumber][0];
 		get_wordlist (sgc3_settings.wordList);
-		if (sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
+		if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
 		write_WordlistName();
@@ -472,7 +473,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 		sgc3_settings.wordList = wordlists[wordlistNumber][0];
 		get_wordlist (sgc3_settings.wordList);
-		if (sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
+		if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
 		write_WordlistName();
@@ -485,7 +486,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);
 			
-			if (sgc3_settings.shuffleLists == "true") currentWordlist.shuffle();
+			if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentWord = 0;
 			
 			write_WordlistName();

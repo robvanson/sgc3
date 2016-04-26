@@ -52,7 +52,104 @@ Array.prototype.shuffle = function() {
 	return input;
 }
 
-// Code for handling CSV wordlists
+/*
+ * 
+ * Read wordlists from tsv or csv files
+ * 
+ */
+ 
+function numbersToTonemarks (pinyin) {
+	// Add '-quote between vowels
+	var intermediatePinyin = pinyin.replace(/([aeuiov])([0-9])([aeuiov])/g, "$1$2'$3");
+	// Move numbers to the nucleus vowel
+	// To the vowel
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([^aeuiov0-9]*)([0-9])/g, "$1$3$2");
+	// Either a/e
+	intermediatePinyin = intermediatePinyin.replace(/([ae])([aeuiov]*)([0-9])/g, "$1$3$2")
+	// Or the Oo in /ou/
+	intermediatePinyin = intermediatePinyin.replace(/(ou)([0-9])/g, "o$2u");
+	// or the second vowel
+	intermediatePinyin = intermediatePinyin.replace(/([uiov][aeuiov])([uiov])([0-9])/g, "$1$3$2");
+	// Convert all tones to special characters
+	// Tone 1
+	intermediatePinyin = intermediatePinyin.replace(/a1/g, "ā");
+	intermediatePinyin = intermediatePinyin.replace(/e1/g, "ē");
+	intermediatePinyin = intermediatePinyin.replace(/u1/g, "ū");
+	intermediatePinyin = intermediatePinyin.replace(/i1/g, "ī");
+	intermediatePinyin = intermediatePinyin.replace(/o1/g, "ō");
+	intermediatePinyin = intermediatePinyin.replace(/ü1/g, "ǖ");
+	//intermediatePinyin = intermediatePinyin.replace(/1/g, "\\-^");
+	
+	// Tone 2
+	intermediatePinyin = intermediatePinyin.replace(/a2/g, "á");
+	intermediatePinyin = intermediatePinyin.replace(/e2/g, "é");
+	intermediatePinyin = intermediatePinyin.replace(/u2/g, "ú");
+	intermediatePinyin = intermediatePinyin.replace(/i2/g, "í");
+	intermediatePinyin = intermediatePinyin.replace(/o2/g, "ó");
+	intermediatePinyin = intermediatePinyin.replace(/ü2/g, "ǘ");
+	intermediatePinyin = intermediatePinyin.replace(/([iaeou])2/g, "$1'");
+	
+	// Tone 3
+	intermediatePinyin = intermediatePinyin.replace(/a3/g, "ǎ");
+	intermediatePinyin = intermediatePinyin.replace(/e3/g, "ě");
+	intermediatePinyin = intermediatePinyin.replace(/u3/g, "ǔ");
+	intermediatePinyin = intermediatePinyin.replace(/i3/g, "ǐ");
+	intermediatePinyin = intermediatePinyin.replace(/o3/g, "ǒ");
+	intermediatePinyin = intermediatePinyin.replace(/ü3/g, "ǚ");
+
+	// Tone 4
+	intermediatePinyin = intermediatePinyin.replace(/a4/g, "à");
+	intermediatePinyin = intermediatePinyin.replace(/e4/g, "è");
+	intermediatePinyin = intermediatePinyin.replace(/u4/g, "ù");
+	intermediatePinyin = intermediatePinyin.replace(/i4/g, "ì");
+	intermediatePinyin = intermediatePinyin.replace(/o4/g, "ò");
+	intermediatePinyin = intermediatePinyin.replace(/ü4/g, "ǜ");
+	intermediatePinyin = intermediatePinyin.replace(/([iaeou])4/g, "$1`");
+	
+	// Tone 0
+	// Remove tone 0 symbol completely
+	intermediatePinyin = intermediatePinyin.replace(/0/g, "");
+
+	return intermediatePinyin;
+};
+
+function processWordlist (url, allText, delimiter) {
+	var rows = processCSV (url, allText, delimiter);
+	var wordlistPath = url.replace(/[^\/]+$/g, "");
+	wordlistName = url.substring(wordlistPath.length);
+	wordlistName = wordlistName.replace(/\.[^\.]*$/g, "");
+	wordlistName = wordlistName.replace(/_/g, " ");
+	var wordlist = [wordlistName];
+	var wordlistEntries = [];
+	var header = rows.shift();
+	var columnNums = {Pinyin: -1, Marks: -1, Character: -1, Translation: -1, Sound: -1};
+	for (var c in header) {
+		columnNums [header[c]] = c;
+	};
+	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Sound"];
+	for (var r=0; r < rows.length; ++r) {
+		var currentRow = rows[r];
+		var newEntry = []
+		for (var c=0; c < nameList.length; ++c) {
+			var value = "-";
+			if (columnNums[nameList[c]] > -1) {
+				value = currentRow[columnNums[nameList[c]]];
+				// Prepend the URL path to sounds
+				if (nameList[c] == "Sound" && value.match(/\w/) && ! value.match(/:\/\//)) {
+					value = wordlistPath+value;
+				};
+			};
+			newEntry.push(value)
+		};
+		if (newEntry[1] == "-") {
+			newEntry[1] = numbersToTonemarks(newEntry[0]);
+		};
+		wordlistEntries.push(newEntry);
+	};
+	wordlist.push(wordlistEntries); 
+	wordlists_plus.push(wordlist);
+console.log(wordlists_plus);
+};
 
 
 

@@ -116,7 +116,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Global settings
 	var sgc3_settings = {
-		settingsRead: "false",
+		settingsRead: false,
 		recSecs: 3,
 		ttsSpeed: 110,
 		ttsVariant: "f3",
@@ -130,15 +130,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Store settings
 	function store_SGC3_settings () {
-		sgc3_settings.settingsRead = "true";
+		sgc3_settings.settingsRead = true;
 		for (x in sgc3_settings) {
-			localStorage[x] = sgc3_settings[x];
+			localStorage[x] = JSON.stringify(sgc3_settings[x]);
 		};
 	};
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
-			if (localStorage[x]) sgc3_settings[x] = localStorage[x];
+			if (localStorage[x]) sgc3_settings[x] = JSON.parse(localStorage[x]);
 		};
 		
 		set_configLanguage (sgc3_settings.language);
@@ -148,7 +148,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 		localRecordingTime.value = sgc3_settings.recSecs;
 		localStrict.value = sgc3_settings.strict;
-		sgc3_settings.settingsRead = "true";
+		sgc3_settings.settingsRead = true;
 	};
 	
 	// Initialize to stored settings
@@ -162,18 +162,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Wordlists
 	shuffleListsButton	
-	if (sgc3_settings.shuffleLists == "true") {
+	if (sgc3_settings.shuffleLists) {
 		shuffleListsButton.style.color = "red";
 		shuffleListsButton.background = "rgb(256,245,245)";
 	};
 	
 	shuffleListsButton.onclick = function () {
-		if (sgc3_settings.shuffleLists == "false") {
-			sgc3_settings.shuffleLists = "true";
+		if (! sgc3_settings.shuffleLists) {
+			sgc3_settings.shuffleLists = true;
 			shuffleListsButton.style.color = "red";
 			shuffleListsButton.background = "rgb(232,210,210)";
 		} else {
-			sgc3_settings.shuffleLists = "false";
+			sgc3_settings.shuffleLists = false;
 			shuffleListsButton.style.color = "black";
 			shuffleListsButton.background = "rgb(220,220,220)";
 		};
@@ -181,18 +181,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 
 	// Set TTS
-	if (sgc3_settings.synthesis_eSpeak != "false") {
+	if (sgc3_settings.synthesis_eSpeak) {
 		localSynthesis.style.color = "red";
 		localSynthesis.background = "rgb(256,245,245)";
 	};
 	
 	localSynthesis.onclick = function () {
-		if (sgc3_settings.synthesis_eSpeak == "false") {
-			sgc3_settings.synthesis_eSpeak = "true";
+		if (!sgc3_settings.synthesis_eSpeak) {
+			sgc3_settings.synthesis_eSpeak = true;
 			localSynthesis.style.color = "red";
 			localSynthesis.background = "rgb(232,210,210)";
 		} else {
-			sgc3_settings.synthesis_eSpeak = "false";
+			sgc3_settings.synthesis_eSpeak = false;
 			localSynthesis.style.color = "black";
 			localSynthesis.background = "rgb(220,220,220)";
 		};
