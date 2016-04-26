@@ -246,7 +246,7 @@ var config_tables = {
 		Recognition: ["Sprachkenntnisse", "Einstellung für fortgeschrittene Studenten"],
 		StrictPost: ["Stufe", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
 		RecordingTimePost: ["(sec)", "Aufnahmezeit in Secunden"],
-		OpenWordlist: ["\O"fne Liste+", "W\a"hle und \o"fne eine einzige Wortliste"],
+		OpenWordlist: ["Öfne Liste+", "Wähle und öfne eine einzige Wortliste"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -416,13 +416,3 @@ function readCSV (url) {
 	readDelimitedTextFile(url, processCSV, delimiter);
 };
 
-function readWordlist (url) {
-	var delimiter = csvDelimiter;
-	if (url.match(/\.(tsv|Table)\s*$/i)) {
-		delimiter = "\t";
-	};
-	readDelimitedTextFile(url, processWordlist, delimiter);
-};
-
-// Example use
- readWordlist ("file:///Users/robvanson/Werk/Software/sgc3/20_basic_tone_combinations.Table");

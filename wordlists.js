@@ -151,6 +151,16 @@ function processWordlist (url, allText, delimiter) {
 console.log(wordlists_plus);
 };
 
+function readWordlist (url) {
+	var delimiter = csvDelimiter;
+	if (url.match(/\.(tsv|Table)\s*$/i)) {
+		delimiter = "\t";
+	};
+	readDelimitedTextFile(url, processWordlist, delimiter);
+};
+
+// Example use
+// readWordlist ("file:///Users/robvanson/Werk/Software/sgc3/20_basic_tone_combinations.Table");
 
 
 var wordlists = [
