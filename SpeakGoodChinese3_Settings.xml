@@ -47,6 +47,8 @@ button {
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
+<script type="text/javascript" src="wordlists.js" ></script>   
+<script type="text/javascript" src="wordlists_plus.js" ></script>   
 </head>
 <body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');" >
 <!--
@@ -103,7 +105,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button></div>
 
-	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='console.log(this.files[0]);console.log(window.URL.createObjectURL(this.files[0]))' title="OpenWord" />
+	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='openWordlist (this.files);' title="OpenWord" />
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 5%; height: 8%;" id="LocalOpenWordlist" ><span id="OpenWordlist" >---</span></button></div>
 
     <script type="text/javascript">
@@ -132,7 +134,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		wordList: "20 basic tone combinations",
 		language: "",
 		synthesis_eSpeak: false,
-		strict: 1
+		strict: 1,
+		personalWordlists: []
 	};
 	
 	// Store settings
@@ -156,6 +159,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		localRecordingTime.value = sgc3_settings.recSecs;
 		localStrict.value = sgc3_settings.strict;
 		sgc3_settings.settingsRead = true;
+		wordlists = combineWordlistLists(wordlists, sgc3_settings.personalWordlists);
+		add_wordlist_names_to_select ();
 	};
 	
 	// Initialize to stored settings
@@ -187,6 +192,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 	};
 
+	function openWordlist (files) {
+		var wordlistFile;
+		for (var i=0; i < files.length; ++i) {
+			if (files[i].name.match(/\.(tsv|Table|csv)$/i)) {
+				wordlistFile = files[i];
+			};
+		};
+		if (wordlistFile) {
+			readWordlist (wordlistFile);
+		};
+	};
+	
 	// Set TTS
 	if (sgc3_settings.synthesis_eSpeak) {
 		localSynthesis.style.color = "red";

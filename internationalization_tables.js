@@ -371,8 +371,10 @@ if(!mainpage_tables[userLanguage]) {
 // Read from CSV URL/File.
 // This should handel processing in handleData!!!
 var csvDelimiter = ';';
-function readDelimitedTextFile (url, handleData, delimiter)
+function readDelimitedTextFile (file, handleData, delimiter)
 {
+	var url = file.name ? window.URL.createObjectURL(file) : file;
+		
 	var rawFile = new XMLHttpRequest();
 	rawFile.open("GET", url, true);
 	rawFile.onreadystatechange = function ()
@@ -382,14 +384,14 @@ function readDelimitedTextFile (url, handleData, delimiter)
 			if(rawFile.status === 200 || rawFile.status == 0)
 			{
 				var allText = rawFile.responseText;
-				handleData(url, allText, delimiter);
+				handleData(file, allText, delimiter);
 			}
 		}
 	}
 	rawFile.send(null);
 }
 
-function processCSV (url, allText, delimiter) {
+function processCSV (file, allText, delimiter) {
 	var del = delimiter? delimiter : csvDelimiter;
 	var allTextLines = allText.split(/\r\n|\n/);
 	var lines = [];
@@ -408,11 +410,11 @@ function processCSV (url, allText, delimiter) {
 }
 
 // Read and write tab-separated-values tables
-function readCSV (url) {
+function readCSV (file) {
 	var delimiter = csvDelimiter;
-	if (url.match(/\.(tsv|Table)\s*$/i)) {
+	if (file.name.match(/\.(tsv|Table)\s*$/i)) {
 		delimiter = "\t";
 	};
-	readDelimitedTextFile(url, processCSV, delimiter);
+	readDelimitedTextFile(file, processCSV, delimiter);
 };
 

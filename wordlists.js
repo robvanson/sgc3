@@ -17,6 +17,7 @@
  */
 
 var currentWordlist = [];
+var personalWordlists = [];
 var wordlistNumber;
 function get_wordlist (wordlistName) {
 	var wordlistNum;
@@ -28,6 +29,11 @@ function get_wordlist (wordlistName) {
 function add_wordlist_names_to_select () {
 	var selector = document.getElementById('SelectWordList');
 	var i = 0;
+	// First, remove old entries
+	for(i=1; i < selector.options.length; ++i) {
+		selector.remove(i);
+	};
+	// Add new entries
 	for(i=0; i < wordlists.length; ++i) {
 		var lastOption = selector.options.length - 1;
 		var wordlistTitle = wordlists[i][0];
@@ -36,6 +42,26 @@ function add_wordlist_names_to_select () {
 		newOption.text = wordlistTitle;
 		selector.add(newOption);
 	};
+};
+
+function addNewWordlist (oldWordlists, newWordlist) {
+	// First, remove doubles
+	var wordlistName = newWordlist [0];
+	for (var i = 0; i < oldWordlists.length; ++i) {
+		if (oldWordlists[i][0] == wordlistName) {
+			oldWordlists.splice(i, 1);
+		};
+	};
+	oldWordlists.push(newWordlist);
+	return oldWordlists;
+};
+
+function combineWordlistLists (wordlists1, wordlists2) {
+	var combined = wordlists1;
+	for (var i = 0; i < wordlists2.length; ++i) {
+		combined = addNewWordlist(combined, wordlists2[i]);
+	};
+	return combined;
 };
 
 Array.prototype.shuffle = function() {
@@ -113,13 +139,11 @@ function numbersToTonemarks (pinyin) {
 	return intermediatePinyin;
 };
 
-function processWordlist (url, allText, delimiter) {
-	var rows = processCSV (url, allText, delimiter);
-	var wordlistPath = url.replace(/[^\/]+$/g, "");
-	wordlistName = url.substring(wordlistPath.length);
-	wordlistName = wordlistName.replace(/\.[^\.]*$/g, "");
+function processWordlist (file, allText, delimiter) {
+	var rows = processCSV (file, allText, delimiter);
+	var wordlistName = file.name.replace(/\.[^\.]*$/g, "");
 	wordlistName = wordlistName.replace(/_/g, " ");
-	var wordlist = [wordlistName];
+	var newWordlist = [wordlistName];
 	var wordlistEntries = [];
 	var header = rows.shift();
 	var columnNums = {Pinyin: -1, Marks: -1, Character: -1, Translation: -1, Sound: -1};
@@ -135,7 +159,7 @@ function processWordlist (url, allText, delimiter) {
 			if (columnNums[nameList[c]] > -1) {
 				value = currentRow[columnNums[nameList[c]]];
 				// Prepend the URL path to sounds
-				if (nameList[c] == "Sound" && value.match(/\w/) && ! value.match(/:\/\//)) {
+				if (nameList[c] == "Sound" && value.match(/\w/) && ! value.match(/(blob:|:\/\/)/)) {
 					value = wordlistPath+value;
 				};
 			};
@@ -146,17 +170,19 @@ function processWordlist (url, allText, delimiter) {
 		};
 		wordlistEntries.push(newEntry);
 	};
-	wordlist.push(wordlistEntries); 
-	wordlists_plus.push(wordlist);
-console.log(wordlists_plus);
+	// Merge rows with name
+	newWordlist.push(wordlistEntries);
+	// Add the new wordlist to the current wordlists
+	addNewWordlist(sgc3_settings.personalWordlists, newWordlist);
+	addNewWordlist(wordlists, newWordlist);
 };
 
-function readWordlist (url) {
+function readWordlist (file) {
 	var delimiter = csvDelimiter;
-	if (url.match(/\.(tsv|Table)\s*$/i)) {
+	if (file.name.match(/\.(tsv|Table)\s*$/i)) {
 		delimiter = "\t";
 	};
-	readDelimitedTextFile(url, processWordlist, delimiter);
+	readDelimitedTextFile(file, processWordlist, delimiter);
 };
 
 // Example use

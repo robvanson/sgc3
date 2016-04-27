@@ -250,6 +250,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		set_mainpageLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
 		if (sgc3_settings.settingsRead) hideSelectors();
+		wordlists = combineWordlistLists(wordlists, sgc3_settings.personalWordlists);
+		add_wordlist_names_to_select ();
 	};
 	
 	// Initialize to stored settings
