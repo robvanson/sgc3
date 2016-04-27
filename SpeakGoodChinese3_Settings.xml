@@ -103,7 +103,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button></div>
 
-	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" title="OpenWord" />
+	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='console.log(this.files[0]);console.log(window.URL.createObjectURL(this.files[0]))' title="OpenWord" />
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 5%; height: 8%;" id="LocalOpenWordlist" ><span id="OpenWordlist" >---</span></button></div>
 
     <script type="text/javascript">
@@ -115,7 +115,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var localStrict = document.getElementById('Strict');
 
 	var shuffleListsButton = document.getElementById('ShuffleListsButton');
-
+	var openWordlistButton = document.getElementById('LocalOpenWordlist');
+	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
+	openWordlistButton.onclick = function () {
+	    document.getElementById('HiddenOpenWordlist').click();
+	};
 	
 	// Global settings
 	var sgc3_settings = {
