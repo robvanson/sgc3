@@ -107,6 +107,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='openWordlist (this.files);' title="OpenWord" />
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 5%; height: 8%;" id="LocalOpenWordlist" ><span id="OpenWordlist" >---</span></button></div>
+	<div style="position: fixed; color: blue; bottom: 13%; left: 25%; height: 5%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
+	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
     <script type="text/javascript">
 	//<![CDATA[
@@ -122,6 +124,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	openWordlistButton.onclick = function () {
 	    document.getElementById('HiddenOpenWordlist').click();
 	};
+	var deleteWordlistButton = document.getElementById('DeleteWordlistButton');
+	var currentWordlist = document.getElementById('CurrentWordlist');
 	
 	// Global settings
 	var sgc3_settings = {
@@ -160,7 +164,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		localStrict.value = sgc3_settings.strict;
 		sgc3_settings.settingsRead = true;
 		wordlists = combineWordlistLists(wordlists, sgc3_settings.personalWordlists);
-		add_wordlist_names_to_select ();
+		currentWordlist.textContent = sgc3_settings.wordList;
 	};
 	
 	// Initialize to stored settings
@@ -202,6 +206,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		if (wordlistFile) {
 			readWordlist (wordlistFile);
 		};
+	};
+	
+	deleteWordlistButton.onclick = function () {
 	};
 	
 	// Set TTS

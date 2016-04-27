@@ -197,6 +197,8 @@ var config_tables = {
 		StrictPost: ["水平", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"],
 		RecordingTimePost: ["（秒）", "录音时间（秒）"],
 		OpenWordlist: ["打开单词表+", "选择并打开单词表"],
+		DeleteWordlist: ["删除单词表 D", "删除单词表，需要按下'y'键确认"],
+		DeleteWordlistConfirm: ["确认 y/N", "确定要删除吗？按下“y”键确定。"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -213,6 +215,8 @@ var config_tables = {
 		StrictPost: ["Level", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
 		RecordingTimePost: ["(sec)", "Time of recording in seconds"],
 		OpenWordlist: ["Open List+", "Select and read a single wordlist "],
+		DeleteWordlist: ["Delete List", "Permanently delete the word list. You have to confirm this by typing 'y'"],
+		DeleteWordlistConfirm: ["Realy y/N", "Are you sure you want to proceed? Confirm this option by typing 'y'"],
 		},
 			
 	JA: {
@@ -230,6 +234,8 @@ var config_tables = {
 		StrictPost: ["レベル", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
 		RecordingTimePost: ["（秒）", "録音時間の秒数"],
 		OpenWordlist: ["単語表読み込み+", "単語表を選択し読み込みます"],
+		DeleteWordlist: ["単語表削除", "単語表を消去します。“y”キーを押して確定して下さい"],
+		DeleteWordlistConfirm: ["削除確認 y/N", "本当に削除しますか？“y”キーで確定します。"],
 		},
 		
 	DE: {
@@ -247,6 +253,8 @@ var config_tables = {
 		StrictPost: ["Stufe", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
 		RecordingTimePost: ["(sec)", "Aufnahmezeit in Secunden"],
 		OpenWordlist: ["Öfne Liste+", "Wähle und öfne eine einzige Wortliste"],
+		DeleteWordlist: ["Lössche Liste", "Lössche die Wortliste. Sie müssen die 'j' taste drücken um das Lösschen zu bestätigen."],
+		DeleteWordlistConfirm: ["Sicher? j/N", "Sind Sie sicher? Bestätige diese Aktion mit der taste 'j'"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -263,6 +271,8 @@ var config_tables = {
 		StrictPost:	["Niveau", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."],
 		RecordingTimePost: ["(sec)", "Opnametijd in seconden"],
 		OpenWordlist: ["Open Lijst+", "Selecteer en lees een enkele woordlijst"],
+		DeleteWordlist: ["Verwijder Lijst", "Verwijder de getoonde woordlijst permanent, u moet dit bevestigen door een 'j' te typen"],
+		DeleteWordlistConfirm: ["Heel zeker j/N", "Bent u zeker dat u door wilt gaan? Bevestig door een 'j' te typen"],
 		}
 };
 
