@@ -243,14 +243,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	function load_SGC3_settings () {
-		for (x in sgc3_settings) {
+		for (var x = 0; x < sgc3_settings.length; ++x) {
 			if (localStorage[x]) sgc3_settings[x] = JSON.parse(localStorage[x]);
 		};
 		
 		set_mainpageLanguage (sgc3_settings.language);
 		setRegister (sgc3_settings.register);
 		if (sgc3_settings.settingsRead) hideSelectors();
-		wordlists = combineWordlistLists(wordlists, sgc3_settings.personalWordlists);
+		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		add_wordlist_names_to_select ();
 	};
 	

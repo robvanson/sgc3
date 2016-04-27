@@ -17,6 +17,7 @@
  */
 
 var currentWordlist = [];
+var wordlists = [];
 var personalWordlists = [];
 var wordlistNumber;
 function get_wordlist (wordlistName) {
@@ -30,7 +31,8 @@ function add_wordlist_names_to_select () {
 	var selector = document.getElementById('SelectWordList');
 	var i = 0;
 	// First, remove old entries
-	for(i=1; i < selector.options.length; ++i) {
+	var numOptions = selector.options.length
+	for(var i = numOptions - 1; i > 0; --i) {
 		selector.remove(i);
 	};
 	// Add new entries
@@ -57,7 +59,7 @@ function addNewWordlist (oldWordlists, newWordlist) {
 };
 
 function combineWordlistLists (wordlists1, wordlists2) {
-	var combined = wordlists1;
+	var combined = wordlists1.slice();
 	for (var i = 0; i < wordlists2.length; ++i) {
 		combined = addNewWordlist(combined, wordlists2[i]);
 	};
@@ -189,7 +191,7 @@ function readWordlist (file) {
 // readWordlist ("file:///Users/robvanson/Werk/Software/sgc3/20_basic_tone_combinations.Table");
 
 
-var wordlists = [
+var global_wordlists = [
 		[
 		"20 basic tone combinations", [
 			["yi1sheng1","yīshēng","医生","doctor","-","-"],
@@ -614,3 +616,4 @@ var wordlists = [
 		]
 	]
 
+wordlists = global_wordlists.slice();

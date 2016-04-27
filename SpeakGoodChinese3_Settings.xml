@@ -163,7 +163,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		localRecordingTime.value = sgc3_settings.recSecs;
 		localStrict.value = sgc3_settings.strict;
 		sgc3_settings.settingsRead = true;
-		wordlists = combineWordlistLists(wordlists, sgc3_settings.personalWordlists);
+		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		currentWordlist.textContent = sgc3_settings.wordList;
 	};
 	
@@ -209,6 +209,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	deleteWordlistButton.onclick = function () {
+		var currentWordlist = sgc3_settings.wordList;
+		
 	};
 	
 	// Set TTS

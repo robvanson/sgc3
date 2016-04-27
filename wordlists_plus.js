@@ -27,4 +27,4 @@ var wordlists_plus = [
 ]
 	
 
-wordlists = wordlists.concat(wordlists_plus);
+global_wordlists = global_wordlists.concat(wordlists_plus);
