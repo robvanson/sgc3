@@ -27,6 +27,14 @@ function get_wordlist (wordlistName) {
 	wordlistNumber = wordlistNum;
 };
 
+function wordlistExist (wordlists, wordlistName) {
+	var wordlistfound = false;
+	for(var wordlistNum = 0; wordlistNum < wordlists.length && ! wordlistfound; wordlistNum++) { 
+		if (wordlists[wordlistNum][0] == wordlistName) wordlistfound = true;
+	};
+	return wordlistfound;
+};
+
 function add_wordlist_names_to_select () {
 	var selector = document.getElementById('SelectWordList');
 	var i = 0;
@@ -186,6 +194,7 @@ function processWordlist (file, allText, delimiter) {
 	sgc3_settings.wordList = newWordlist[0];
 	if (document.getElementById('CurrentWordlist')) {
 		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
+		document.getElementById('CurrentWordlist').style.color = (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) ? "blue" : "gray";
 	};
 };
 

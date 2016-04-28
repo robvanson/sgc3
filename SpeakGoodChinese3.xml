@@ -237,7 +237,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Store settings
 	function store_SGC3_settings () {
-		for (var x=0; x < sgc3_settings.length; ++x) {
+		for (x in sgc3_settings) {
 			localStorage[x] = JSON.stringify(sgc3_settings[x]);
 		};
 	};
@@ -265,7 +265,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 	};
 	
-	// Set language (make that selectable)
+	// Set language
 	if (!sgc3_settings.language) {
 		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
 	};
@@ -497,14 +497,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		if(selectWordlist.selectedIndex > 0) {
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);
-console.log(sgc3_settings.wordList);			
 			if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentWord = 0;
 			
 			write_WordlistName();
 			write_CurrentString();
 			store_SGC3_settings ();
-console.log(localStorage.wordList);			
 		};
 	};
 	

@@ -107,7 +107,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='openWordlist (this.files);' title="OpenWord" />
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 5%; height: 8%;" id="LocalOpenWordlist" ><span id="OpenWordlist" >---</span></button></div>
-	<div style="position: fixed; color: blue; bottom: 13%; left: 25%; height: 5%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
+	<div style="position: fixed; color: gray; bottom: 13%; left: 20%; height: 5%; width: 27%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
     <script type="text/javascript">
@@ -169,6 +169,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsRead = true;
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		currentWordlist.textContent = sgc3_settings.wordList;
+		currentWordlist.style.color = (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) ? "blue" : "gray";
 	};
 	
 	// Initialize to stored settings
@@ -213,8 +214,24 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	deleteWordlistButton.onclick = function () {
-		var currentWordlist = sgc3_settings.wordList;
-		
+		var wordlistName = sgc3_settings.wordList;
+		var canBeDeleted = wordlistExist (sgc3_settings.personalWordlists, wordlistName);
+		var confirmText = config_tables[sgc3_settings.language].DeleteWordlistConfirm[0];
+		canBeDeleted = confirm(confirmText);
+		if (canBeDeleted) {
+			for(var x = sgc3_settings.personalWordlists.length - 1; x >= 0; --x) {
+				if (sgc3_settings.personalWordlists[x][0] == wordlistName) {
+					sgc3_settings.personalWordlists.splice(x, 1);
+					canBeDeleted = true;
+				};
+			};
+			// rebuild wordlist;
+			wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+			wordlistNumber = (wordlistNumber < wordlists.length) ? wordlistNumber : 0;
+			sgc3_settings.wordList = wordlists[wordlistNumber][0];
+			store_SGC3_settings ();
+			load_SGC3_settings ();
+		};
 	};
 	
 	// Set TTS
