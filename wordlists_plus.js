@@ -28,4 +28,3 @@ var wordlists_plus = [
 	
 
 global_wordlists = wordlists_plus.concat(global_wordlists);
-console.log(global_wordlists);

@@ -178,8 +178,15 @@ function processWordlist (file, allText, delimiter) {
 	newWordlist.push(wordlistEntries);
 	// Add the new wordlist to the current wordlists
 	sgc3_settings.personalWordlists = addNewWordlist(sgc3_settings.personalWordlists, newWordlist);
+	sgc3_settings.wordList = newWordlist[0];
 	// Force new worlists into local storage
 	localStorage.personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
+	localStorage.wordList = JSON.stringify(sgc3_settings.wordList);
+	// Set new current
+	sgc3_settings.wordList = newWordlist[0];
+	if (document.getElementById('CurrentWordlist')) {
+		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
+	};
 };
 
 function readWordlist (file) {
