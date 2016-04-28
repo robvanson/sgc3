@@ -145,6 +145,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Store settings
 	function store_SGC3_settings () {
 		sgc3_settings.settingsRead = true;
+
 		for (x in sgc3_settings) {
 			localStorage[x] = JSON.stringify(sgc3_settings[x]);
 		};
@@ -152,7 +153,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
-			if (localStorage[x]) sgc3_settings[x] = JSON.parse(localStorage[x]);
+			// For some reason, parsing the language goes wrong
+			if (localStorage[x]) {
+				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			};
 		};
 		
 		set_configLanguage (sgc3_settings.language);

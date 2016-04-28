@@ -237,14 +237,17 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Store settings
 	function store_SGC3_settings () {
-		for (x in sgc3_settings) {
+		for (var x=0; x < sgc3_settings.length; ++x) {
 			localStorage[x] = JSON.stringify(sgc3_settings[x]);
 		};
 	};
 	
 	function load_SGC3_settings () {
-		for (var x = 0; x < sgc3_settings.length; ++x) {
-			if (localStorage[x]) sgc3_settings[x] = JSON.parse(localStorage[x]);
+		for (x in sgc3_settings) {
+			// For some reason, parsing the language goes wrong
+			if (localStorage[x]) {
+				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			};
 		};
 		
 		set_mainpageLanguage (sgc3_settings.language);
@@ -255,7 +258,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	// Initialize to stored settings
-	load_SGC3_settings ();
+	if(localStorage.language) {
+		load_SGC3_settings ();
+	} else {
+		store_SGC3_settings ();
+	};
 	
 	// Set language (make that selectable)
 	if (!sgc3_settings.language) {
@@ -389,7 +396,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else {
 			if (settingsWindow) settingsWindow.close();
 			settingsWindow = window.open('SpeakGoodChinese3_Settings.xml', '_blank');
-			localStorage.settingsWindow = true;
+			localStorage.settingsWindow = JSON.stringify(true);
 		}
 	};
 	

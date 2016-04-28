@@ -60,8 +60,10 @@ function addNewWordlist (oldWordlists, newWordlist) {
 
 function combineWordlistLists (wordlists1, wordlists2) {
 	var combined = wordlists1.slice();
-	for (var i = 0; i < wordlists2.length; ++i) {
-		combined = addNewWordlist(combined, wordlists2[i]);
+	if (wordlists2) {
+		for (var i = 0; i < wordlists2.length; ++i) {
+			combined = addNewWordlist(combined, wordlists2[i]);
+		};
 	};
 	return combined;
 };
@@ -162,7 +164,7 @@ function processWordlist (file, allText, delimiter) {
 				value = currentRow[columnNums[nameList[c]]];
 				// Prepend the URL path to sounds
 				if (nameList[c] == "Sound" && value.match(/\w/) && ! value.match(/(blob:|:\/\/)/)) {
-					value = wordlistPath+value;
+					value = value;
 				};
 			};
 			newEntry.push(value)
@@ -175,8 +177,9 @@ function processWordlist (file, allText, delimiter) {
 	// Merge rows with name
 	newWordlist.push(wordlistEntries);
 	// Add the new wordlist to the current wordlists
-	addNewWordlist(sgc3_settings.personalWordlists, newWordlist);
-	addNewWordlist(wordlists, newWordlist);
+	sgc3_settings.personalWordlists = addNewWordlist(sgc3_settings.personalWordlists, newWordlist);
+	// Force new worlists into local storage
+	localStorage.personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
 };
 
 function readWordlist (file) {

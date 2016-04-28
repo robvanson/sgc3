@@ -69,7 +69,7 @@ function set_mainpageLanguage (language) {
 		};
 	};
 	
-	localStorage.language = language;
+	localStorage.language = JSON.stringify(language);
 };
 
 function set_configLanguage (language) {
@@ -95,7 +95,7 @@ function set_configLanguage (language) {
 			};
 		};
 	};
-	localStorage.language = language;
+	localStorage.language = JSON.stringify(language);
 };
 
 function change_mainpageLanguage () {
