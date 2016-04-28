@@ -54,7 +54,7 @@ function addNewWordlist (oldWordlists, newWordlist) {
 			oldWordlists.splice(i, 1);
 		};
 	};
-	oldWordlists.push(newWordlist);
+	oldWordlists.unshift(newWordlist);
 	return oldWordlists;
 };
 
