@@ -81,7 +81,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
 	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
-		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 4vmin; ">-</span></div>
+		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span></div>
 	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 3vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 4px; "></canvas>
@@ -221,6 +221,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 */
 	 
 	// Global settings
+	// This setting is NOT stored
+	localStorage.currentWord = JSON.stringify(0);
+	// These settings are stored
 	var sgc3_settings = {
 		settingsRead: false,
 		recSecs: 3,
@@ -240,6 +243,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (x in sgc3_settings) {
 			localStorage[x] = JSON.stringify(sgc3_settings[x]);
 		};
+		 localStorage.currentWord = JSON.stringify(currentWord);
 	};
 	
 	function load_SGC3_settings () {
@@ -256,6 +260,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		add_wordlist_names_to_select ();
 		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
+		
+		// Reset currentWord if the wordlist has changed
+		currentWord = 0;
+		if (localStorage.currentWord) {
+			currentWord = JSON.parse(localStorage.currentWord);			
+		};
+		// update display
+		write_CurrentString ();
 	};
 	
 	// Initialize to stored settings
@@ -322,7 +334,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	// Replace contents of displayed string
-	var write_CurrentString = function () {
+	function write_CurrentString () {
 		// Store current settings
 		store_SGC3_settings ()
 		
@@ -347,7 +359,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		document.getElementById('Character').textContent = characterText;
 		document.getElementById('Translation').textContent = translationText;
 		document.getElementById('Translation').style.fontSize = "6vmin";
-		if (document.getElementById('Translation').textContent.length > 30) document.getElementById('Translation').style.fontSize = "4vmin";
+		if (document.getElementById('Translation').textContent.length > 50) {
+			document.getElementById('Translation').style.fontSize = "4vmin";
+		} else if (document.getElementById('Translation').textContent.length > 30) {
+			document.getElementById('Translation').style.fontSize = "5vmin";
+		};
 		
 		// Plot tones and set recording time (Watch out for text appending: "3" + 0 can become "30")
 		currentRecordingTime = Number(sgc3_settings.recSecs) + Number(1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2));
