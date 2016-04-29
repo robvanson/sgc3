@@ -169,7 +169,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsRead = true;
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		currentWordlist.textContent = sgc3_settings.wordList;
-		currentWordlist.style.color = (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) ? "blue" : "gray";
+		currentWordlist.style.color = "gray";
+		deleteWordlistButton.style.color = "gray";
+		deleteWordlistButton.disabled = true;
+		if (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) {
+			currentWordlist.style.color = "blue";
+			deleteWordlistButton.style.color = "black";
+			deleteWordlistButton.disabled = false;
+		};
+
 	};
 	
 	// Initialize to stored settings
