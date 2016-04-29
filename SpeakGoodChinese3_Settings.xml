@@ -216,7 +216,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	deleteWordlistButton.onclick = function () {
 		var wordlistName = sgc3_settings.wordList;
 		var canBeDeleted = wordlistExist (sgc3_settings.personalWordlists, wordlistName);
-		var confirmText = config_tables[sgc3_settings.language].DeleteWordlistConfirm[0];
+		var confirmText = config_tables[sgc3_settings.language].DeleteWordlistConfirm[1];
 		canBeDeleted = confirm(confirmText);
 		if (canBeDeleted) {
 			for(var x = sgc3_settings.personalWordlists.length - 1; x >= 0; --x) {
