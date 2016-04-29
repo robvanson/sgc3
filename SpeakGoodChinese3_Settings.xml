@@ -69,7 +69,7 @@ You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 	<div id='headertitle' style='position: center; font-size: 3vmin; '>
-		<h2 style='text-align: center' id="title">
+		<h2 style='text-align: center' id="settingsTitle">
 		SpeakGoodChinese 3 <br />
 		Shuō hǎo Zhōngwén <br />
 		说好中文
