@@ -199,6 +199,7 @@ var config_tables = {
 		OpenWordlist: ["打开单词表", "选择并打开单词表"],
 		DeleteWordlist: ["删除单词表", "删除单词表，需要按下'y'键确认"],
 		DeleteWordlistConfirm: ["确认", "确定要删除吗？"],
+		Credits: ["关于 SGC3", "关于SpeakGoodChinese。"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -217,6 +218,7 @@ var config_tables = {
 		OpenWordlist: ["Open List", "Select and read a single wordlist "],
 		DeleteWordlist: ["Delete List", "Permanently delete the word list. You will be asked to confirm this action."],
 		DeleteWordlistConfirm: ["Are you sure?", "Are you sure you want to proceed?"],
+		Credits: ["About SGC3", "Information about SpeakGoodChinese"],
 		},
 			
 	JA: {
@@ -236,6 +238,7 @@ var config_tables = {
 		OpenWordlist: ["単語表読み込み", "単語表を選択し読み込みます"],
 		DeleteWordlist: ["単語表削除", "単語表を消去します。“y”キーを押して確定して下さい"],
 		DeleteWordlistConfirm: ["削除確認", "本当に削除しますか？"],
+		Credits: ["SGC3 について", "SpeakGoodChineseについての基本情報を表示します。"],
 		},
 		
 	DE: {
@@ -255,6 +258,7 @@ var config_tables = {
 		OpenWordlist: ["Öfne Liste", "Wähle und öfne eine einzige Wortliste"],
 		DeleteWordlist: ["Lössche Liste", "Lössche die Wortliste. Sie werden gefragd das Lösschen zu bestätigen."],
 		DeleteWordlistConfirm: ["Sicher?", "Sind Sie sicher?"],
+		Credits: ["über SGC3", "Informationen zur SpeakGoodChinese 2"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -273,6 +277,7 @@ var config_tables = {
 		OpenWordlist: ["Open Lijst", "Selecteer en lees een enkele woordlijst"],
 		DeleteWordlist: ["Verwijder Lijst", "Verwijder de getoonde woordlijst permanent. U wordt gevraagd deze actie te bevestigen."],
 		DeleteWordlistConfirm: ["Heel zeker?", "Bent u zeker dat u door wilt gaan?"],
+		Credits: ["Over SGC3", "Informatie over SpeakGoodChinese"],
 		}
 };
 
