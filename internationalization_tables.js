@@ -633,7 +633,7 @@ var toneFeedback_tables = {
 		t40: "De neutrale toon gaat ongeveer verder waar de vorige toon stopt",
 	},
 };
-console.log(toneFeedback_tables.DE.t11);
+
 /*
  * GENERAL FUNCTIONS 
  * 
