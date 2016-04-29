@@ -18,6 +18,11 @@ while(my $line = shift(@appcache)) {
 		
 		$line =~ s!(<div id\=["']VERSION['"] style=["']([^"']+)["']\s*>)[^<]*(</div>)!\1V: $commit $date\3!gs;
 	};
+	if($line =~ /Copyrights © 2007-/) {
+		my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime();
+		$year += 1900;
+		$line =~ s/(Copyrights © 2007-)\d+/\1$year/g;
+	};
 	print APPCACHE $line unless($line =~ /\# (commit|Author\:|Date\:  ) /);
 	if($line =~ /\# Version 1/) {print APPCACHE $header;};
 };
