@@ -80,8 +80,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<p><audio id='ExampleAudio' controls="false" hidden="true" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
-	<div style="color: black; position: fixed; top: 65%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
+	<div style="color: black; position: fixed; top: 60%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span></div>
+	<div style="color: green; position: fixed; top: 68%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
+	<div style="color: green; position: fixed; top: 73%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
 	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 3vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 4px; "></canvas>
@@ -365,6 +367,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			document.getElementById('Translation').style.fontSize = "5vmin";
 		};
 		
+		document.getElementById("ResultString").textContent = "";
+		document.getElementById("ResultString").style.color = "green";
+		document.getElementById("FeedbackString").textContent = "";
+		document.getElementById("FeedbackString").style.color = "green";
+			
 		// Plot tones and set recording time (Watch out for text appending: "3" + 0 can become "30")
 		currentRecordingTime = Number(sgc3_settings.recSecs) + Number(1.0*Math.ceil((numSyllables(currentPinyin) - 2)/2));
 		

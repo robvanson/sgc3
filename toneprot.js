@@ -654,6 +654,7 @@ function draw_tone (id, color, typedArray, sampleRate, duration) {
 	var pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
 	plot_pitchTier (id, color, 4, topLine, pitchTier);
 	
+	return pitchTier;
 }
 
 // Pitch trackers 
@@ -723,11 +724,46 @@ console.log("x: " + t + ", value: " + pitchValue);
 	return pitchTier;
 }
 
+var recognition = {
+		Recognition: "",
+		Feedback: "",
+		Label: "Correct",
+	};
 function processRecordedSound () {
 	display_recording_level ("RecordingLight", recordedArray);
 	
 	initializeDrawingParam ("TonePlot");
 	draw_example_pinyin ("TonePlot", currentPinyin);
-	draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate, recordedDuration)
+	var pitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate, recordedDuration)
+	recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
+
+	// Write results
+	document.getElementById("ResultString").textContent = recognition.Recognition;
+	document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+	document.getElementById("FeedbackString").textContent = recognition.Feedback;
+	document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
 };
 
+// Tone recogition
+
+function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
+	var recognitionText = numbersToTonemarks(pinyin)+": ";
+	var feedbackText = "";
+	var labelText = "";
+	
+	recognitionText += numbersToTonemarks(pinyin);
+	if (labelText == "Wrong") recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
+	var toneLabel = pinyin.replace(/[^\d]/g, "");
+	toneLabel = toneLabel.replace(/^(\d\d).*$/, "$1");
+	feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+	
+	labelText = "Wrong";
+	
+	var result = {
+		Recognition: recognitionText,
+		Feedback: feedbackText,
+		Label: labelText,
+	};
+	
+	return result;
+};
