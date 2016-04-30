@@ -195,7 +195,10 @@ function processWordlist (file, allText, delimiter) {
 	localStorage.currentWord = JSON.stringify(0);
 	if (document.getElementById('CurrentWordlist')) {
 		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
-		document.getElementById('CurrentWordlist').style.color = (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) ? "blue" : "gray";
+		var isDeletable = wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList);
+		document.getElementById('CurrentWordlist').style.color = isDeletable ? "blue" : "gray";
+		document.getElementById('DeleteWordlistButton').style.color = isDeletable ? "black" : "gray";
+		document.getElementById('DeleteWordlistButton').disabled = !isDeletable;
 	};
 };
 

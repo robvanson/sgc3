@@ -340,6 +340,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		// Store current settings
 		store_SGC3_settings ()
 		
+		// Get wordlist
+		get_wordlist (sgc3_settings.wordList);
+
 		// Get texts
 		var pinyinText = "-";
 		var characterText = "-";

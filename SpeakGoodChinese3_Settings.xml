@@ -50,7 +50,7 @@ button {
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="wordlists_plus.js" ></script>   
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow');" >
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -95,19 +95,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		</select>
 	</div>
 	
-	<div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 54%; left: 45%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" title="">
+	<div title=""><div style="background-color: rgb(220,220,220); position: fixed; color: black; bottom: 54%; left: 45%; height: 8%; width: 17%; font-size: 3vmin; text-align: center; " id="LocalRecordingTime" title="">
 		<span id="RecordingTimeCaption" style="vertical-align: middle; " >---</span><br />
 		<select id="RecordingTime"  style="font-size: 2vmin; vertical-align: middle; background-color: rgb(220,220,220);" onchange="sgc3_settings.recSecs = getRecordingTime(); store_SGC3_settings (); ">
 			<option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="10">10</option>
 		</select>
 		<span id="RecordingTimePost" style="vertical-align: middle; " >---</span> 
-	</div>
+	</div></div>
 	
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button></div>
 	
-	<div title=""><button type="button" style="color: black; bottom: 62%; left: 85%; height: 14%; width: 10%" id="CreditsButton" onclick="window.open('SpeakGoodChinese3_Credits.xml', '_blank');" ><span id="Credits" >---</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 62%; left: 85%; height: 14%; width: 10%" id="CreditsButton" onclick="creditsWindow = window.open('SpeakGoodChinese3_Credits.xml', '_blank');" ><span id="Credits" >---</span></button></div>
 
-	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='openWordlist (this.files);' title="OpenWord" />
+	<input type="file" id="HiddenOpenWordlist" name="OpenWordlist" style="display:none" onchange='openWordlist (this.files); this.value="";' title="OpenWord" />
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 5%; height: 8%;" id="LocalOpenWordlist" ><span id="OpenWordlist" >---</span></button></div>
 	<div style="position: fixed; color: gray; bottom: 13%; left: 20%; height: 5%; width: 27%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
@@ -115,6 +115,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <script type="text/javascript">
 	//<![CDATA[
 	var mainWindow = localStorage.mainWindow;
+	var creditsWindow;
 	
 	var localSynthesis = document.getElementById('LocalSynthesis');
 	var localRecordingTime = document.getElementById('RecordingTime');
@@ -216,10 +217,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (var i=0; i < files.length; ++i) {
 			if (files[i].name.match(/\.(tsv|Table|csv)$/i)) {
 				wordlistFile = files[i];
+				readWordlist (wordlistFile);
 			};
-		};
-		if (wordlistFile) {
-			readWordlist (wordlistFile);
 		};
 	};
 	
