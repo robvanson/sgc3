@@ -21,12 +21,15 @@
 var recordedBlob, recordedBlobURL;
 var recordedArray, currentAudioWindow;
 var recordedSampleRate, recordedDuration;
+var recordedPitchTier;
 
 var clearRecording = function () { 
 	recordedBlob = undefined;
 	recordedBlobURL = undefined;
-	recordedArray = currentAudioWindow = undefined;
+	recordedArray = undefined;
+	currentAudioWindow = undefined;
 	recordedSampleRate = recordedDuration = undefined;
+	recordedPitchTier = undefined;
 };
 
 /*

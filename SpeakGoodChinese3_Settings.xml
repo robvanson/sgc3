@@ -238,8 +238,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 			wordlistNumber = (wordlistNumber < wordlists.length) ? wordlistNumber : 0;
 			sgc3_settings.wordList = wordlists[wordlistNumber][0];
+			localStorage.currentWord = JSON.stringify(-1);
 			store_SGC3_settings ();
 			load_SGC3_settings ();
+			// Remove last recording
 		};
 	};
 	

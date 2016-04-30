@@ -266,8 +266,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		// Reset currentWord if the wordlist has changed
 		currentWord = 0;
 		if (localStorage.currentWord) {
-			currentWord = JSON.parse(localStorage.currentWord);			
+			currentWord = JSON.parse(localStorage.currentWord);
 		};
+		if (currentWord < 0){
+			clearRecordedData ();
+			currentWord = 0;
+		};
+		
 		// update display
 		write_CurrentString ();
 	};
@@ -388,9 +393,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		initializeDrawingParam ("TonePlot");
 		draw_example_pinyin ("TonePlot", currentPinyin);
 
-		// Remove last recording
-		clearRecordedData ();
-
+		// Draw current sound
+		processRecordedSound ()
 	};
 	
 	var write_WordlistName = function () {
@@ -471,6 +475,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Previous word 
 	previous.onclick = function() {
+		// Remove last recording
+		clearRecordedData ();
+
 		--currentWord;
  		if( currentWord < 0 ) {
 			currentWord = currentWordlist.length;
@@ -481,6 +488,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Next word 
 	next.onclick = function() {
+		// Remove last recording
+		clearRecordedData ();
+
 		++currentWord;		
 		if(currentWord > currentWordlist.length) {
 			currentWord = 0;
@@ -490,6 +500,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Previous wordlist
 	prevWordlist.onclick = function() {
+		// Remove last recording
+		clearRecordedData ();
+
 		--wordlistNumber;
  		if( wordlistNumber < 0 ) {
 			wordlistNumber = wordlists.length - 1;
@@ -506,6 +519,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Next wordlist
 	nextWordlist.onclick = function() {
+		// Remove last recording
+		clearRecordedData ();
+
 		++wordlistNumber;
  		if( wordlistNumber >= wordlists.length ) {
 			wordlistNumber = 0;
@@ -522,6 +538,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// select wordlist by name
 	selectWordlist.onchange = function() {
+		// Remove last recording
+		clearRecordedData ();
+
 		if(selectWordlist.selectedIndex > 0) {
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);

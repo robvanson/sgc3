@@ -55,12 +55,6 @@ var testDrawing = function (canvasId, color, order) {
 	drawingCtx.stroke();
 };
 	
-// Handle sound after decoding (used in audioProcessing.js)
-function processRecordedSound () {
-	display_recording_level ("RecordingLight", recordedArray);
-	drawSignal ("TonePlot");
-};
-
 // Handle tone examples
 function getTones (pinyin) {
 	var tones = pinyin.replace(/[^\d]+(\d)/g, "$1");
@@ -651,7 +645,7 @@ function draw_tone (id, color, typedArray, sampleRate, duration) {
 	for (var i=0; i < pitch.length; ++ i) {
 		points.push({"x": i*dT, "value": pitch [i] });
 	};
-	var pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+	pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
 	plot_pitchTier (id, color, 4, topLine, pitchTier);
 	
 	return pitchTier;
@@ -729,19 +723,27 @@ var recognition = {
 		Feedback: "",
 		Label: "Correct",
 	};
-function processRecordedSound () {
-	display_recording_level ("RecordingLight", recordedArray);
 	
-	initializeDrawingParam ("TonePlot");
-	draw_example_pinyin ("TonePlot", currentPinyin);
-	var pitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate, recordedDuration)
-	recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
-
-	// Write results
-	document.getElementById("ResultString").textContent = recognition.Recognition;
-	document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
-	document.getElementById("FeedbackString").textContent = recognition.Feedback;
-	document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+// Handle sound after decoding (used in audioProcessing.js)
+function processRecordedSound () {
+	if(recordedArray) {
+		display_recording_level ("RecordingLight", recordedArray);
+		
+		initializeDrawingParam ("TonePlot");
+		draw_example_pinyin ("TonePlot", currentPinyin);
+		if (recordedPitchTier) {
+			plot_pitchTier ("TonePlot", "red", 4, getRegister(), recordedPitchTier);
+		} else {
+			recordedPitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate, recordedDuration)
+		};
+		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
+	
+		// Write results
+		document.getElementById("ResultString").textContent = recognition.Recognition;
+		document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+		document.getElementById("FeedbackString").textContent = recognition.Feedback;
+		document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+	};
 };
 
 // Tone recogition
