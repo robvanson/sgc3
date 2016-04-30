@@ -599,6 +599,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// onClick Start
 		record.onclick = function() {
+			clearRecordedData ();
 			recordRTC.startRecording();
 		    play.disabled = true;
 		    record.disabled = true;
