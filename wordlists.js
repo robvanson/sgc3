@@ -200,6 +200,9 @@ function processWordlist (file, allText, delimiter) {
 		document.getElementById('DeleteWordlistButton').style.color = isDeletable ? "black" : "gray";
 		document.getElementById('DeleteWordlistButton').disabled = !isDeletable;
 	};
+	wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+	get_wordlist (sgc3_settings.wordList);
+	if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 };
 
 function readWordlist (file) {
