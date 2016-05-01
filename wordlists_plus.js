@@ -28,3 +28,29 @@ var wordlists_plus = [
 	
 
 global_wordlists = wordlists_plus.concat(global_wordlists);
+
+
+// Read all wordlists stored in the wordlists subdirectory
+var rawFile = new XMLHttpRequest();
+var url = window.location.href;
+url = url.replace(/[^\/]+$/, "wordlists/");
+rawFile.open("GET", url, true);
+rawFile.onreadystatechange = function ()
+{
+	if(rawFile.readyState === 4)
+	{
+		if(rawFile.status === 200 || rawFile.status == 0)
+		{
+			var allText = rawFile.responseText;
+			var wordlistFiles = allText.match(/wordlists\/[^\"\']+/g);
+			for (var u = 0; u < wordlistFiles.length; ++u) {
+				var url = wordlistFiles [u];
+				console.log(url);
+				if (url.match(/\.(Table|tsv|csv)$/)) {
+					readWordlist (url); 
+				};
+			};
+		}
+	}
+}
+rawFile.send(null);

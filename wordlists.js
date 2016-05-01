@@ -151,9 +151,18 @@ function numbersToTonemarks (pinyin) {
 	return intermediatePinyin;
 };
 
+// file can be a local file or an url
 function processWordlist (file, allText, delimiter) {
 	var rows = processCSV (file, allText, delimiter);
-	var wordlistName = file.name.replace(/\.[^\.]*$/g, "");
+	var url = "";
+	var wordlistName;
+	if (file.name) {
+		wordlistName = file.name.replace(/\.[^\.]*$/g, "");
+	} else {
+		var matchRes = file.match(/[^\/\.]+\.(Table|tsv|csv)/g);
+		wordlistName = matchRes[0].replace(/\.[^\.]+/g, "");
+		url = file.replace(/[^\/]+$/g, "");
+	};
 	wordlistName = wordlistName.replace(/_/g, " ");
 	var newWordlist = [wordlistName];
 	var wordlistEntries = [];
@@ -172,7 +181,7 @@ function processWordlist (file, allText, delimiter) {
 				value = currentRow[columnNums[nameList[c]]];
 				// Prepend the URL path to sounds
 				if (nameList[c] == "Sound" && value.match(/\w/) && ! value.match(/(blob:|:\/\/)/)) {
-					value = value;
+					value = url+value;
 				};
 			};
 			newEntry.push(value)
@@ -207,10 +216,14 @@ function processWordlist (file, allText, delimiter) {
 
 function readWordlist (file) {
 	var delimiter = csvDelimiter;
-	if (file.name.match(/\.(tsv|Table)\s*$/i)) {
-		delimiter = "\t";
+	if(file) {
+		if (file.name && file.name.match(/\.(tsv|Table)\s*$/i)) {
+			delimiter = "\t";
+		} else if(file.match(/\.(tsv|Table)\s*$/i)) {
+				delimiter = "\t";
+		};
+		readDelimitedTextFile(file, processWordlist, delimiter);
 	};
-	readDelimitedTextFile(file, processWordlist, delimiter);
 };
 
 // Example use
