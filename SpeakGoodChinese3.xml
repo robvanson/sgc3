@@ -225,6 +225,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Global settings
 	// This setting is NOT stored
 	localStorage.currentWord = JSON.stringify(0);
+	sessionStorage.lastPinyin = "";
+	
 	// These settings are stored
 	var sgc3_settings = {
 		settingsRead: false,
@@ -365,6 +367,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
 		};
+		// This cannot be the recorded Pinyin, therefor, clear all recorded data
+		if (currentPinyin == "" || currentPinyin != sessionStorage.lastPinyin) clearRecordedData ();
+		sessionStorage.lastPinyin = currentPinyin;
+		
 		document.getElementById('Pinyin').textContent = pinyinText;
 		document.getElementById('Character').textContent = characterText;
 		document.getElementById('Translation').textContent = translationText;
@@ -475,9 +481,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Previous word 
 	previous.onclick = function() {
-		// Remove last recording
-		clearRecordedData ();
-
 		--currentWord;
  		if( currentWord < 0 ) {
 			currentWord = currentWordlist.length;
@@ -488,9 +491,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Next word 
 	next.onclick = function() {
-		// Remove last recording
-		clearRecordedData ();
-
 		++currentWord;		
 		if(currentWord > currentWordlist.length) {
 			currentWord = 0;
@@ -500,9 +500,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Previous wordlist
 	prevWordlist.onclick = function() {
-		// Remove last recording
-		clearRecordedData ();
-
 		--wordlistNumber;
  		if( wordlistNumber < 0 ) {
 			wordlistNumber = wordlists.length - 1;
@@ -519,9 +516,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Next wordlist
 	nextWordlist.onclick = function() {
-		// Remove last recording
-		clearRecordedData ();
-
 		++wordlistNumber;
  		if( wordlistNumber >= wordlists.length ) {
 			wordlistNumber = 0;
@@ -538,9 +532,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// select wordlist by name
 	selectWordlist.onchange = function() {
-		// Remove last recording
-		clearRecordedData ();
-
 		if(selectWordlist.selectedIndex > 0) {
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);

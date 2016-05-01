@@ -128,7 +128,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	    document.getElementById('HiddenOpenWordlist').click();
 	};
 	var deleteWordlistButton = document.getElementById('DeleteWordlistButton');
-	var currentWordlist = document.getElementById('CurrentWordlist');
+	var currentWordlistName = document.getElementById('CurrentWordlist');
 	
 	// Global settings
 	var sgc3_settings = {
@@ -171,12 +171,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		localStrict.value = sgc3_settings.strict;
 		sgc3_settings.settingsRead = true;
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
-		currentWordlist.textContent = sgc3_settings.wordList;
-		currentWordlist.style.color = "gray";
+		currentWordlistName.textContent = sgc3_settings.wordList;
+console.log(currentWordlistName);
+		currentWordlistName.style.color = "gray";
 		deleteWordlistButton.style.color = "gray";
 		deleteWordlistButton.disabled = true;
 		if (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) {
-			currentWordlist.style.color = "blue";
+			currentWordlistName.style.color = "blue";
 			deleteWordlistButton.style.color = "black";
 			deleteWordlistButton.disabled = false;
 		};
@@ -238,7 +239,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 			wordlistNumber = (wordlistNumber < wordlists.length) ? wordlistNumber : 0;
 			sgc3_settings.wordList = wordlists[wordlistNumber][0];
-			localStorage.currentWord = JSON.stringify(-1);
+			localStorage.currentWord = JSON.stringify(0);
 			store_SGC3_settings ();
 			load_SGC3_settings ();
 			// Remove last recording

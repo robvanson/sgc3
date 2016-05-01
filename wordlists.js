@@ -192,7 +192,7 @@ function processWordlist (file, allText, delimiter) {
 	localStorage.wordList = JSON.stringify(sgc3_settings.wordList);
 	// Set new current
 	sgc3_settings.wordList = newWordlist[0];
-	localStorage.currentWord = JSON.stringify(-1);
+	localStorage.currentWord = JSON.stringify(0);
 	if (document.getElementById('CurrentWordlist')) {
 		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
 		var isDeletable = wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList);
