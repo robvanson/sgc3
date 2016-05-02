@@ -126,6 +126,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var localStrict = document.getElementById('Strict');
 
 	var shuffleListsButton = document.getElementById('ShuffleListsButton');
+	var displayNumbersButton = document.getElementById('DisplayNumbersButton');
+	var displayPinyinButton = document.getElementById('DisplayPinyinButton');
+	var displayCharButton = document.getElementById('DisplayCharButton');
+	var displayTransButton = document.getElementById('DisplayTransButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
 	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
 	openWordlistButton.onclick = function () {
@@ -180,7 +184,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsRead = true;
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		currentWordlistName.textContent = sgc3_settings.wordList;
-console.log(currentWordlistName);
 		currentWordlistName.style.color = "gray";
 		deleteWordlistButton.style.color = "gray";
 		deleteWordlistButton.disabled = true;
@@ -201,8 +204,7 @@ console.log(currentWordlistName);
 	};
 	set_configLanguage (sgc3_settings.language);
 
-	// Wordlists
-	shuffleListsButton	
+	// Wordlists	
 	if (sgc3_settings.shuffleLists) {
 		shuffleListsButton.style.color = "red";
 		shuffleListsButton.background = "rgb(256,245,245)";
@@ -217,6 +219,78 @@ console.log(currentWordlistName);
 			sgc3_settings.shuffleLists = false;
 			shuffleListsButton.style.color = "black";
 			shuffleListsButton.background = "rgb(220,220,220)";
+		};
+		store_SGC3_settings ();
+	};
+
+	if (sgc3_settings.displayNumbers) {
+		displayNumbersButton.style.color = "red";
+		displayNumbersButton.background = "rgb(256,245,245)";
+	};
+	
+	displayNumbersButton.onclick = function () {
+		if (! sgc3_settings.displayNumbers) {
+			sgc3_settings.displayNumbers = true;
+			displayNumbersButton.style.color = "red";
+			displayNumbersButton.background = "rgb(232,210,210)";
+		} else {
+			sgc3_settings.displayNumbers = false;
+			displayNumbersButton.style.color = "black";
+			displayNumbersButton.background = "rgb(220,220,220)";
+		};
+		store_SGC3_settings ();
+	};
+
+	if (sgc3_settings.displayPinyin) {
+		displayPinyinButton.style.color = "red";
+		displayPinyinButton.background = "rgb(256,245,245)";
+	};
+	
+	displayPinyinButton.onclick = function () {
+		if (! sgc3_settings.displayPinyin) {
+			sgc3_settings.displayPinyin = true;
+			displayPinyinButton.style.color = "red";
+			displayPinyinButton.background = "rgb(232,210,210)";
+		} else {
+			sgc3_settings.displayPinyin = false;
+			displayPinyinButton.style.color = "black";
+			displayPinyinButton.background = "rgb(220,220,220)";
+		};
+		store_SGC3_settings ();
+	};
+
+	if (sgc3_settings.displayChar) {
+		displayCharButton.style.color = "red";
+		displayCharButton.background = "rgb(256,245,245)";
+	};
+	
+	displayCharButton.onclick = function () {
+		if (! sgc3_settings.displayChar) {
+			sgc3_settings.displayChar = true;
+			displayCharButton.style.color = "red";
+			displayCharButton.background = "rgb(232,210,210)";
+		} else {
+			sgc3_settings.displayChar = false;
+			displayCharButton.style.color = "black";
+			displayCharButton.background = "rgb(220,220,220)";
+		};
+		store_SGC3_settings ();
+	};
+
+	if (sgc3_settings.displayTrans) {
+		displayTransButton.style.color = "red";
+		displayTransButton.background = "rgb(256,245,245)";
+	};
+	
+	displayTransButton.onclick = function () {
+		if (! sgc3_settings.displayTrans) {
+			sgc3_settings.displayTrans = true;
+			displayTransButton.style.color = "red";
+			displayTransButton.background = "rgb(232,210,210)";
+		} else {
+			sgc3_settings.displayTrans = false;
+			displayTransButton.style.color = "black";
+			displayTransButton.background = "rgb(220,220,220)";
 		};
 		store_SGC3_settings ();
 	};

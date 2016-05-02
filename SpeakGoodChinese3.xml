@@ -80,10 +80,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<p><audio id='ExampleAudio' controls="false" hidden="true" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
+	<div id="DisplayText" title="" >
 	<div style="color: black; position: fixed; top: 60%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span></div>
 	<div style="color: green; position: fixed; top: 68%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
 	<div style="color: green; position: fixed; top: 73%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
+	</div>
+	
 	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 3vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 4px; "></canvas>
@@ -127,6 +130,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var selectWordlist = document.getElementById('SelectWordList');
 	var exampleElement = document.getElementById('ExampleAudio');
 	var settingsButton = document.getElementById('Settings');
+	var displayText = document.getElementById('DisplayText');
 	var stopRecording, playSound;
 	var exampleURL = "-";
 	var voiceZH_CN = -1;
@@ -374,20 +378,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		// This cannot be the recorded Pinyin, therefor, clear all recorded data
 		if (currentPinyin == "" || currentPinyin != sessionStorage.lastPinyin) clearRecordedData ();
 		sessionStorage.lastPinyin = currentPinyin;
-		
-		if (sgc3_settings.displayNumbers) {
-			document.getElementById('Pinyin').textContent = currentPinyin;
-			document.getElementById('Pinyin').style.display = "true";
-		} else {
-			document.getElementById('Pinyin').textContent =  pinyinText;
-			document.getElementById('Pinyin').style.display = sgc3_settings.displayPinyin ? "true" : "none";
-		};
+
+		document.getElementById('Pinyin').textContent = sgc3_settings.displayNumbers ? currentPinyin : pinyinText;
+		document.getElementById('Pinyin').style.display = sgc3_settings.displayPinyin ? "inline" : "none";
 		
 		document.getElementById('Character').textContent = characterText;
-		document.getElementById('Character').style.display = sgc3_settings.displayPinyin ? "true" : "none";
+		document.getElementById('Character').style.display = sgc3_settings.displayChar ? "inline" : "none";
 		
 		document.getElementById('Translation').textContent = translationText;
-		document.getElementById('Translation').style.display = sgc3_settings.displayTrans ? "true" : "none";
+		document.getElementById('Translation').style.display = sgc3_settings.displayTrans ? "inline" : "none";
 		
 		document.getElementById('Translation').style.fontSize = "6vmin";
 		if (document.getElementById('Translation').textContent.length > 50) {
@@ -443,6 +442,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var mediaConstraints = { audio: true, video: false };
 	var errorCallback = function(err){console.log("Error: " + err.name);};
 	
+	// Reveal hiddne display text
+	displayText.onclick = function () {
+		document.getElementById('Pinyin').style.display = "inline";
+		document.getElementById('Character').style.display = "inline";
+		document.getElementById('Translation').style.display = "inline";
+	};
+
 	// Settings button
 	settingsButton.onclick = function () {
 		if (localStorage.settingsWindow && settingsWindow) {
