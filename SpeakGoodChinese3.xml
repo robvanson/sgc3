@@ -168,8 +168,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	tonePlotArea.addEventListener("touchstart", mouseDown, false);
 	tonePlotArea.addEventListener("touchend", mouseUp, false);
 	// Parameters
-	var verticalThreshold = tonePlotArea.height / 20;
-	var horizontalThreshold = tonePlotArea.width / 20;
+	var verticalThreshold = tonePlotArea.height / 30;
+	var horizontalThreshold = tonePlotArea.width / 30;
 	var mouseDownCoordinates = {x: -1, y: -1};
 	var mouseUpCoordinates = {x: -1, y: -1};
 	// Mouse down or touch start
@@ -379,14 +379,17 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		if (currentPinyin == "" || currentPinyin != sessionStorage.lastPinyin) clearRecordedData ();
 		sessionStorage.lastPinyin = currentPinyin;
 
-		document.getElementById('Pinyin').textContent = sgc3_settings.displayNumbers ? currentPinyin : pinyinText;
 		document.getElementById('Pinyin').style.display = sgc3_settings.displayPinyin ? "inline" : "none";
+		document.getElementById('Pinyin').style.color = "black";
+		document.getElementById('Pinyin').textContent = sgc3_settings.displayNumbers ? currentPinyin : pinyinText;
 		
-		document.getElementById('Character').textContent = characterText;
 		document.getElementById('Character').style.display = sgc3_settings.displayChar ? "inline" : "none";
+		document.getElementById('Character').style.color = "black";
+		document.getElementById('Character').textContent = characterText;
 		
-		document.getElementById('Translation').textContent = translationText;
 		document.getElementById('Translation').style.display = sgc3_settings.displayTrans ? "inline" : "none";
+		document.getElementById('Translation').style.color = "black";
+		document.getElementById('Translation').textContent = translationText;
 		
 		document.getElementById('Translation').style.fontSize = "6vmin";
 		if (document.getElementById('Translation').textContent.length > 50) {
@@ -445,8 +448,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Reveal hiddne display text
 	displayText.onclick = function () {
 		document.getElementById('Pinyin').style.display = "inline";
+		if(!sgc3_settings.displayPinyin) document.getElementById('Pinyin').style.color = "red";
 		document.getElementById('Character').style.display = "inline";
+		if(!sgc3_settings.displayChar) document.getElementById('Character').style.color = "red";
 		document.getElementById('Translation').style.display = "inline";
+		if(!sgc3_settings.displayTrans) document.getElementById('Translation').style.color = "red";
 	};
 
 	// Settings button
