@@ -200,6 +200,10 @@ var config_tables = {
 		DeleteWordlist: ["删除单词表", "删除单词表，需要按下'y'键确认"],
 		DeleteWordlistConfirm: ["确认", "确定要删除吗？"],
 		Credits: ["关于 SGC3", "关于SpeakGoodChinese。"],
+		DisplayNumbers: ["声调编码 u", "选择用数字显示声调，否则用声调符号显示。"],
+		DisplayPinyin: ["拼音 P", "练习发音的过程中显示拼音。"],
+		DisplayChar: ["汉字 C", "如果单词表提供了汉字，则显示汉字。"],
+		DisplayTrans: ["翻译 T", "如果单词表提供了翻译，则显示翻译。"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -219,6 +223,10 @@ var config_tables = {
 		DeleteWordlist: ["Delete List", "Permanently delete the word list. You will be asked to confirm this action."],
 		DeleteWordlistConfirm: ["Are you sure?", "Are you sure you want to proceed?"],
 		Credits: ["About SGC3", "Information about SpeakGoodChinese"],
+		DisplayNumbers: ["Tone Numbers", "Display pinyin with tone numbers (on) or tone symbols (off)"],
+		DisplayPinyin: ["Pinyin", "Display pinyin word while practicing"],
+		DisplayChar: ["Characters", "Display chinese characters if they are available"],
+		DisplayTrans: ["Translation", "Display translation if available"],
 		},
 			
 	JA: {
@@ -239,6 +247,10 @@ var config_tables = {
 		DeleteWordlist: ["単語表削除", "単語表を消去します。“y”キーを押して確定して下さい"],
 		DeleteWordlistConfirm: ["削除確認", "本当に削除しますか？"],
 		Credits: ["SGC3 について", "SpeakGoodChineseについての基本情報を表示します。"],
+		DisplayNumbers: ["声調番号 u", "オンにすると練習画面で声調番号が表示され、オフにすると声調符号が表示されます。"],
+		DisplayPinyin: ["ピンイン P", "練習画面でピンインを表示します。"],
+		DisplayChar: ["漢字 C", "可能ならば練習画面で漢字を表示します。"],
+		DisplayTrans: ["翻訳 T", "可能ならば練習画面で単語の意味を表示します。"],
 		},
 		
 	DE: {
@@ -259,6 +271,10 @@ var config_tables = {
 		DeleteWordlist: ["Lössche Liste", "Lössche die Wortliste. Sie werden gefragd das Lösschen zu bestätigen."],
 		DeleteWordlistConfirm: ["Sicher?", "Sind Sie sicher?"],
 		Credits: ["über SGC3", "Informationen zur SpeakGoodChinese 2"],
+		DisplayNumbers: ["Ton Zahlen", "Wiedergabe Pinyin mit zahlen der Töne (einn) oder symbole (aus)"],
+		DisplayPinyin: ["Pinyin", "Wiedergabe Pinyin wörte während der Übungen"],
+		DisplayChar: ["Schriftzeichen", "Wiedergabe chinesische Schriftzeichen wenn anwesend"],
+		DisplayTrans: ["Übersetzung", "Übersetzung wenn anwesend"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -278,6 +294,10 @@ var config_tables = {
 		DeleteWordlist: ["Verwijder Lijst", "Verwijder de getoonde woordlijst permanent. U wordt gevraagd deze actie te bevestigen."],
 		DeleteWordlistConfirm: ["Heel zeker?", "Bent u zeker dat u door wilt gaan?"],
 		Credits: ["Over SGC3", "Informatie over SpeakGoodChinese"],
+		DisplayNumbers: ["Toon Cijfers", "Laat toon nummers (aan) of toon symbolen (uit) zien"],
+		DisplayPinyin: ["Pinyin", "Laat pinyin zien"],
+		DisplayChar: ["Karakters", "Laat Chinese karakters zien als ze beschikbaar zijn"],
+		DisplayTrans: ["Vertaling", "Geef vertaling al die beschikbaar is"],
 		}
 };
 
@@ -650,7 +670,7 @@ var csvDelimiter = ';';
 function readDelimitedTextFile (file, handleData, delimiter)
 {
 	var url = file.name ? window.URL.createObjectURL(file) : file;
-		
+
 	var rawFile = new XMLHttpRequest();
 	rawFile.open("GET", url, true);
 	rawFile.onreadystatechange = function ()

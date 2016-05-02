@@ -104,6 +104,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	</div></div>
 	
 	<div title=""><button type="button" style="color: black; bottom: 65%; left: 65%; height: 8%" id="ShuffleListsButton" ><span id="ShuffleLists" >Synthesis</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 55%; left: 65%; height: 8%" id="DisplayNumbersButton" ><span id="DisplayNumbers" >---</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 45%; left: 65%; height: 8%" id="DisplayPinyinButton" ><span id="DisplayPinyin" >---</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 35%; left: 65%; height: 8%" id="DisplayCharButton" ><span id="DisplayChar" >---</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 25%; left: 65%; height: 8%" id="DisplayTransButton" ><span id="DisplayTrans" >---</span></button></div>
 	
 	<div title=""><button type="button" style="color: black; bottom: 62%; left: 85%; height: 14%; width: 10%" id="CreditsButton" onclick="creditsWindow = window.open('SpeakGoodChinese3_Credits.xml', '_blank');" ><span id="Credits" >---</span></button></div>
 
@@ -142,7 +146,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		language: "",
 		synthesis_eSpeak: false,
 		strict: 1,
-		personalWordlists: []
+		personalWordlists: [],
+		displayNumbers: false,
+		displayPinyin: true,
+		displayChar: true,
+		displayTrans: true
 	};
 	
 	// Store settings

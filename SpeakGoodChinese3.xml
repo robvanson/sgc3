@@ -239,7 +239,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		language: "",
 		synthesis_eSpeak: false,
 		strict: 1,
-		personalWordlists: []
+		personalWordlists: [],
+		displayNumbers: false,
+		displayPinyin: true,
+		displayChar: true,
+		displayTrans: true
 	};
 	
 	// Store settings
@@ -371,9 +375,20 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		if (currentPinyin == "" || currentPinyin != sessionStorage.lastPinyin) clearRecordedData ();
 		sessionStorage.lastPinyin = currentPinyin;
 		
-		document.getElementById('Pinyin').textContent = pinyinText;
+		if (sgc3_settings.displayNumbers) {
+			document.getElementById('Pinyin').textContent = currentPinyin;
+			document.getElementById('Pinyin').style.display = "true";
+		} else {
+			document.getElementById('Pinyin').textContent =  pinyinText;
+			document.getElementById('Pinyin').style.display = sgc3_settings.displayPinyin ? "true" : "none";
+		};
+		
 		document.getElementById('Character').textContent = characterText;
+		document.getElementById('Character').style.display = sgc3_settings.displayPinyin ? "true" : "none";
+		
 		document.getElementById('Translation').textContent = translationText;
+		document.getElementById('Translation').style.display = sgc3_settings.displayTrans ? "true" : "none";
+		
 		document.getElementById('Translation').style.fontSize = "6vmin";
 		if (document.getElementById('Translation').textContent.length > 50) {
 			document.getElementById('Translation').style.fontSize = "4vmin";

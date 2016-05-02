@@ -29,6 +29,11 @@ var wordlists_plus = [
 
 global_wordlists = wordlists_plus.concat(global_wordlists);
 
+/*
+ * 
+ * Read wordlists from the wordlists/ subdirectory at the origin
+ * 
+ */
 
 // Read all wordlists stored in the wordlists subdirectory
 var rawFile = new XMLHttpRequest();
