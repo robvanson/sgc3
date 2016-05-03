@@ -51,7 +51,6 @@ function readAllRemoteWordlists (url) {
 						var url = wordlistFiles [u];
 						console.log(url);
 						if (url.match(/\.(Table|tsv|csv)$/)) {
-console.log(url);
 							readWordlist (url);
 						} else if (!url.match(/\.[^\.]+$/)) {
 							readAllRemoteWordlists (url);

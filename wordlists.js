@@ -162,6 +162,11 @@ function processWordlist (file, allText, delimiter) {
 		var matchRes = file.match(/[^\/\.]+\.(Table|tsv|csv)/g);
 		wordlistName = matchRes[0].replace(/\.[^\.]+/g, "");
 		url = file.replace(/[^\/]+$/g, "");
+		// Embedded wordlist file
+		if (wordlistName == "wordlist") {
+			wordlistName = url.match(/\/[^\/]+\/$/)[0];
+			wordlistName = wordlistName.replace(/\//g, "");
+		};
 	};
 	wordlistName = wordlistName.replace(/_/g, " ");
 	var newWordlist = [wordlistName];
