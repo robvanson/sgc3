@@ -270,6 +270,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		setRegister (sgc3_settings.register);
 		if (sgc3_settings.settingsRead) hideSelectors();
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+		get_wordlist(sgc3_settings.wordList);
 		add_wordlist_names_to_select ();
 		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
 		
