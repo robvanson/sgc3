@@ -58,8 +58,6 @@ function readAllRemoteWordlists (url) {
 				};
 			}
 		}
-		// After this is finished, update the wordlist selector
-		add_wordlist_names_to_select ();
 	}
 	rawFile.send(null);
 };
