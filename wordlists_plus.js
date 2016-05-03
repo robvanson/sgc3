@@ -40,7 +40,7 @@ global_wordlists = wordlists_plus.concat(global_wordlists);
 function readAllRemoteWordlists (url) {
 	var rawFile = new XMLHttpRequest(); 
 	rawFile.overrideMimeType("text/plain");
-	rawFile.open("GET", url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime(), true);
+	rawFile.open("GET", url, true);
 	rawFile.onreadystatechange = function () {
 		if(rawFile.readyState === 4) {
 			if(rawFile.status === 200 || rawFile.status == 0) {
