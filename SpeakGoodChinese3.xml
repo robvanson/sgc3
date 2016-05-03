@@ -357,6 +357,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// Get wordlist
 		get_wordlist (sgc3_settings.wordList);
+		write_WordlistName();
 
 		// Get texts
 		var pinyinText = "-";
@@ -438,7 +439,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var currentCharacter = currentItem[1];
 	var currentString = currentItem[0] + " " + currentItem[1] + " " + currentItem[2];
 	write_CurrentString ();
-	write_WordlistName();
 		
 	// Other parameters
 	var mediaStream;
