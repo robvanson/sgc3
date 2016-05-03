@@ -38,14 +38,12 @@ global_wordlists = wordlists_plus.concat(global_wordlists);
 // Read all wordlists stored in the wordlists subdirectory
 
 function readAllRemoteWordlists (url) {
-	var rawFile = new XMLHttpRequest();
-	rawFile.open("GET", url, true);
-	rawFile.onreadystatechange = function ()
-	{
-		if(rawFile.readyState === 4)
-		{
-			if(rawFile.status === 200 || rawFile.status == 0)
-			{
+	var rawFile = new XMLHttpRequest(); 
+	rawFile.overrideMimeType("text/plain");
+	rawFile.open("GET", url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime(), true);
+	rawFile.onreadystatechange = function () {
+		if(rawFile.readyState === 4) {
+			if(rawFile.status === 200 || rawFile.status == 0) {
 				var allText = rawFile.responseText;
 				var wordlistFiles = allText.match(/wordlists\/[^\"\']+/g);
 				if (wordlistFiles) {
@@ -53,9 +51,9 @@ function readAllRemoteWordlists (url) {
 						var url = wordlistFiles [u];
 						console.log(url);
 						if (url.match(/\.(Table|tsv|csv)$/)) {
-							readWordlist (url);
-						} else if (url.match(/\.[^\.]+$/)) {
 console.log(url);
+							readWordlist (url);
+						} else if (!url.match(/\.[^\.]+$/)) {
 							readAllRemoteWordlists (url);
 						};
 					};
