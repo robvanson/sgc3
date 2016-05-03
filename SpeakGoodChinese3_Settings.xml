@@ -183,6 +183,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		localStrict.value = sgc3_settings.strict;
 		sgc3_settings.settingsRead = true;
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+		get_wordlist (sgc3_settings.wordList);
 		currentWordlistName.textContent = sgc3_settings.wordList;
 		currentWordlistName.style.color = "gray";
 		deleteWordlistButton.style.color = "gray";

@@ -354,6 +354,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	function write_CurrentString () {
 		// Store current settings
 		store_SGC3_settings ()
+		load_SGC3_settings ()
 		
 		// Get wordlist
 		get_wordlist (sgc3_settings.wordList);
