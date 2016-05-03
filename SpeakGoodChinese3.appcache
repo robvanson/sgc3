@@ -31,4 +31,4 @@ images/ sgc.png
 
 NETWORK:
 # This will prevent other network resources from being accessed.
-sgc.png
+*
