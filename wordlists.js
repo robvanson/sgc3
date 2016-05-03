@@ -217,6 +217,8 @@ function processWordlist (file, allText, delimiter) {
 	wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 	get_wordlist (sgc3_settings.wordList);
 	if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
+	// Reset screens
+	load_SGC3_settings ();
 };
 
 function readWordlist (file) {

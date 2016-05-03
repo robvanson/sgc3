@@ -58,7 +58,6 @@ function readAllRemoteWordlists (url) {
 				};
 			}
 		}
-		load_SGC3_settings ();
 	}
 	rawFile.send(null);
 };
