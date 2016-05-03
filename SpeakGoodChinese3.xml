@@ -537,7 +537,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
-		write_WordlistName();
 		write_CurrentString();
 		store_SGC3_settings ();
 	};
@@ -553,7 +552,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 		currentWord = 0;
 		
-		write_WordlistName();
 		write_CurrentString();
 		store_SGC3_settings ();
 	};
@@ -566,7 +564,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentWord = 0;
 			
-			write_WordlistName();
 			write_CurrentString();
 			store_SGC3_settings ();
 		};
