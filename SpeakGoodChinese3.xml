@@ -421,7 +421,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		processRecordedSound ()
 	};
 	
-	var write_WordlistName = function () {
+	function write_WordlistName () {
 		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
 		// Always reset the selection
 		selectWordlist.selectedIndex = 0;	
