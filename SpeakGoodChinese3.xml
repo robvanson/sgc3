@@ -52,6 +52,7 @@ button {
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 <script type="text/javascript" src="audioProcessing.js" ></script>   
 <script type="text/javascript" src="toneprot.js" ></script>   
+<script type="text/javascript" src="RecordRTC.min.js" defer="true" ></script> 
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>
 <script type="text/javascript" src="fft.js/lib/real.js" defer="true" ></script>
 <script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
@@ -570,6 +571,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// When the call to getUserMEdia is susccessfull
 	var successCallback = function(mediaStream){
+		
 		if(!mediaStream){ 
 			console.log("No media stream: " + mediaStream);
 		}
@@ -577,19 +579,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	    record.disabled = false;
 	    record.style.color = "red";
 		
-		var mediaRecorder = new MediaRecorder(mediaStream);
-		mediaRecorder.ondataavailable = function(e) {		
-			recordingLight.style.color = "gray";
-			recordedBlob = e.data;
-			recordedBlobURL = window.URL.createObjectURL(e.data);
-	
-			// Do things with Blob!!!
-			processAudio (recordedBlob);
-		}		
+		var recordRTC = RecordRTC(mediaStream, {
+			recorderType: StereoAudioRecorder // optionally force WebAudio API to record audio
+			
+		}); 
+		recordRTC.mimeType = {audio: 'audio/wav'};
 		
 		clearRecordedData = function () {
 			play.disabled = true;
 			play.style.color = "gray";
+			recordRTC.clearRecordedData();
 			clearRecording ();
 		};
 		
@@ -600,9 +599,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// Stop
 		stopRecording = function() {
-			mediaRecorder.requestData()
-			mediaRecorder.stop();
-
+			recordRTC.stopRecording(function(audioURL) { 
+				recordingLight.style.color = "gray";
+				recordedBlobURL = audioURL;
+				recordedBlob = recordRTC.getBlob();
+				// Do things with Blob!!!
+				processAudio (recordedBlob);
+			});
 		    play.disabled = false;
 		    record.disabled = false;
 		    record.style.color = "red";
@@ -613,8 +616,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		// onClick Start
 		record.onclick = function() {
 			clearRecordedData ();
-		    mediaRecorder.start();
-
+			recordRTC.startRecording();
 		    play.disabled = true;
 		    record.disabled = true;
 		    record.style.color = "gray";
