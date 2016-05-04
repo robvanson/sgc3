@@ -200,6 +200,8 @@ function processWordlist (file, allText, delimiter) {
 	newWordlist.push(wordlistEntries);
 	// Add the new wordlist to the current wordlists
 	sgc3_settings.personalWordlists = addNewWordlist(sgc3_settings.personalWordlists, newWordlist);
+	wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+	get_wordlist (sgc3_settings.wordList);
 	// Force new worlists into local storage
 	localStorage.personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
 	if (document.getElementById('CurrentWordlist')) {
@@ -212,10 +214,8 @@ function processWordlist (file, allText, delimiter) {
 		document.getElementById('CurrentWordlist').style.color = isDeletable ? "blue" : "gray";
 		document.getElementById('DeleteWordlistButton').style.color = isDeletable ? "black" : "gray";
 		document.getElementById('DeleteWordlistButton').disabled = !isDeletable;
+		if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 	};
-	wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
-	get_wordlist (sgc3_settings.wordList);
-	if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
 	// Reset screens
 	load_SGC3_settings ();
 };
