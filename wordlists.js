@@ -204,10 +204,10 @@ function processWordlist (file, allText, delimiter) {
 	// Force new worlists into local storage
 	localStorage.personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
 	localStorage.wordList = JSON.stringify(sgc3_settings.wordList);
-	// Set new current
-	sgc3_settings.wordList = newWordlist[0];
 	localStorage.currentWord = JSON.stringify(0);
 	if (document.getElementById('CurrentWordlist')) {
+		// Set new current, but only if it was selected manually
+		sgc3_settings.wordList = newWordlist[0];
 		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
 		var isDeletable = wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList);
 		document.getElementById('CurrentWordlist').style.color = isDeletable ? "blue" : "gray";

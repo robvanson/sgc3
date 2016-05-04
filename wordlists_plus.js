@@ -62,6 +62,3 @@ function readAllRemoteWordlists (url) {
 	rawFile.send(null);
 };
 
-var url = window.location.href;
-url = url.replace(/[^\/]+$/, "wordlists/");
-readAllRemoteWordlists (url);
