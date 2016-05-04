@@ -200,14 +200,13 @@ function processWordlist (file, allText, delimiter) {
 	newWordlist.push(wordlistEntries);
 	// Add the new wordlist to the current wordlists
 	sgc3_settings.personalWordlists = addNewWordlist(sgc3_settings.personalWordlists, newWordlist);
-	sgc3_settings.wordList = newWordlist[0];
 	// Force new worlists into local storage
 	localStorage.personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
-	localStorage.wordList = JSON.stringify(sgc3_settings.wordList);
-	localStorage.currentWord = JSON.stringify(0);
 	if (document.getElementById('CurrentWordlist')) {
 		// Set new current, but only if it was selected manually
 		sgc3_settings.wordList = newWordlist[0];
+		localStorage.wordList = JSON.stringify(sgc3_settings.wordList);
+		localStorage.currentWord = JSON.stringify(0);
 		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
 		var isDeletable = wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList);
 		document.getElementById('CurrentWordlist').style.color = isDeletable ? "blue" : "gray";
