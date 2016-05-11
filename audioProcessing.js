@@ -313,3 +313,26 @@ function calculate_Intensity (sound, sampleRate, fMin, fMax, dT) {
 		
 	return intensity;
 };
+
+/*
+ * 
+ * Use: var perc = get_percentiles (points, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [0.05, 0.50, 0.95]);
+ * 
+ */
+function get_percentiles (points, compare, remove, percentiles) {
+	var sortList = points.slice();
+	var result = [];
+	sortList.sort(compare);
+	var sortListLength = sortList.length
+	for (var i = sortListLength-1; i >= 0; --i) {
+		if (remove(sortList[i])) sortList.splice(i, 1);
+	};
+	for (var i = 0; i < percentiles.length; ++i) {
+		var perc = percentiles[i];
+		if (perc > 1) perc /= 100;
+		var newPercentile = sortList[Math.ceil(perc * sortList.length)];
+		newPercentile["percentile"] = percentiles[i]; 
+		result.push(newPercentile)
+	};
+	return result;
+};
