@@ -753,7 +753,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var feedbackText = "";
 	var labelText = "";
 	
-	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 50, 95]));
+	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 50, 95]);
 	
 	recognitionText += numbersToTonemarks(pinyin);
 	if (labelText == "Wrong") recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
