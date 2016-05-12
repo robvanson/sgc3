@@ -752,9 +752,54 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var recognitionText = numbersToTonemarks(pinyin)+": ";
 	var feedbackText = "";
 	var labelText = "";
+	var topLine = getRegister();
+
+	// Create a model tone pronunciation
+	var tonePitchTier = word2tones (pinyin, topLine);
+
+	// Set up recognition values
+ 	var precision = 3;
+	if (proficiency >= 3) {
+		precision = 1.5
+	};
+	// Stick to the raw recognition results or not
+	var ultraStrict = (proficiency >= 3);
 	
-	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 50, 95]);
+	var spacing = 0.5
+	var precisionFactor = Math.pow(2,(precision/12));
+	var highBoundaryFactor = Math.pow(precisionFactor, asymmetry);
+	var lowBoundaryFactor = 1/precisionFactor
+
+	// Reduction (lower sgc_ToneProt.register and narrow range) means errors
+	// The oposite mostly not. Asymmetry alows more room upward
+	// than downward (asymmetry = 2 => highBoundaryFactor ^ 2)
+	var asymmetry = 2;
 	
+	// Get top  and range of model
+	var tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
+	maximumModelFzero = tonePercentiles[1].value > 0 ? tonePercentiles[1].value : 0;
+	minimumModelFzero = tonePercentiles[0].value > 0 ? tonePercentiles[0].value : 0;
+	var modelPitchRange = 2; // 1 octave
+	if (minimumModelFzero > 0) {
+    	modelPitchRange = maximumModelFzero / minimumModelFzero;
+    } else {
+		modelPitchRange = 0
+	};
+	
+	// Get top  and range of recorded word
+	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
+	maximumRecFzero = pitchPercentiles[1].value > 0 ? pitchPercentiles[1].value : 0;
+	minimumRecFzero = pitchPercentiles[0].value > 0 ? pitchPercentiles[0].value : 0;
+	var recPitchRange = 2; // 1 octave
+	if (minimumRecFzero > 0) {
+    	recPitchRange = maximumRecFzero / minimumRecFzero;
+    } else {
+		recPitchRange = 0
+	};
+	
+//
+
+	// Set up response to result
 	recognitionText += numbersToTonemarks(pinyin);
 	if (labelText == "Wrong") recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
 	var toneLabel = pinyin.replace(/[^\d]/g, "");
