@@ -753,6 +753,14 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var feedbackText = "";
 	var labelText = "";
 	var topLine = getRegister();
+	
+	// Clean up pinyin
+	// Remove spaces
+	pinyin = pinyin.replace(/^\s*(.+)\s*$/g, "$1");
+	// 5 used as neutral tone number
+	pinyin = pinyin.replace(/5/g, "0");
+	// Add missing neutral tones
+	pinyin = add_missing_neutral_tones (pinyin);
 
 	// Create a model tone pronunciation
 	var tonePitchTier = word2tones (pinyin, topLine);
@@ -797,7 +805,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		recPitchRange = 0
 	};
 	
-//
+	//
 
 	// Set up response to result
 	recognitionText += numbersToTonemarks(pinyin);
@@ -815,4 +823,27 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	};
 	
 	return result;
+};
+
+
+// Not everyone add all the zeros for the neutral tones. Here we try to guess where
+// they would belong.
+function add_missing_neutral_tones (pinyin) {
+	// Missing neutral tones
+	// Missing last tone
+	pinyin = pinyin.replace(/([^0-9])$/g, "$10")
+	// Easy cases V [^n]
+	pinyin = pinyin.replace(/([euioa]+)([^0-9neuioar])/g, "$10$2")
+	// Complex case V r V
+	pinyin = pinyin.replace(/([euioa]+)(r[euioa]+)/g, "$10$2")
+	// Complex case V r C
+	pinyin = pinyin.replace(/([euioa]+r)([^0-9euioa]+)/g, "$10$2")
+	// Vng cases
+	pinyin = pinyin.replace(/([euioa]+ng)([^0-9])/g, "$10$2")
+	// VnC cases C != g
+	pinyin = pinyin.replace(/([euioa]+n)([^0-9geuioa])/g, "$10$2")
+	// VnV cases -> Maximal onset
+	pinyin = pinyin.replace(/([euioa])(n[euioa])/g, "$10$2")
+	
+	return pinyin;
 };

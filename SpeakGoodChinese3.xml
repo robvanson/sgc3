@@ -369,6 +369,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			currentItem = currentWordlist[currentWord];
 			
 			currentPinyin = currentItem[0];
+			currentPinyin = add_missing_neutral_tones (currentPinyin);
+
 			pinyinText = currentItem[1]
 			characterText = currentItem[2];
 			translationText = currentItem[3];
