@@ -783,7 +783,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	// than downward (asymmetry = 2 => highBoundaryFactor ^ 2)
 	var asymmetry = 2;
 	
-	// Get top  and range of model
+	// Get top and range of model
 	var tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
 	maximumModelFzero = tonePercentiles[1].value > 0 ? tonePercentiles[1].value : 0;
 	minimumModelFzero = tonePercentiles[0].value > 0 ? tonePercentiles[0].value : 0;
@@ -794,7 +794,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		modelPitchRange = 0
 	};
 	
-	// Get top  and range of recorded word
+	// Get top and range of recorded word
 	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
 	maximumRecFzero = pitchPercentiles[1].value > 0 ? pitchPercentiles[1].value : 0;
 	minimumRecFzero = pitchPercentiles[0].value > 0 ? pitchPercentiles[0].value : 0;
@@ -802,10 +802,35 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	if (minimumRecFzero > 0) {
     	recPitchRange = maximumRecFzero / minimumRecFzero;
     } else {
-		recPitchRange = 0
+		recPitchRange = 0;
 	};
 	
-	//
+	// Rescale register
+	newRegister = (maximumModelFzero > 0) ? maximumRecFzero / maximumModelFzero * register : register;
+	newToneRange = (modelPitchRange > precision) ? recPitchRange / modelPitchRange : 1;
+
+	// Advanced speakers must not speak too High, or too "Dramatic"
+	// Beginning speakers also not too Low or too Narrow ranges
+	var registerUsed = "OK";
+	var rangeUsed = "OK";
+	if (newRegister > highBoundaryFactor * register) {
+	   newRegister = highBoundaryFactor * register;
+	   registerUsed = "High"
+	} else if ( proficiency < 3 && newRegister < lowBoundaryFactor * register) {
+	   newRegister = lowBoundaryFactor * register;
+	   registerUsed = "Low"
+	};
+	
+	if (newToneRange > highBoundaryFactor) {
+	   newToneRange = highBoundaryFactor
+	   rangeUsed = "Wide"
+	} else if (proficiency < 3 && newToneRange < lowBoundaryFactor) {
+		//Don't do this for advanced speakers
+		newToneRange = lowBoundaryFactor;
+		rangeUsed = "Narrow";
+	};
+	
+	// 
 
 	// Set up response to result
 	recognitionText += numbersToTonemarks(pinyin);
@@ -818,7 +843,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	
 	var result = {
 		Recognition: recognitionText,
-		Feedback: feedbackText,
+		Feedback: feedbackText + " " + registerUsed + " " + rangeUsed,
 		Label: labelText,
 	};
 	
