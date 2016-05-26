@@ -708,7 +708,6 @@ function testPitchTracker (duration, sampleRate) {
 	
 		var pitchValue = pitch.findTone();
 
-console.log("x: " + t + ", value: " + pitchValue);
 		points.push({"x": t, "value": (pitchValue ? pitchValue.freq : 0)});
 
 		t += dT;
@@ -820,8 +819,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	   newRegister = lowBoundaryFactor * register;
 	   registerUsed = "Low"
 	};
-console.log(highBoundaryFactor)	
-console.log(newToneRange)	
+
 	if (newToneRange > highBoundaryFactor) {
 	   newToneRange = highBoundaryFactor
 	   rangeUsed = "Wide"
