@@ -772,16 +772,16 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	};
 	// Stick to the raw recognition results or not
 	var ultraStrict = (proficiency >= 3);
-	
-	var spacing = 0.5
-	var precisionFactor = Math.pow(2,(precision/12));
-	var highBoundaryFactor = Math.pow(precisionFactor, asymmetry);
-	var lowBoundaryFactor = 1/precisionFactor
 
 	// Reduction (lower sgc_ToneProt.register and narrow range) means errors
 	// The oposite mostly not. Asymmetry alows more room upward
 	// than downward (asymmetry = 2 => highBoundaryFactor ^ 2)
 	var asymmetry = 2;
+	
+	var spacing = 0.5
+	var precisionFactor = Math.pow(2,(precision/12));
+	var highBoundaryFactor = Math.pow(precisionFactor, asymmetry);
+	var lowBoundaryFactor = 1/precisionFactor
 	
 	// Get top and range of model
 	var tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
@@ -805,9 +805,9 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		recPitchRange = 0;
 	};
 	
-	// Rescale register
+	// Rescale register (ignore model tone ranges <= 3 semitones)
 	newRegister = (maximumModelFzero > 0) ? maximumRecFzero / maximumModelFzero * register : register;
-	newToneRange = (modelPitchRange > precision) ? recPitchRange / modelPitchRange : 1;
+	newToneRange = (modelPitchRange > 1/toneRules_threeSemit) ? recPitchRange / modelPitchRange : 1;
 
 	// Advanced speakers must not speak too High, or too "Dramatic"
 	// Beginning speakers also not too Low or too Narrow ranges
@@ -820,7 +820,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	   newRegister = lowBoundaryFactor * register;
 	   registerUsed = "Low"
 	};
-	
+console.log(highBoundaryFactor)	
+console.log(newToneRange)	
 	if (newToneRange > highBoundaryFactor) {
 	   newToneRange = highBoundaryFactor
 	   rangeUsed = "Wide"
@@ -834,16 +835,25 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 
 	// Set up response to result
 	recognitionText += numbersToTonemarks(pinyin);
-	if (labelText == "Wrong") recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
-	var toneLabel = pinyin.replace(/[^\d]/g, "");
-	toneLabel = toneLabel.replace(/^(\d\d).*$/, "$1");
-	feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+	if (labelText == "Wrong") {
+		recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
+	};
+	if (registerUsed != "OK") {
+		feedbackText += toneFeedback_tables[language][registerUsed];
+	} else if (rangeUsed != "OK") {
+		feedbackText += toneFeedback_tables[language][rangeUsed];
+	} else {
+		var toneLabel = pinyin.replace(/[^\d]/g, "");
+		toneLabel = toneLabel.replace(/^(\d\d).*$/, "$1");
+		feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+	};
+
 	
 	labelText = "Wrong";
 	
 	var result = {
 		Recognition: recognitionText,
-		Feedback: feedbackText + " " + registerUsed + " " + rangeUsed,
+		Feedback: feedbackText,
 		Label: labelText,
 	};
 	
