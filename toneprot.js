@@ -777,7 +777,10 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	// than downward (asymmetry = 2 => highBoundaryFactor ^ 2)
 	var asymmetry = 2;
 	
-	var spacing = 0.5
+	var spacing = 0.5;
+	var speedFactor = 1;
+	var speechDuration = pitchTier.xmax;
+	var modelDuration = tonePitchTier.xmax;
 	var precisionFactor = Math.pow(2,(precision/12));
 	var highBoundaryFactor = Math.pow(precisionFactor, asymmetry);
 	var lowBoundaryFactor = 1/precisionFactor
@@ -829,7 +832,24 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		rangeUsed = "Narrow";
 	};
 	
-	// 
+	// Duration 
+	if (modelDuration > spacing) {
+	   speedFactor = (speechDuration - spacing) / (modelDuration - spacing)
+	};
+
+	// Round values
+	newRegister = Math.round(newRegister);
+
+	// Remove all pitch points outside a band around the newRegister
+	var upperCutOff = 1.5*newRegister;
+	var lowerCutOff = newRegister/3;	
+	var items = pitchTier.points.items;
+
+	for (var i=0; i < items.length; ++i) {
+		if(items[i].value > upperCutOff || items[i].value < lowerCutOff) items[i].value = 0;
+	};
+	
+	//
 
 	// Set up response to result
 	recognitionText += numbersToTonemarks(pinyin);
