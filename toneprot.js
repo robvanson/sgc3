@@ -634,18 +634,13 @@ function display_recording_level (id, recordedArray) {
 	recordingLight.style.left = (horMidpoint - ((fontSize/lightSize)*currentWidth)/2) + "%";
 };
 
-function draw_tone (id, color, typedArray, sampleRate, duration) {
+function draw_tone (id, color, typedArray, sampleRate) {
 	var fMin = 75;
 	var fMax = 600;
 	var dT = 0.01;
 	var topLine = getRegister();
 
-	var pitch = calculate_Pitch (typedArray, sampleRate, fMin, fMax, dT);
-	var points = [];
-	for (var i=0; i < pitch.length; ++ i) {
-		points.push({"x": i*dT, "value": pitch [i] });
-	};
-	pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+	pitchTier = toPitchTier (typedArray, sampleRate, fMin, fMax, dT);
 	plot_pitchTier (id, color, 4, topLine, pitchTier);
 	
 	return pitchTier;
@@ -733,7 +728,7 @@ function processRecordedSound () {
 		if (recordedPitchTier) {
 			plot_pitchTier ("TonePlot", "red", 4, getRegister(), recordedPitchTier);
 		} else {
-			recordedPitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate, recordedDuration)
+			recordedPitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate)
 		};
 		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
 	

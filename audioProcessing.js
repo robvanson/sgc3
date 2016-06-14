@@ -269,6 +269,18 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 	return pitchArray;
 };
 
+function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
+	var pitchArray = calculate_Pitch (sound, sampleRate, fMin, fMax, dT);
+	var duration = sampleRate > 0 ? sound.length / sampleRate : 0;
+	var points = [];
+	for (var i=0; i < pitchArray.length; ++ i) {
+		points.push({"x": i*dT, "value": pitchArray [i] });
+	};
+	var pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+
+	return pitchTier;
+}
+
 function getPower (sound, sampleRate, time, window) {
 	var soundLength = sound.length;
 	var duration = sound.length / sampleRate;
