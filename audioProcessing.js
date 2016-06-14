@@ -22,6 +22,7 @@ var recordedBlob, recordedBlobURL;
 var recordedArray, currentAudioWindow;
 var recordedSampleRate, recordedDuration;
 var recordedPitchTier;
+var windowStart = windowEnd = 0;
 
 var clearRecording = function () { 
 	recordedBlob = undefined;
@@ -44,12 +45,12 @@ var audioContext = new AudioContext();
 // Decode the audio blob
 var audioProcessing_decodedArray;
 function processAudio (blob) {
-	var reader = new FileReader();
-	reader.onload = function(){
-		var arrayBuffer = reader.result;
+	var audioReader = new FileReader();
+	audioReader.onload = function(){
+		var arrayBuffer = audioReader.result;
 		audioContext.decodeAudioData(arrayBuffer, decodedDone);
 	};
-	reader.readAsArrayBuffer(blob);
+	audioReader.readAsArrayBuffer(blob);
 };
 
 // You need a function "processRecordedSound ()"
@@ -65,30 +66,36 @@ function decodedDone(decoded) {
 	recordedArray = cut_silent_margins (currentArray, recordedSampleRate);
 	currentAudioWindow = recordedArray;
 	recordedDuration = recordedArray.length / recordedSampleRate;
+	windowStart = 0;
+	windowEnd = recordedDuration;
 
 	// make sure this funciton is defined!!!
 	processRecordedSound ();
 };
 
-function play_soundArray (soundArray, sampleRate) {
-	if (soundArray) {
-		var soundBuffer = audioContext.createBuffer(1, soundArray.length, sampleRate);
-		var buffer = soundBuffer.getChannelData(0);	
-		for (var i = 0; i < soundArray.length; i++) {
-		     buffer[i] = soundArray[i];
-		};
-		
-		// Get an AudioBufferSourceNode.
-		// This is the AudioNode to use when we want to play an AudioBuffer
-		var source = audioContext.createBufferSource();
-		// set the buffer in the AudioBufferSourceNode
-		source.buffer = soundBuffer;
-		// connect the AudioBufferSourceNode to the
-		// destination so we can hear the sound
-		source.connect(audioContext.destination);
-		// start the source playing
-		source.start();
+function play_soundArray (soundArray, sampleRate, start, end) {
+	var startSample = start > 0 ? Math.floor(start * sampleRate) : 0;
+	var endSample = end > 0 ? Math.ceil(end * sampleRate) : soundArray.length;
+	if (startSample > soundArray.length || endSample > soundArray.length) {
+		startSample = 0;
+		endSample = soundArray.length;
 	};
+	var soundBuffer = audioContext.createBuffer(1, endSample - startSample, sampleRate);
+	var buffer = soundBuffer.getChannelData(0);
+	for (var i = 0; i < (endSample - startSample); i++) {
+	     buffer[i] = soundArray[startSample + i];
+	};
+
+	// Get an AudioBufferSourceNode.
+	// This is the AudioNode to use when we want to play an AudioBuffer
+	var source = audioContext.createBufferSource();
+	// set the buffer in the AudioBufferSourceNode
+	source.buffer = soundBuffer;
+	// connect the AudioBufferSourceNode to the
+	// destination so we can hear the sound
+	source.connect(audioContext.destination);
+	// start the source playing
+	source.start();
 };
 
 // Set up window 
@@ -122,23 +129,23 @@ function getWindowRMS (window) {
 // Cut off the silent margins
 // ISSUE: After the first recording, there is a piece at the start missing.
 // This is now cut off
-function cut_silent_margins (recordedArray, sampleRate) {
+function cut_silent_margins (typedArray, sampleRate) {
 	// Find part with sound
 	var silentMargin = 0.1;
 	// Silence thresshold is -20 dB
 	var thressHoldDb = 25;
 	// Stepsize
 	var dT = 0.01;
-	var soundLength = recordedArray.length;
+	var soundLength = typedArray.length;
 
 	// There is sometimes (often) a delay before recording is started
 	var firstNonZero = 0;
-	while (firstNonZero < recordedArray.length &&  (isNaN(recordedArray[firstNonZero]) || recordedArray[firstNonZero] == 0)) {
+	while (firstNonZero < typedArray.length && (isNaN(typedArray[firstNonZero]) || typedArray[firstNonZero] == 0)) {
 		++firstNonZero
 	};
 	
 	// Calculation intensity
-	var currentIntensity = calculate_Intensity (recordedArray, sampleRate, 75, 600, 0.01);
+	var currentIntensity = calculate_Intensity (typedArray, sampleRate, 75, 600, 0.01);
 	var maxInt = Math.max.apply(Math, currentIntensity);
 	var silenceThresshold = maxInt - thressHoldDb;
 
@@ -168,7 +175,8 @@ function cut_silent_margins (recordedArray, sampleRate) {
 	var newLength = Math.ceil(lastSample - firstSample);
 	var soundArray = new Float32Array(newLength);
 	for (var i = 0; i < newLength; ++i) {
-		soundArray [i] = recordedArray[firstSample + i];
+		// Also, get rid of NaN's
+		soundArray [i] = !isNaN(typedArray[firstSample + i]) ? typedArray[firstSample + i] : 0;
 	};
 	return soundArray;
 };
@@ -313,6 +321,19 @@ function calculate_Intensity (sound, sampleRate, fMin, fMax, dT) {
 		
 	return intensity;
 };
+
+
+// load the sound from a URL
+function load_audio(url) {
+	var request = new XMLHttpRequest();
+	request.open('GET', url, true);
+	request.responseType = 'arraybuffer';
+	// When loaded decode the data and store the audio buffer in memory
+	request.onload = function() {
+		processAudio (request.response);
+	}
+	request.send();
+}
 
 /*
  * 
