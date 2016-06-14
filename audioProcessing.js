@@ -228,15 +228,45 @@ function autocorrelation (sound, sampleRate, time, window) {
 	return autocorr;
 };
 
-function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
-	var duration = sound.length / sampleRate;
-	var pitchArray = new Float32Array(Math.floor(duration / dT));
+/*
+ * 
+ * David, hier zijn de pitch routines:
+ * - Autocorrelation peak picking for candidates
+ * - Pitch tracking for selecting the best candidate
+ * 
+ */
+
+// Take a spectrum and return a list with peaks
+function autocorrelationPeakPicker (autocorr, sampleRate, fMin, fMax) {
+	var thressHold = 0.001;
+	var resultArray = [];
+	// Find the pitch candidates
 	var lagMin = (fMax > 0) ? 1/fMax : 1/600;
 	var lagMax = (fMin > 0) ? 1/fMin : 1/60;
-	var thressHold = 0.001;
+	var startLag = Math.floor(lagMin * sampleRate);
+	var endLag = Math.ceil(lagMax * sampleRate);
+	var bestLag = 0;
+	var bestAmp = -100;
+	for (var j = startLag; j <= endLag; ++j) {
+		if (autocorr [j] > thressHold && autocorr [j] > bestAmp) {
+			bestAmp = autocorr [j];
+			bestLag = j;
+		};
+	};
+	var pitch = bestLag ? sampleRate / bestLag : 0;
+	resultArray.push(pitch, 0, 0, 0, 0);
+	
+	return resultArray;
+};
+
+// Return a list of points with {t, candidates} "pairs"
+function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
+	var duration = sound.length / sampleRate;
+	var pitchArray = [];
 	
 	// Set up window and calculate Autocorrelation of window
-	var windowDuration = lagMax * 6;
+	var windowDuration = (fMin > 0) ? 1/fMin : 1/60;
+	windowDuration *= 6;
 	var window = setupGaussWindow (sampleRate, fMin);
 	var windowRMS = getWindowRMS (window);
 
@@ -244,37 +274,28 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 	var windowAutocorr = autocorrelation (window, sampleRate, windowDuration / 2, 0);
 	
 	// Step through the sound
-	var startLag = Math.floor(lagMin * sampleRate);
-	var endLag = Math.ceil(lagMax * sampleRate);
 	for (var t = 0; t < duration; t += dT) {
 		var autocorr = autocorrelation (sound, sampleRate, t, window);
 		for (var i = 0; i < autocorr.length; ++i) {
 			autocorr [i] /= (windowAutocorr [i]) ? (windowAutocorr [i] * windowRMS) : 0;
 		};
 		
-		// Find the "real" pitch
-		var bestLag = 0;
-		var bestAmp = -100;
-		for (var j = startLag; j <= endLag; ++j) {
-			if (autocorr [j] > thressHold && autocorr [j] > bestAmp) {
-				bestAmp = autocorr [j];
-				bestLag = j;
-			};
-		};
-		var pitch = bestLag ? sampleRate / bestLag : 0;
-
-		// Add pitch
-		pitchArray [Math.floor(t / dT)] = pitch;
+		// Find the pitch candidates
+		var pitchCandidates = autocorrelationPeakPicker (autocorr, sampleRate, fMin, fMax);
+		pitchArray.push({x: t, values: pitchCandidates});
 	};
 	return pitchArray;
 };
 
+// Pitch tracking and candidate selection
 function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var pitchArray = calculate_Pitch (sound, sampleRate, fMin, fMax, dT);
 	var duration = sampleRate > 0 ? sound.length / sampleRate : 0;
 	var points = [];
+	
+	// Select the best pitch candidates using tracking etc.
 	for (var i=0; i < pitchArray.length; ++ i) {
-		points.push({"x": i*dT, "value": pitchArray [i] });
+		points.push({"x": pitchArray [i].x, "value": pitchArray [i].values [0] });
 	};
 	var pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
 
