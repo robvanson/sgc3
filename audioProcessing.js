@@ -230,7 +230,7 @@ function autocorrelation (sound, sampleRate, time, window) {
 
 /*
  * 
- * David Weenink, hier zijn de pitch routines:
+ * David Weenink, here are the pitch routines:
  * - Autocorrelation peak picking for candidates
  * - Pitch tracking for selecting the best candidate
  * 
@@ -295,13 +295,27 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	
 	// Select the best pitch candidates using tracking etc.
 	for (var i=0; i < pitchArray.length; ++ i) {
-		points.push({"x": pitchArray [i].x, "value": pitchArray [i].values [0] });
+		points.push({x: pitchArray [i].x, value: pitchArray [i].values [0] });
 	};
-	var pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+	var pitchTier = {xmin: 0, xmax: duration, dT: dT, points: {size: points.length, items: points}};
 
 	return pitchTier;
 }
 
+// DTW between two pitchTiers
+function toDTW (pitchTier1, pitchTier2) {
+	var dtw = {distance: 0, path: [], matrix: undefined};
+	
+	var pitch1 = pitchTier1.points.items;
+	var pitch2 = pitchTier2.points.items;
+	
+	// Stub code giving fake results
+	dtw.distance = Math.random()*Math.max(pitch1.length, pitch2.length);
+	
+	return dtw;
+};
+
+// Calculate the (RMS) power in a time window
 function getPower (sound, sampleRate, time, window) {
 	var soundLength = sound.length;
 	var duration = sound.length / sampleRate;
