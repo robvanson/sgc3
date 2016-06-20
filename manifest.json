@@ -10,4 +10,10 @@
   "start_url": "SpeakGoodChinese3.xml",
     "display": "standalone",
   "orientation": "landscape"
+  "sandbox": {
+    "pages": [
+      "SpeakGoodChinese3.xml",
+      "SpeakGoodChinese3_Credits.xml.html",
+      "SpeakGoodChinese3_Settings.xml"
+    ]
 }
