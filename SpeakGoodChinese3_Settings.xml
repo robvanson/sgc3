@@ -2,10 +2,9 @@
 <?xml-stylesheet href="xhtml-default.css" type="text/css" media="screen, aural, print" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" manifest="SpeakGoodChinese3.appcache" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <head>
 <link rel="shortcut icon" href="sgc.png" />
-<link rel="manifest" href="manifest.json" />
 <link rel="icon" sizes="192x192" href="sgc.png" />
 <meta name="viewport" content="width=device-width" />
 <meta name="mobile-web-app-capable" content="yes" />
@@ -118,6 +117,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <script type="text/javascript">
 	//<![CDATA[
+	// Install the service worker for offline use
+	if ('serviceWorker' in navigator) {
+	  navigator.serviceWorker.register('sw.js').then(function(registration) {
+	    // Registration was successful
+	    console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+	  }).catch(function(err) {
+	    // registration failed :(
+	    console.log('ServiceWorker registration failed: ', err);
+	  });
+	}
+	
+	// DOM parameters
 	var mainWindow = localStorage.mainWindow;
 	var creditsWindow;
 	
