@@ -38,6 +38,7 @@ self.addEventListener('install', function(event) {
 
   var urlsToPrefetch = [
 	'/',
+	'manifest.json',
 	'Background.png',
 	'sgc.png',
 	'SpeakGoodChinese3.xml',
