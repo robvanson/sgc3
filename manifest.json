@@ -1,4 +1,6 @@
 {
+  "manifest_version": 2,
+  "version": "1",  
   "short_name": "SpeakGoodChinese 3",
   "name": "SpeakGoodChinese 3",
   "icons": [
@@ -7,13 +9,18 @@
       "type": "image/png"
     }
   ],
+	"permissions": [
+	  "tts"
+	],
   "start_url": "SpeakGoodChinese3.xml",
     "display": "standalone",
   "orientation": "landscape"
+  "content_security_policy": "default-src 'self'",
   "sandbox": {
     "pages": [
       "SpeakGoodChinese3.xml",
       "SpeakGoodChinese3_Credits.xml.html",
       "SpeakGoodChinese3_Settings.xml"
     ]
+	}
 }
