@@ -1,6 +1,10 @@
 {
+   "app": {
+    "background": {
+    }
+   },
   "manifest_version": 2,
-  "version": "1",  
+  "version": "1.002",  
   "short_name": "SpeakGoodChinese 3",
   "name": "SpeakGoodChinese 3",
   "icons": [
@@ -15,7 +19,7 @@
   "start_url": "SpeakGoodChinese3.xml",
     "display": "standalone",
   "orientation": "landscape"
-  "content_security_policy": "default-src 'self'",
+  "content_security_policy": "default-src 'self'; script-src 'self' 'unsafe-eval'; object-src 'self'",
   "sandbox": {
     "pages": [
       "SpeakGoodChinese3.xml",
