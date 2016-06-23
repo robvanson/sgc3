@@ -18,7 +18,7 @@
 	],
   "start_url": "SpeakGoodChinese3.xml",
     "display": "standalone",
-  "orientation": "landscape"
+  "orientation": "landscape",
   "content_security_policy": "default-src 'self'; script-src 'self' 'unsafe-eval'; object-src 'self'",
   "sandbox": {
     "pages": [
