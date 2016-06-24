@@ -38,6 +38,7 @@ global_wordlists = wordlists_plus.concat(global_wordlists);
 // Read all wordlists stored in the wordlists subdirectory
 
 function readAllRemoteWordlists (url) {
+	if(!navigator.onLine)return null; // Only when Online
 	var rawFile = new XMLHttpRequest(); 
 	rawFile.overrideMimeType("text/plain");
 	rawFile.open("GET", url, true);
