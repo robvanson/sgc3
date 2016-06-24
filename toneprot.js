@@ -844,7 +844,17 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		if(items[i].value > upperCutOff || items[i].value < lowerCutOff) items[i].value = 0;
 	};
 	
-	//
+	// Do the tone recognition
+	// Step through longer words
+	var syllableCount = numSyllables (pinyin);
+	var choiceReference = pinyin;
+	var skipSyllables = 0;
+	while (choiceReference == pinyin && skipSyllables < syllableCount) {
+		choiceReference = freeToneRecognition(pitchTier, choiceReference, newRegister, newToneRange, speedFactor, proficiency, skipSyllables);
+		skipSyllables += 1
+	};
+	//call toneScript 'sgc_ToneProt.currentTestWord$' 'sgc_ToneProt.upperRegisterInput' 'sgc_ToneProt.newToneRange' 'speedFactor' CorrectPitch
+	
 
 	// Set up response to result
 	recognitionText += numbersToTonemarks(pinyin);
@@ -873,6 +883,36 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	return result;
 };
 
+// DUMMY PLACEHOLDER
+function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor, proficiency, skipSyllables) {
+    var referenceFrequency = 300;
+    var frequencyFactor = register > 0 ? referenceFrequency / register : 1;
+	
+    // Bias Z-normalized value of the distance difference between smallest and correct
+    var biasDistance = 1.1;
+	if (proficiency <= 0) { // 0
+		biasDistance = 1.7;
+	} else if (proficiency <= 1) { // 1
+		biasDistance = 1.1;
+	} else if (proficiency <= 2) { // 2
+		biasDistance = 0.6;
+	} else if (proficiency > 2) { // 3
+		biasDistance = 0.3;
+	};
+	
+	// Generate reference tone
+	var referenceTone = toneScript (pinyin, register, toneRange, speedFactor, skipSyllables);
+	
+	choiceReference = referenceTone;
+	return choiceReference;
+}
+
+// DUMMY PLACEHOLDER
+function toneScript (pinyin, register, toneRange, speedFactor, skipSyllables) {
+	var currentWord = word2tones (pinyin, register);
+	
+	return currentWord;
+};
 
 // Not everyone add all the zeros for the neutral tones. Here we try to guess where
 // they would belong.
