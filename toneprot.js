@@ -148,6 +148,7 @@ function toneDuration (prevTone, currentTone, nextTone) {
 	return toneFactor;
 }
 
+// The rules to create pitch tracks from tones
 function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, currentTone, nextTone) {
 	
 	var syllableToneContour = [];
@@ -289,21 +290,21 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
         }
         
         // First syllable
-        if (nextPoint < 0) {
+        if (nextTone < 0) {
             endPoint = startPoint
         // Anticipate rise in next tone
-        } else if (nextPoint == 1 || nextPoint == 4) {
+        } else if (nextTone == 1 || nextTone == 4) {
             lowestPoint = toneRules_levelOne / toneRules_twoSemit
             endPoint = startPoint
         // Anticipate rise in next tone and stay low
-        } else if (nextPoint == 2) {
+        } else if (nextTone == 2) {
             lowestPoint = toneRules_levelOne / toneRules_twoSemit
             endPoint = lowestPoint
         // Last one was low, don't go so much lower
         } else if (prevTone == 4) {
             lowestPoint = toneRules_levelOne * toneRules_oneSemit
         // Anticipate rise in next tone and stay low
-        } else if (nextPoint == 0) {
+        } else if (nextTone == 0) {
             lowestPoint = toneRules_levelOne
             endPoint = lowestPoint / toneRules_sixSemit
         } else {
@@ -316,15 +317,16 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 	    time += (voicedDuration)*2/6
 		syllableToneContour.push({"t": time, "f": lowestPoint});;
 
+// CHECK THIS !!!
         // voiceless break
        	var delta = time + 0.001
-		syllableToneContour[p] = [delta, 0];
+		syllableToneContour.push({"t": delta, "f": 0});
 
         // Go half the duration low
 	    time += (voicedDuration)*3/6
 	    
        	delta = time - 0.001
- 		syllableToneContour[p] = [delta, 0];
+		syllableToneContour.push({"t": delta, "f": 0});
        
         // After voiceless break
 		syllableToneContour.push({"t": time, "f": lowestPoint});;
@@ -433,8 +435,8 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	var currentToneContour = [];
 	// Get tone
 	var toneSyllable = getTones(syllable);
-	// Tone sandhi: 3-3 => 2-3
-    if (toneSyllable == 3 && nextTone == 3) {
+	// Tone sandhi: 3-3/9-9 => 2-3
+    if ((toneSyllable == 3 || toneSyllable == 9) && (nextTone == 3 || nextTone == 9)) {
         toneSyllable = 2
     };
 	
@@ -461,7 +463,7 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	/*
 	 * Write contour of each tone
 	 * Note that tones are influenced by the previous (tone 0) and next (tone 3)
-	 * tones. Tone 6 is the Dutch intonation
+	 * tones. Tone 6 is the NO TONE intonation
 	 * sqrt(frequencyRange) is the mid point
 	 * 
 	 */
@@ -553,6 +555,7 @@ function smooth_pitchTier (pitchTier) {
 	};
 };
 
+// Plot the pitch tier on the canvas
 function plot_pitchTier (canvasId, color, lineWidth, topLine, pitchTier) {
 	var drawingCtx = setDrawingParam(canvasId);
 	var plotWidth = drawingCtx.canvas.width
@@ -741,7 +744,7 @@ function processRecordedSound () {
 };
 
 // Tone recogition
-
+// Set up the tone context and start recognition
 function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var recognitionText = numbersToTonemarks(pinyin)+": ";
 	var feedbackText = "";
@@ -844,10 +847,53 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		if(items[i].value > upperCutOff || items[i].value < lowerCutOff) items[i].value = 0;
 	};
 	
-	//
+	// Do the tone recognition
+	// Step through longer words
+	var syllableCount = numSyllables (pinyin);
+	var choiceReference = pinyin;
+	var skipSyllables = 0;
+	while (choiceReference == pinyin && skipSyllables+1 < Math.max(syllableCount,2)) {
+		var result = freeToneRecognition(pitchTier, choiceReference, newRegister, newToneRange, speedFactor, proficiency, skipSyllables);
+		skipSyllables += 1
+		choiceReference = result.pinyin;
+	};
+	// Get rid of odd symbols
+	choiceReference = choiceReference.replace(/9/g, "3");
+	
+	// Special cases (frequent recognition errors)
+	// Not ultra strict and wrong
+	if (proficiency < 3 && choiceReference != pinyin) {
+		var currentPinyin = choiceReference;
+		
+    	// [23]3 is often misidentified as 23, 20 or 30
+    	var matchedFragmentList = pinyin.match(/[23][^0-9]+3/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
+			choiceReference = choiceReference.replace(new RegExp("[23]"+matchedSyllable+"[023]", 'g'), matchedFragment)
+		};
+    	
+    	// First syllable: 2<->3 exchanges
+    	
+    	// A single second tone is often misidentified as a neutral tone, 
+    	// A real neutral tone would be too low or too narrow and be discarded
+		
+    	// A single fourth tone is often misidentified as a neutral tone, 
+    	// A real neutral tone would be too low or too narrow and be discarded
+
+    	// 40 <-> 42
+    	// A recognized 0 after a 4 can be a 2: 4-0 => 4-2
+    	
+    	// 404 <-> 414
+    	// A recognized 0 between two tones 4 can be a 1
+    	
+		// If wrong, then undo all changes
+	};
+	
+	labelText = (pinyin == choiceReference) ? "Correct" : "Wrong";
 
 	// Set up response to result
-	recognitionText += numbersToTonemarks(pinyin);
+	recognitionText += numbersToTonemarks(choiceReference);
 	if (labelText == "Wrong") {
 		recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
 	};
@@ -858,11 +904,15 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	} else {
 		var toneLabel = pinyin.replace(/[^\d]/g, "");
 		toneLabel = toneLabel.replace(/^(\d\d).*$/, "$1");
-		feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+		if (choiceReference.match(/6/)) toneLabel = "6";
+		if (labelText == "Wrong") {
+			feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+		} else {
+			feedbackText = toneFeedback_tables[language]["Correct"];
+		};
 	};
 
 	
-	labelText = "Wrong";
 	
 	var result = {
 		Recognition: recognitionText,
@@ -873,6 +923,137 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	return result;
 };
 
+// DUMMY PLACEHOLDER
+/*
+ * Tone recognition is done on two-tone pairs
+ * 1 Create all 5*5 tone pairs, a broken third tone (9) if necessary, and a "no-tone" pair (6-6)
+ * 2 Create pitch contours for each tone combination
+ * 3 Determine the DTW distance between the recorded pitch tier and each of the tone combinations
+ * 4 If the Z-transformed distance with the correct tone pair is below a bias thresshold, pick correct
+ * 5 If the smallest distance is larger than the thresshold pick the tones with the shortest distance
+ * 
+ */
+function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor, proficiency, skipSyllables) {
+    var referenceFrequency = 300;
+    var frequencyFactor = register > 0 ? referenceFrequency / register : 1;
+	
+    // Bias Z-normalized value of the distance difference between smallest and correct
+    var biasDistance = 1.1;
+	if (proficiency <= 0) { // 0
+		biasDistance = 1.7;
+	} else if (proficiency <= 1) { // 1
+		biasDistance = 1.1;
+	} else if (proficiency <= 2) { // 2
+		biasDistance = 0.6;
+	} else if (proficiency > 2) { // 3
+		biasDistance = 0.3;
+	};
+	
+	// Generate reference tone
+	var referenceDistance = dtwTones (pitchTier, pinyin, register, toneRange, speedFactor, skipSyllables);
+	
+	var minDistance = Infinity;
+	var choicePinyin = pinyin;
+	var countDistance = 0;
+	var sumDistance = 0;
+	var sumSqrDistance = 0;
+	
+	// Iterate over all relevant tone combinations
+	var syllableCount = numSyllables (pinyin);
+	var initToneStart = 1;
+	if (skipSyllables > 0 || syllableCount <= 1) initToneStart = 0;
+	for (var firstTone = initToneStart; firstTone <= 4; ++firstTone) {
+		for (var secondTone = 0; secondTone <= 4; ++secondTone) {
+			if (! (firstTone == 3 && secondTone == 3)) {
+				var testPinyin = moveTones(pinyin, skipSyllables, firstTone, secondTone);
+				var testDistance = dtwTones (pitchTier, testPinyin, register, toneRange, speedFactor, skipSyllables);
+				if (testDistance < minDistance) {
+					minDistance = testDistance;
+					choicePinyin = testPinyin;
+				};
+	            ++countDistance;
+	            sumDistance += testDistance;
+	            sumSqrDistance += testDistance*testDistance;
+			};
+		};
+	};
+
+	// If there is a third tone, test broken third tones (9)
+	if (pinyin.match(/3/g)) {
+		testPinyin = pinyin.replace(/3/g, "9");
+		var testDistance = dtwTones (pitchTier, testPinyin, register, toneRange, speedFactor, skipSyllables);
+		if (testDistance < minDistance) {
+			minDistance = testDistance;
+			choicePinyin = testPinyin;
+		};
+		++countDistance;
+		sumDistance += testDistance;
+		sumSqrDistance += testDistance*testDistance;
+		
+	};
+	
+	// Replace all tones by "no tone", i.e., "6"
+	{
+		testPinyin = pinyin.replace(/[0-9]/g, "6");
+		var testDistance = dtwTones (pitchTier, testPinyin, register, toneRange, speedFactor, skipSyllables);
+		if (testDistance < minDistance) {
+			minDistance = testDistance;
+			choicePinyin = testPinyin;
+		};
+		++countDistance;
+		sumDistance += testDistance;
+		sumSqrDistance += testDistance*testDistance;
+		
+	};
+	
+    if (countDistance > 1) {
+        var meanDistance = sumDistance / countDistance;
+        var varDistance = (sumSqrDistance - sumDistance*sumDistance/countDistance)/(countDistance - 1) ;
+        var stdDistance = Math.sqrt(varDistance);
+        var diffDistance = referenceDistance - minDistance;
+        var zDistance = diffDistance/stdDistance;
+
+        if (zDistance < biasDistance) {
+            choiceReference = pinyin
+            minDistance = referenceDistance
+        };
+    };
+    
+	return {distance: minDistance, pinyin: choicePinyin};
+}
+
+// Calculate DTW on pitchtiers, create the reference pitchTier
+// Use toneRange and speedFactor to adapt the reference pitchTier.
+function dtwTones (pitchTier, pinyin, register, toneRange, speedFactor, skipSyllables) {
+	var dtw = {distance: 0, path: [], matrix: undefined};
+	// USE toneRange and speedFactor !!!
+	var currentWord = word2tones (pinyin, register);
+	dtw = toDTW (pitchTier, currentWord);
+	return dtw.distance;
+};
+
+// Create a pinyin word with new tones
+function moveTones (pinyin, skipSyllables, firstTone, secondTone) {
+	var newPinyin = pinyin;
+	var syllableCount = numSyllables (pinyin);
+	// replace tones in newPinyin
+	if (skipSyllables < syllableCount) {
+		var regex = skipSyllables > 0 ? new RegExp("^(([^0-9]+[0-9]){" + (skipSyllables) + "}[^0-9]+)[0-9]", 'g') : new RegExp("^([^0-9]+)[0-9]", 'g');
+		newPinyin = newPinyin.replace(regex, "$1"+(firstTone));
+	};
+	if (skipSyllables+1 < syllableCount) {
+		var regex = skipSyllables > 0 ? new RegExp("^(([^0-9]+[0-9]){" + (skipSyllables+1) + "}[^0-9]+)[0-9]", 'g') : new RegExp("^([^0-9]+[0-9][^0-9]+)[0-9]", 'g');
+		newPinyin = newPinyin.replace(regex, "$1"+(secondTone));
+	};
+	return newPinyin;
+};
+
+// LOOK UP FUNCTIONALITY OF toneScript AND IMPLEMENT IT SOMEWHERE ELSE!!!
+function toneScript (pinyin, register, toneRange, speedFactor, skipSyllables) {
+	var currentWord = word2tones (pinyin, register);
+	
+	return currentWord;
+};
 
 // Not everyone add all the zeros for the neutral tones. Here we try to guess where
 // they would belong.
