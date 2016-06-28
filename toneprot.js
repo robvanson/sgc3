@@ -852,15 +852,14 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var syllableCount = numSyllables (pinyin);
 	var choiceReference = pinyin;
 	var skipSyllables = 0;
-	while (choiceReference == pinyin && skipSyllables < syllableCount) {
-		choiceReference = freeToneRecognition(pitchTier, choiceReference, newRegister, newToneRange, speedFactor, proficiency, skipSyllables);
+	while (choiceReference == pinyin && skipSyllables+1 < Math.max(syllableCount,2)) {
+		var result = freeToneRecognition(pitchTier, choiceReference, newRegister, newToneRange, speedFactor, proficiency, skipSyllables);
 		skipSyllables += 1
-	};
-	//call toneScript 'sgc_ToneProt.currentTestWord$' 'sgc_ToneProt.upperRegisterInput' 'sgc_ToneProt.newToneRange' 'speedFactor' CorrectPitch
-	
+		choiceReference = result.pinyin;
+	};	
 
 	// Set up response to result
-	recognitionText += numbersToTonemarks(pinyin);
+	recognitionText += numbersToTonemarks(choiceReference);
 	if (labelText == "Wrong") {
 		recognitionText += " ("+toneFeedback_tables[language]["Wrong"]+")";
 	};
@@ -871,6 +870,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	} else {
 		var toneLabel = pinyin.replace(/[^\d]/g, "");
 		toneLabel = toneLabel.replace(/^(\d\d).*$/, "$1");
+		if (choiceReference.match(/6/)) toneLabel = "6";
 		feedbackText = toneFeedback_tables[language]["t"+toneLabel];
 	};
 
@@ -922,7 +922,10 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
 	var sumSqrDistance = 0;
 	
 	// Iterate over all relevant tone combinations
-	for (var firstTone = 0; firstTone <= 4; ++firstTone) {
+	var syllableCount = numSyllables (pinyin);
+	var initToneStart = 1;
+	if (skipSyllables > 0 || syllableCount <= 1) initToneStart = 0;
+	for (var firstTone = initToneStart; firstTone <= 4; ++firstTone) {
 		for (var secondTone = 0; secondTone <= 4; ++secondTone) {
 			if (! (firstTone == 3 && secondTone == 3)) {
 				var testPinyin = moveTones(pinyin, skipSyllables, firstTone, secondTone);
@@ -934,7 +937,6 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
 	            ++countDistance;
 	            sumDistance += testDistance;
 	            sumSqrDistance += testDistance*testDistance;
-            
 			};
 		};
 	};
@@ -975,30 +977,40 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
         var zDistance = diffDistance/stdDistance;
 
         if (zDistance < biasDistance) {
-            choiceReference$ = pinyin
+            choiceReference = pinyin
             minDistance = referenceDistance
         };
     };
-
 	return {distance: minDistance, pinyin: choicePinyin};
 }
 
-// DUMMY PLACEHOLDERs
-
+// Calculate DTW on pitchtiers, create the reference pitchTier
+// Use toneRange and speedFactor to adapt the reference pitchTier.
 function dtwTones (pitchTier, pinyin, register, toneRange, speedFactor, skipSyllables) {
 	var dtw = {distance: 0, path: [], matrix: undefined};
+	// USE toneRange and speedFactor !!!
 	var currentWord = word2tones (pinyin, register);
 	dtw = toDTW (pitchTier, currentWord);
 	return dtw.distance;
 };
 
+// Create a pinyin word with new tones
 function moveTones (pinyin, skipSyllables, firstTone, secondTone) {
 	var newPinyin = pinyin;
+	var syllableCount = numSyllables (pinyin);
 	// replace tones in newPinyin
-	
+	if (skipSyllables < syllableCount) {
+		var regex = skipSyllables > 0 ? new RegExp("^(([^0-9]+[0-9]){" + (skipSyllables) + "}[^0-9]+)[0-9]", 'g') : new RegExp("^([^0-9]+)[0-9]", 'g');
+		newPinyin = newPinyin.replace(regex, "$1"+(firstTone));
+	};
+	if (skipSyllables+1 < syllableCount) {
+		var regex = skipSyllables > 0 ? new RegExp("^(([^0-9]+[0-9]){" + (skipSyllables+1) + "}[^0-9]+)[0-9]", 'g') : new RegExp("^([^0-9]+[0-9][^0-9]+)[0-9]", 'g');
+		newPinyin = newPinyin.replace(regex, "$1"+(secondTone));
+	};
 	return newPinyin;
 };
 
+// LOOK UP FUNCTIONALITY OF toneScript AND IMPLEMENT IT SOMEWHERE ELSE!!!
 function toneScript (pinyin, register, toneRange, speedFactor, skipSyllables) {
 	var currentWord = word2tones (pinyin, register);
 	

@@ -146,7 +146,7 @@ function numbersToTonemarks (pinyin) {
 	
 	// Tone 0
 	// Remove tone 0 symbol completely
-	intermediatePinyin = intermediatePinyin.replace(/0/g, "");
+	intermediatePinyin = intermediatePinyin.replace(/[06]/g, "");
 
 	return intermediatePinyin;
 };
