@@ -856,7 +856,41 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		var result = freeToneRecognition(pitchTier, choiceReference, newRegister, newToneRange, speedFactor, proficiency, skipSyllables);
 		skipSyllables += 1
 		choiceReference = result.pinyin;
-	};	
+	};
+	// Get rid of odd symbols
+	choiceReference = choiceReference.replace(/9/g, "3");
+	
+	// Special cases (frequent recognition errors)
+	// Not ultra strict and wrong
+	if (proficiency < 3 && choiceReference != pinyin) {
+		var currentPinyin = choiceReference;
+		
+    	// [23]3 is often misidentified as 23, 20 or 30
+    	var matchedFragmentList = pinyin.match(/[23][^0-9]+3/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
+			choiceReference = choiceReference.replace(new RegExp("[23]"+matchedSyllable+"[023]", 'g'), matchedFragment)
+		};
+    	
+    	// First syllable: 2<->3 exchanges
+    	
+    	// A single second tone is often misidentified as a neutral tone, 
+    	// A real neutral tone would be too low or too narrow and be discarded
+		
+    	// A single fourth tone is often misidentified as a neutral tone, 
+    	// A real neutral tone would be too low or too narrow and be discarded
+
+    	// 40 <-> 42
+    	// A recognized 0 after a 4 can be a 2: 4-0 => 4-2
+    	
+    	// 404 <-> 414
+    	// A recognized 0 between two tones 4 can be a 1
+    	
+		// If wrong, then undo all changes
+	};
+	
+	labelText = (pinyin == choiceReference) ? "Correct" : "Wrong";
 
 	// Set up response to result
 	recognitionText += numbersToTonemarks(choiceReference);
@@ -871,11 +905,14 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		var toneLabel = pinyin.replace(/[^\d]/g, "");
 		toneLabel = toneLabel.replace(/^(\d\d).*$/, "$1");
 		if (choiceReference.match(/6/)) toneLabel = "6";
-		feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+		if (labelText == "Wrong") {
+			feedbackText = toneFeedback_tables[language]["t"+toneLabel];
+		} else {
+			feedbackText = toneFeedback_tables[language]["Correct"];
+		};
 	};
 
 	
-	labelText = "Wrong";
 	
 	var result = {
 		Recognition: recognitionText,
@@ -981,6 +1018,7 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
             minDistance = referenceDistance
         };
     };
+    
 	return {distance: minDistance, pinyin: choicePinyin};
 }
 
