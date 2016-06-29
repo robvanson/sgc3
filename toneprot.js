@@ -804,6 +804,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
     } else {
 		recPitchRange = 0;
 	};
+	var recordedMinMax = get_time_of_minmax (pitchTier.points.items);
 	
 	// Rescale register (ignore model tone ranges <= 3 semitones)
 	newRegister = (maximumModelFzero > 0) ? maximumRecFzero / maximumModelFzero * register : register;
@@ -870,24 +871,69 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
     	while (matchedFragmentList && matchedFragmentList.length > 0) {
 			var matchedFragment = matchedFragmentList.shift();
 			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
-			choiceReference = choiceReference.replace(new RegExp("[23]"+matchedSyllable+"[023]", 'g'), matchedFragment)
+			currentPinyin = currentPinyin.replace(new RegExp("[23]"+matchedSyllable+"[023]", 'g'), matchedFragment)
 		};
     	
     	// First syllable: 2<->3 exchanges
-    	
+    	// 3 => 2
+     	var matchedFragmentList = pinyin.match(/[^[^0-9]+2/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("^"+matchedSyllable+"[3]", 'g'), matchedFragment)
+		};
+    	// 2 => 3
+     	var matchedFragmentList = pinyin.match(/[^[^0-9]+3/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("^"+matchedSyllable+"[2]", 'g'), matchedFragment)
+		};
+		
     	// A single second tone is often misidentified as a neutral tone, 
     	// A real neutral tone would be too low or too narrow and be discarded
+    	// 0 => 2
+     	var matchedFragmentList = pinyin.match(/^[^0-9]+2$/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[2]/g, "");
+			if (recordedMinMax.tmin < recordedMinMax.tmax) {
+				currentPinyin = currentPinyin.replace(new RegExp("^"+matchedSyllable+"[0]", 'g'), matchedFragment);
+			};
+		};
 		
     	// A single fourth tone is often misidentified as a neutral tone, 
     	// A real neutral tone would be too low or too narrow and be discarded
-
+     	// 0 => 4
+    	var matchedFragmentList = pinyin.match(/^[^0-9]+4$/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[4]/g, "");
+			if (recordedMinMax.tmax < recordedMinMax.tmin) {
+				currentPinyin = currentPinyin.replace(new RegExp("^"+matchedSyllable+"[0]", 'g'), matchedFragment);
+			};
+		};
+		
     	// 40 <-> 42
     	// A recognized 0 after a 4 can be a 2: 4-0 => 4-2
-    	
+     	var matchedFragmentList = pinyin.match(/4[^0-9]+2/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[2]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp(matchedSyllable+"[0]", 'g'), matchedFragment);
+		};
+		
     	// 404 <-> 414
-    	// A recognized 0 between two tones 4 can be a 1
-    	
+    	// A recognized 0 between two tones 4 can be a 1 404 => 414
+      	var matchedFragmentList = pinyin.match(/4[^0-9]+1[^0-9]+4/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[1]/g, "0");
+			currentPinyin = currentPinyin.replace(new RegExp(matchedSyllable, 'g'), matchedFragment);
+		};
+		
 		// If wrong, then undo all changes
+		if(currentPinyin == pinyin) choiceReference = currentPinyin;
 	};
 	
 	labelText = (pinyin == choiceReference) ? "Correct" : "Wrong";
