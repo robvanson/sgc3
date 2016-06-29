@@ -405,3 +405,23 @@ function get_percentiles (points, compare, remove, percentiles) {
 	};
 	return result;
 };
+
+// return the minim and maximum and their times
+function get_time_of_minmax (points) {
+	var min = Infinity;
+	var max = -Infinity;
+	var tmin = tmax = 0;
+	for (var i = 0; i < points.length; ++i) {
+		var currentValue = points[i].value;
+		var currentTime = points[i].time;
+		if (currentValue < min) {
+			min = currentValue;
+			tmin = currentTime;
+		};
+		if (currentValue > max) {
+			max = currentValue;
+			tmax = currentTime;
+		};
+	};
+	return {min: min, max: max, tmin: tmin, tmax: tmax};
+};
