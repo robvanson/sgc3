@@ -43,6 +43,7 @@ self.addEventListener('install', function(event) {
 	'sgc.png',
 	'SpeakGoodChinese3.xml',
 	'SpeakGoodChinese3_Settings.xml',
+	'SpeakGoodChinese3_SelectWords.xml',
 	'SpeakGoodChinese3_Credits.xml',
 	'audioProcessing.js',
 	'internationalization_tables.js',

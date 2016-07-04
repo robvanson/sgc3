@@ -40,7 +40,7 @@ function add_wordlist_names_to_select () {
 	var i = 0;
 	// First, remove old entries
 	var numOptions = selector.options.length
-	for(var i = numOptions - 1; i > 0; --i) {
+	for(var i = numOptions - 1; i > 1; --i) {
 		selector.remove(i);
 	};
 	// Add new entries

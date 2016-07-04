@@ -58,7 +58,7 @@ button {
 <script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
 </head>
 
-<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="if(settingsWindow)settingsWindow.close(); " >
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close(); " >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -103,6 +103,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<button type="button" style="color: black; bottom: 71%; right: 2%; height: 10%" id="PreviousWordlist" ><span style="font-size: 100%"><span id="WordlistUp" >Previous</span> &#8593;</span></button>
 	<button type="button" style="color: black; bottom: 50%; right: 2%; height: 10%" id="NextWordlist" ><span style="font-size: 100%"> <span id="WordlistDown" title="" >Next</span> &#8595;</span></button>
 	<select id="SelectWordList" style="position: fixed; color: black; bottom: 61%; right: 2%; height: 8%; width: 17%; font: 3vmin 'Helvetica'; background-color: rgb(220,220,220); "  >
+		<option value="---" ><span id="SelectWords" title="" >Words</span></option>
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
@@ -129,6 +130,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Set DOM parameters
 	var settingsWindow;
+	var selectWordsWindow;
 	var recordingLight = document.getElementById('RecordingLight');
 	var tonePlotArea = document.getElementById('TonePlot');
 	var record = document.getElementById('RecordButton');
@@ -438,7 +440,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	function write_WordlistName () {
 		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
 		// Always reset the selection
-		selectWordlist.selectedIndex = 0;	
+		selectWordlist.selectedIndex = 1;	
 	};
 	
 	// Create the list with wordlists
@@ -571,7 +573,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// select wordlist by name
 	selectWordlist.onchange = function() {
-		if(selectWordlist.selectedIndex > 0) {
+		if (selectWordlist.selectedIndex > 1) {
 			sgc3_settings.wordList = selectWordlist.options[selectWordlist.selectedIndex].value;
 			get_wordlist (sgc3_settings.wordList);
 			if (sgc3_settings.shuffleLists) currentWordlist.shuffle();
@@ -579,6 +581,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			
 			write_CurrentString();
 			store_SGC3_settings ();
+		} else if (selectWordlist.selectedIndex == 0) {
+			// Always reset the selection
+			selectWordlist.selectedIndex = 1;
+			// Open Wordlist page
+			selectWordsWindow = window.open('SpeakGoodChinese3_SelectWords.xml', '_blank');
 		};
 	};
 	
