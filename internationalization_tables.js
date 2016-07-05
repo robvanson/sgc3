@@ -47,6 +47,34 @@ function insert_and_update_options (labels) {
 	};
 };
 
+function insert_and_update_simpleoptions (labels) {
+	for(x in labels) {
+		if(document.getElementById(x) && ! x.match(/_/)) {
+			document.getElementById(x).title = labels[x];
+			var defaultText = document.getElementById(x+"Caption");
+			if (defaultText) defaultText.textContent = labels[x];
+			var defaultText2 = document.getElementById(x+"Caption2");
+			if (defaultText2) defaultText2.textContent = labels[x];
+		} else if (x.match(/_/)) {
+			var Id = x.replace(/_[^_]*$/, "");
+			var value = x.replace(/^[^_]*_/, "");
+			if (document.getElementById(x)) {
+				document.getElementById(x).value = value;
+				document.getElementById(x).text = labels[x];
+			} else {
+				if(document.getElementById(Id)) {
+					var selector = document.getElementById(Id);
+					var newOption = selector.options[0].cloneNode(true);
+					newOption.value = value;
+					newOption.text = labels[x];
+					newOption.id = x;
+					selector.add(newOption);
+				};
+			};
+		};
+	};
+};
+
 function set_mainpageLanguage (language) {
 	var labels = mainpage_tables[language];
 	for(x in labels) {
@@ -97,6 +125,12 @@ function set_configLanguage (language) {
 	};
 	localStorage.language = JSON.stringify(language);
 };
+
+function set_selectWordsLanguage (language) {
+	var labels = feedback_tables[language];
+	insert_and_update_simpleoptions (labels);
+};
+ 
 
 function change_mainpageLanguage () {
 	var index = document.getElementById("Language").selectedIndex;

@@ -260,7 +260,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayNumbers: false,
 		displayPinyin: true,
 		displayChar: true,
-		displayTrans: true
+		displayTrans: true,
+		selectedLessons: [],
+		selectedTones: []
 	};
 	
 	// Store settings
@@ -377,6 +379,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		var pinyinText = "-";
 		var characterText = "-";
 		var translationText = "-";
+		var lessonText = "-";
 		exampleURL = "-";
 		if( currentWord >= 0 && currentWord < currentWordlist.length ) {
 			currentItem = currentWordlist[currentWord];
@@ -387,6 +390,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			pinyinText = currentItem[1]
 			characterText = currentItem[2];
 			translationText = currentItem[3];
+			lessonText = currentItem[4];
 			exampleURL = currentItem[currentItem.length - 1];
 		} else {
 			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
@@ -525,6 +529,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Previous word 
 	previous.onclick = function() {
 		--currentWord;
+		while(! itemIsActive(currentWord))--currentWord;
  		if( currentWord < 0 ) {
 			currentWord = currentWordlist.length;
 			
@@ -535,6 +540,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Next word 
 	next.onclick = function() {
 		++currentWord;		
+		while(! itemIsActive(currentWord))++currentWord;
 		if(currentWord > currentWordlist.length) {
 			currentWord = 0;
 		};

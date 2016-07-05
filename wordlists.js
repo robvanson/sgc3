@@ -76,6 +76,21 @@ function combineWordlistLists (wordlists1, wordlists2) {
 	return combined;
 };
 
+function itemIsActive (itemNum) {
+	var active = false;
+	if (itemNum >= 0 && itemNum < currentWordlist.length) {
+		var currentItem = currentWordlist[itemNum];
+		// Lesson selected
+		if (!sgc3_settings.selectedLessons || sgc3_settings.selectedLessons.indexOf(currentItem [4]) > -1)  active = true;
+		if (!sgc3_settings.selectedTones || currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = true;
+	} else {
+		// Boundaries are handled elsewhere
+		active = true;
+	};
+	
+	return active;
+};
+
 Array.prototype.shuffle = function() {
 	var input = this;
 	

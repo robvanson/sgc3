@@ -36,6 +36,12 @@ pre {
 	margin-right: 20%;
 	}
 </style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<script type="text/javascript" src="internationalization_tables.js" ></script>   
+<script type="text/javascript" src="wordlists.js" ></script>   
+<script type="text/javascript" src="wordlists_plus.js" ></script>   
 </head>
 <body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); " >
 <!--
@@ -57,6 +63,20 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <h1 style='text-align: center'><span id="SelectWords" title="" >Words</span></h1>
 <p style='text-align: center'>Empty</p>
+	<div style="position: fixed; color: black; bottom: 74%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="TonesCaption">---</div>	
+	<select id="Tones" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 14%; width: 17%; font: 'Helvetica'; font-size: 2vmin ; background-color: rgb(220,220,220); " onchange="selectedTones(this.selectedOptions); store_SGC3_settings (); " size="5" multiple="multiple" >
+		<option value="0" >0</option>
+		<option value="1" >1</option>
+		<option value="2" >2</option>
+		<option value="3" >3</option>
+		<option value="4" >4</option>
+	</select> 
+
+	<div style="position: fixed; color: black; bottom: 74%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="PartCaption">---</div>	
+	<select id="Part" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 14%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="sgc3_settings.selectedLessons = []; store_SGC3_settings (); " multiple="multiple" >
+		<option value="---" ><span id="PartCaption2" title="" >---</span></option>
+	</select> 
+
    <script type="text/javascript">
 	//<![CDATA[
 	// Install the service worker for offline use
@@ -72,6 +92,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// DOM parameters
 	var mainWindow = localStorage.mainWindow;
+	
+	var selectTones = document.getElementById('Tones');
+	var selectLessons = document.getElementById('Part');
+
 	
 	// Global settings
 	var sgc3_settings = {
@@ -89,7 +113,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayNumbers: false,
 		displayPinyin: true,
 		displayChar: true,
-		displayTrans: true
+		displayTrans: true,
+		selectedLessons: [],
+		selectedTones: []
 	};
 	
 	// Store settings
@@ -109,10 +135,26 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		};
 		
-		set_configLanguage (sgc3_settings.language);
-		setRegister (sgc3_settings.register);
-		setRecordingTime (sgc3_settings.recSecs);
-		setStrict (sgc3_settings.strict);
+		set_selectWordsLanguage (sgc3_settings.language);
+		// Set selected tones
+		if(sgc3_settings.selectedTones) {
+			for (var i=0; i< selectTones.options.length; ++i) {
+				selectTones.options[i].selected = false;
+			};
+			for (var i=0; i< sgc3_settings.selectedTones.length; ++i) {
+				var tone = sgc3_settings.selectedTones[i];
+				selectTones.options[tone].selected = true;
+			};
+		};
+	};
+	
+	function selectedTones (selectedOptions) {
+		sgc3_settings.selectedTones = []; 
+		for(var i=0; i < selectedOptions.length; ++i) {
+			sgc3_settings.selectedTones.push(Number(selectedOptions[i].value))
+		};
+		console.log(sgc3_settings.selectedTones);
+		store_SGC3_settings (); 
 	};
 	
 	// Initialize to stored settings
@@ -122,7 +164,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	if (!sgc3_settings.language) {
 		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
 	};
-	set_configLanguage (sgc3_settings.language);
+	set_selectWordsLanguage (sgc3_settings.language);
 	//]]>	
 	</script>
 	
