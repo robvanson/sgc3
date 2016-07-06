@@ -410,7 +410,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		document.getElementById('Translation').style.display = sgc3_settings.displayTrans ? "inline" : "none";
 		document.getElementById('Translation').style.color = "black";
-		document.getElementById('Translation').textContent = translationText;
+		document.getElementById('Translation').textContent = lessonText != "-" ? translationText + " ["+lessonText+"]": translationText;
 		
 		document.getElementById('Translation').style.fontSize = "6vmin";
 		if (document.getElementById('Translation').textContent.length > 50) {

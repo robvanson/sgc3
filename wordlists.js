@@ -77,15 +77,14 @@ function combineWordlistLists (wordlists1, wordlists2) {
 };
 
 function itemIsActive (itemNum) {
-	var active = false;
+	var active = true;
 	if (itemNum >= 0 && itemNum < currentWordlist.length) {
 		var currentItem = currentWordlist[itemNum];
 		// Lesson selected
-		if (!sgc3_settings.selectedLessons || sgc3_settings.selectedLessons.indexOf(currentItem [4]) > -1)  active = true;
-		if (!sgc3_settings.selectedTones || currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = true;
-	} else {
-		// Boundaries are handled elsewhere
-		active = true;
+		if (sgc3_settings.selectedLessons.length > 0 && sgc3_settings.selectedLessons.indexOf(currentItem [4]+"") <= -1)  active = false;
+console.log(sgc3_settings.selectedLessons,active);
+		if (sgc3_settings.selectedTones.length > 0 && ! currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = false;
+console.log(sgc3_settings.selectedTones,active);
 	};
 	
 	return active;
@@ -670,7 +669,7 @@ var global_wordlists = [
 			["duo1shao0","duōshao","多少","how many, how much","12","-"],
 			["hai2","hái","还","else, any other, still","12","-"],
 			["ta1","tā","她","she, her","13","-"],
-			["ta1","tā","他,她,它","he, she, it","3","-"],
+			["ta1","tā","他,她,它","he, she, it","13","-"],
 			["nin2","nín","您","you (polite form)","13","-"]
 			]
 		]

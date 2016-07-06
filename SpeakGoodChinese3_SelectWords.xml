@@ -62,9 +62,10 @@ You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <h1 style='text-align: center'><span id="SelectWords" title="" >Words</span></h1>
-<p style='text-align: center'>Empty</p>
-	<div style="position: fixed; color: black; bottom: 74%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="TonesCaption">---</div>	
-	<select id="Tones" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 14%; width: 17%; font: 'Helvetica'; font-size: 2vmin ; background-color: rgb(220,220,220); " onchange="selectedTones(this.selectedOptions); store_SGC3_settings (); " size="5" multiple="multiple" >
+<h1 id="WordListName" style='text-align: center'>wordlist</h1>
+	<div style="position: fixed; color: black; bottom: 75%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="TonesCaption">---</div>	
+	<select id="Tones" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 15%; width: 17%; font: 'Helvetica'; font-size: 3vmin ; background-color: rgb(220,220,220); " onchange="selectedTones(this.selectedOptions); store_SGC3_settings (); " size="5" multiple="multiple" >
+		<option value="---" >---</option>
 		<option value="0" >0</option>
 		<option value="1" >1</option>
 		<option value="2" >2</option>
@@ -72,9 +73,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="4" >4</option>
 	</select> 
 
-	<div style="position: fixed; color: black; bottom: 74%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="PartCaption">---</div>	
-	<select id="Part" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 14%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="sgc3_settings.selectedLessons = []; store_SGC3_settings (); " multiple="multiple" >
-		<option value="---" ><span id="PartCaption2" title="" >---</span></option>
+	<div style="position: fixed; color: black; bottom: 75%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="PartCaption">---</div>	
+	<select id="Part" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 15%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="selectedLessons(this.selectedOptions); store_SGC3_settings (); " multiple="multiple" >
+		<option value="---" ><span id="---" title="" >---</span></option>
 	</select> 
 
    <script type="text/javascript">
@@ -95,6 +96,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	var selectTones = document.getElementById('Tones');
 	var selectLessons = document.getElementById('Part');
+	var wordListName = document.getElementById('WordListName');
 
 	
 	// Global settings
@@ -135,25 +137,47 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		};
 		
+		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+		get_wordlist (sgc3_settings.wordList);
+
+		wordListName.textContent = sgc3_settings.wordList;
 		set_selectWordsLanguage (sgc3_settings.language);
+		add_lesson_names_to_select ();
+		
 		// Set selected tones
 		if(sgc3_settings.selectedTones) {
 			for (var i=0; i< selectTones.options.length; ++i) {
 				selectTones.options[i].selected = false;
 			};
-			for (var i=0; i< sgc3_settings.selectedTones.length; ++i) {
+			for (var i=1; i< sgc3_settings.selectedTones.length; ++i) {
 				var tone = sgc3_settings.selectedTones[i];
-				selectTones.options[tone].selected = true;
+				selectTones.options[tone+1].selected = true;
 			};
 		};
 	};
 	
 	function selectedTones (selectedOptions) {
-		sgc3_settings.selectedTones = []; 
+		sgc3_settings.selectedTones = [];
+		var erase = false;
 		for(var i=0; i < selectedOptions.length; ++i) {
-			sgc3_settings.selectedTones.push(Number(selectedOptions[i].value))
+			if (selectedOptions[i].value == "---") {
+				erase = true;
+			} else {
+				sgc3_settings.selectedTones.push(Number(selectedOptions[i].value))
+			};
 		};
-		console.log(sgc3_settings.selectedTones);
+		if (erase) sgc3_settings.selectedTones = [];
+console.log(sgc3_settings.selectedTones);
+		store_SGC3_settings (); 
+	};
+	
+	function selectedLessons (selectedOptions) {
+		sgc3_settings.selectedLessons = []; 
+		for(var i=0; i < selectedOptions.length; ++i) {
+			sgc3_settings.selectedLessons.push(selectedOptions[i].value + "")
+		};
+		if (sgc3_settings.selectedLessons.indexOf("---") > -1) sgc3_settings.selectedLessons = [];
+console.log(sgc3_settings.selectedLessons);
 		store_SGC3_settings (); 
 	};
 	
@@ -165,6 +189,38 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
 	};
 	set_selectWordsLanguage (sgc3_settings.language);
+
+
+	function add_lesson_names_to_select () {
+		var selector = document.getElementById('Part');
+		var i = 0;
+		// First, remove old entries
+		var numOptions = selector.options.length
+		for(var i = numOptions - 1; i > 0; --i) {
+			selector.remove(i);
+		};
+		
+		// Create a list with lesson names/numbers
+		var lessons = [];
+		for (var i=0; i < currentWordlist.length; ++ i) {
+			var currentLesson = currentWordlist[i][4];
+			if (currentLesson && currentLesson != "-" && lessons.indexOf(currentLesson) <= -1) {
+				lessons.push(currentLesson+"");
+			};
+		};
+		
+		// Add new entries
+		for(i=0; i < lessons.length; ++i) {
+			var lastOption = selector.options.length - 1;
+			var lessonTitle = lessons[i];
+			var newOption = selector.options[0].cloneNode(true);
+			newOption.value = lessonTitle;
+			newOption.text = lessonTitle;
+			selector.add(newOption);
+		};
+	};
+
+
 	//]]>	
 	</script>
 	
