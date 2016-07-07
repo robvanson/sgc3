@@ -84,17 +84,24 @@ function combineWordlistLists (wordlists1, wordlists2) {
 
 function itemIsActive (itemNum) {
 	var active = true;
-	if (itemNum >= 0 && itemNum < currentWordlist.length) {
-		var currentItem = currentWordlist[itemNum];
-		// Lesson selected
-		if (sgc3_settings.selectedLessons.length > 0) {
-			 if(sgc3_settings.selectedLessons.indexOf(currentItem [4]+"") <= -1)  active = false;
-		 };
-		if (sgc3_settings.selectedTones.length > 0) {
-			 if(! currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = false;
-		 };
+	if (sgc3_settings) {
+		if (itemNum >= 0 && itemNum < currentWordlist.length) {
+			var currentItem = currentWordlist[itemNum];
+			// Lesson selected
+			if (sgc3_settings.selectedLessons.length > 0) {
+				 if(sgc3_settings.selectedLessons.indexOf(currentItem [4]+"") <= -1) active = false;
+			 };
+			// Tones selected
+			if (sgc3_settings.selectedTones.length > 0) {
+				 if(! currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g'))) active = false;
+			 };
+			// Deselected words
+			if (sgc3_settings.deselectedWords.length > 0) {
+				 if(sgc3_settings.deselectedWords.indexOf(currentItem [0]) <= -1) active = false;
+			 };
+		};
 	};
-	
+
 	return active;
 };
 
