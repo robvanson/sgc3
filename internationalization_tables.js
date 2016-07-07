@@ -127,7 +127,9 @@ function set_configLanguage (language) {
 };
 
 function set_selectWordsLanguage (language) {
-	var labels = feedback_tables[language];
+	var labels = config_tables[language];
+	insert_and_update_options (labels);
+	labels = feedback_tables[language];
 	insert_and_update_simpleoptions (labels);
 };
  
@@ -304,7 +306,7 @@ var config_tables = {
 		OpenWordlist: ["Öfne Liste", "Wähle und öfne eine einzige Wortliste"],
 		DeleteWordlist: ["Lössche Liste", "Lössche die Wortliste. Sie werden gefragd das Lösschen zu bestätigen."],
 		DeleteWordlistConfirm: ["Sicher?", "Sind Sie sicher?"],
-		Credits: ["über SGC3", "Informationen zur SpeakGoodChinese 2"],
+		Credits: ["über SGC3", "Informationen zur SpeakGoodChinese"],
 		DisplayNumbers: ["Ton Zahlen", "Wiedergabe Pinyin mit zahlen der Töne (einn) oder symbole (aus)"],
 		DisplayPinyin: ["Pinyin", "Wiedergabe Pinyin wörte während der Übungen"],
 		DisplayChar: ["Schriftzeichen", "Wiedergabe chinesische Schriftzeichen wenn anwesend"],

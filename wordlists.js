@@ -23,6 +23,12 @@ var wordlistNumber;
 function get_wordlist (wordlistName) {
 	var wordlistNum;
 	for(wordlistNum = 0; wordlistNum < wordlists.length && wordlists[wordlistNum][0] != wordlistName; wordlistNum++) { };
+	// Reset selections
+	if (currentWordlist != wordlists[wordlistNum][1] && sgc3_settings) {
+		sgc3_settings.selectedLessons = [];
+		sgc3_settings.selectedTones = [];
+		sgc3_settings.deselectedWords = [];
+	};
 	currentWordlist = wordlists[wordlistNum][1];
 	wordlistNumber = wordlistNum;
 };
@@ -71,7 +77,7 @@ function combineWordlistLists (wordlists1, wordlists2) {
 	if (wordlists2) {
 		for (var i = 0; i < wordlists2.length; ++i) {
 			combined = addNewWordlist(combined, wordlists2[i]);
-		};
+		 };
 	};
 	return combined;
 };
@@ -81,10 +87,12 @@ function itemIsActive (itemNum) {
 	if (itemNum >= 0 && itemNum < currentWordlist.length) {
 		var currentItem = currentWordlist[itemNum];
 		// Lesson selected
-		if (sgc3_settings.selectedLessons.length > 0 && sgc3_settings.selectedLessons.indexOf(currentItem [4]+"") <= -1)  active = false;
-console.log(sgc3_settings.selectedLessons,active);
-		if (sgc3_settings.selectedTones.length > 0 && ! currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = false;
-console.log(sgc3_settings.selectedTones,active);
+		if (sgc3_settings.selectedLessons.length > 0) {
+			 if(sgc3_settings.selectedLessons.indexOf(currentItem [4]+"") <= -1)  active = false;
+		 };
+		if (sgc3_settings.selectedTones.length > 0) {
+			 if(! currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = false;
+		 };
 	};
 	
 	return active;

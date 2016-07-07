@@ -262,7 +262,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		selectedLessons: [],
-		selectedTones: []
+		selectedTones: [],
+		deselectedWords: []
 	};
 	
 	// Store settings
@@ -298,6 +299,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			clearRecordedData ();
 			currentWord = 0;
 		};
+		// Make sure the current word is indeed active
+		while (currentWord < currentWordlist.length && ! itemIsActive (currentWord)) ++currentWord;
 		
 		// update display
 		write_CurrentString ();
@@ -532,7 +535,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		while(! itemIsActive(currentWord))--currentWord;
  		if( currentWord < 0 ) {
 			currentWord = currentWordlist.length;
-			
+			// Make sure the current word is indeed active
+			while (currentWord > -1 && ! itemIsActive (currentWord)) --currentWord;		
 		};
 		write_CurrentString();
 	};
@@ -543,6 +547,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		while(! itemIsActive(currentWord))++currentWord;
 		if(currentWord > currentWordlist.length) {
 			currentWord = 0;
+			// Make sure the current word is indeed active
+			while (currentWord < currentWordlist.length && ! itemIsActive (currentWord)) ++currentWord;
 		};
 		write_CurrentString();
 	};

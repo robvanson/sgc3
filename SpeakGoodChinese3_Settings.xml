@@ -168,7 +168,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		selectedLessons: [],
-		selectedTones: []
+		selectedTones: [],
+		deselectedWords: []
 	};
 	
 	// Store settings

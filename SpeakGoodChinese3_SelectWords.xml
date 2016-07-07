@@ -43,7 +43,7 @@ pre {
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="wordlists_plus.js" ></script>   
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); " >
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();this.close();" onunload="store_SGC3_settings (); " >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -61,8 +61,8 @@ GNU General Public License for more details.
 You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<h1 style='text-align: center'><span id="SelectWords" title="" >Words</span></h1>
-<h1 id="WordListName" style='text-align: center'>wordlist</h1>
+<h1 style='text-align: center' id="SelectWords"><span id="SelectWordsCaption" title="" >Words</span>:
+<span id="WordListName" style='text-align: center; color: blue;'>wordlist</span></h1>
 	<div style="position: fixed; color: black; bottom: 75%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="TonesCaption">---</div>	
 	<select id="Tones" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 15%; width: 17%; font: 'Helvetica'; font-size: 3vmin ; background-color: rgb(220,220,220); " onchange="selectedTones(this.selectedOptions); store_SGC3_settings (); " size="5" multiple="multiple" >
 		<option value="---" >---</option>
@@ -117,7 +117,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		selectedLessons: [],
-		selectedTones: []
+		selectedTones: [],
+		deselectedWords: []
 	};
 	
 	// Store settings
@@ -149,9 +150,23 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			for (var i=0; i< selectTones.options.length; ++i) {
 				selectTones.options[i].selected = false;
 			};
-			for (var i=1; i< sgc3_settings.selectedTones.length; ++i) {
+			for (var i=0; i< sgc3_settings.selectedTones.length; ++i) {
 				var tone = sgc3_settings.selectedTones[i];
 				selectTones.options[tone+1].selected = true;
+			};
+		};
+		// Set selected lessons
+		if(sgc3_settings.selectedLessons) {
+			for (var i=0; i< selectLessons.options.length; ++i) {
+				selectLessons.options[i].selected = false;
+			};
+			for (var i=0; i< sgc3_settings.selectedLessons.length; ++i) {
+				var part = sgc3_settings.selectedLessons[i];
+				for (var j=0; j < selectLessons.options.length; ++ j) {
+					if(selectLessons.options[j].value == part) {
+						selectLessons.options[j].selected = true;
+					};
+				};
 			};
 		};
 	};
@@ -166,8 +181,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				sgc3_settings.selectedTones.push(Number(selectedOptions[i].value))
 			};
 		};
-		if (erase) sgc3_settings.selectedTones = [];
-console.log(sgc3_settings.selectedTones);
+		// All is nothing
+		if (erase || sgc3_settings.selectedTones.length >= selectTones.options.length - 1) sgc3_settings.selectedTones = [];
 		store_SGC3_settings (); 
 	};
 	
@@ -176,8 +191,8 @@ console.log(sgc3_settings.selectedTones);
 		for(var i=0; i < selectedOptions.length; ++i) {
 			sgc3_settings.selectedLessons.push(selectedOptions[i].value + "")
 		};
-		if (sgc3_settings.selectedLessons.indexOf("---") > -1) sgc3_settings.selectedLessons = [];
-console.log(sgc3_settings.selectedLessons);
+		// All is nothing
+		if (sgc3_settings.selectedLessons.length >= selectLessons.options.length - 1 || sgc3_settings.selectedLessons.indexOf("---") > -1) sgc3_settings.selectedLessons = [];
 		store_SGC3_settings (); 
 	};
 	
