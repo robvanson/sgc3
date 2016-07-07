@@ -23,6 +23,12 @@ var wordlistNumber;
 function get_wordlist (wordlistName) {
 	var wordlistNum;
 	for(wordlistNum = 0; wordlistNum < wordlists.length && wordlists[wordlistNum][0] != wordlistName; wordlistNum++) { };
+	// Reset selections
+	if (currentWordlist != wordlists[wordlistNum][1] && sgc3_settings) {
+		sgc3_settings.selectedLessons = [];
+		sgc3_settings.selectedTones = [];
+		sgc3_settings.deselectedWords = [];
+	};
 	currentWordlist = wordlists[wordlistNum][1];
 	wordlistNumber = wordlistNum;
 };
@@ -40,7 +46,7 @@ function add_wordlist_names_to_select () {
 	var i = 0;
 	// First, remove old entries
 	var numOptions = selector.options.length
-	for(var i = numOptions - 1; i > 0; --i) {
+	for(var i = numOptions - 1; i > 1; --i) {
 		selector.remove(i);
 	};
 	// Add new entries
@@ -71,9 +77,25 @@ function combineWordlistLists (wordlists1, wordlists2) {
 	if (wordlists2) {
 		for (var i = 0; i < wordlists2.length; ++i) {
 			combined = addNewWordlist(combined, wordlists2[i]);
-		};
+		 };
 	};
 	return combined;
+};
+
+function itemIsActive (itemNum) {
+	var active = true;
+	if (itemNum >= 0 && itemNum < currentWordlist.length) {
+		var currentItem = currentWordlist[itemNum];
+		// Lesson selected
+		if (sgc3_settings.selectedLessons.length > 0) {
+			 if(sgc3_settings.selectedLessons.indexOf(currentItem [4]+"") <= -1)  active = false;
+		 };
+		if (sgc3_settings.selectedTones.length > 0) {
+			 if(! currentItem [0].match(new RegExp("["+sgc3_settings.selectedTones.join("")+"]", 'g')))  active = false;
+		 };
+	};
+	
+	return active;
 };
 
 Array.prototype.shuffle = function() {
@@ -655,7 +677,7 @@ var global_wordlists = [
 			["duo1shao0","duōshao","多少","how many, how much","12","-"],
 			["hai2","hái","还","else, any other, still","12","-"],
 			["ta1","tā","她","she, her","13","-"],
-			["ta1","tā","他,她,它","he, she, it","3","-"],
+			["ta1","tā","他,她,它","he, she, it","13","-"],
 			["nin2","nín","您","you (polite form)","13","-"]
 			]
 		]

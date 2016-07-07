@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="xhtml-default.css" type="text/css" media="screen, aural, print" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
+    "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+<head>
+<link rel="shortcut icon" href="sgc.png" />
+<link rel="icon" sizes="192x192" href="sgc.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="viewport" content="width=device-width" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta http-equiv="Content-Language" content="en" />
+<title lang="en" xml:lang="en" dir="ltr">Select Words - SpeakGoodChinese</title>
+<style>
+body {
+	background-image: url("Background.png");
+	background-color: rgb(250,250,250);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50%;
+    background-attachment: fixed;}
+h1 {
+	text-align: center;
+	}
+h2 {
+	text-align: center;
+	}
+p {
+	text-align: left; 
+	margin-left: 20%; 
+	margin-right: 20%;
+	}
+pre {
+	text-align: left; 
+	margin-left: 20%; 
+	margin-right: 20%;
+	}
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<script type="text/javascript" src="internationalization_tables.js" ></script>   
+<script type="text/javascript" src="wordlists.js" ></script>   
+<script type="text/javascript" src="wordlists_plus.js" ></script>   
+</head>
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();this.close();" onunload="store_SGC3_settings (); " >
+<!--
+SpeakGoodChinese 3
+Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You can find a copy of the GNU General Public License at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+-->
+<h1 style='text-align: center' id="SelectWords"><span id="SelectWordsCaption" title="" >Words</span>:
+<span id="WordListName" style='text-align: center; color: blue;'>wordlist</span></h1>
+	<div style="position: fixed; color: black; bottom: 75%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="TonesCaption">---</div>	
+	<select id="Tones" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 15%; width: 17%; font: 'Helvetica'; font-size: 3vmin ; background-color: rgb(220,220,220); " onchange="selectedTones(this.selectedOptions); store_SGC3_settings (); " size="5" multiple="multiple" >
+		<option value="---" >---</option>
+		<option value="0" >0</option>
+		<option value="1" >1</option>
+		<option value="2" >2</option>
+		<option value="3" >3</option>
+		<option value="4" >4</option>
+	</select> 
+
+	<div style="position: fixed; color: black; bottom: 75%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="PartCaption">---</div>	
+	<select id="Part" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 15%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="selectedLessons(this.selectedOptions); store_SGC3_settings (); " multiple="multiple" >
+		<option value="---" ><span id="---" title="" >---</span></option>
+	</select> 
+
+   <script type="text/javascript">
+	//<![CDATA[
+	// Install the service worker for offline use
+	if ('serviceWorker' in navigator) {
+	  navigator.serviceWorker.register('sw.js').then(function(registration) {
+	    // Registration was successful
+	    console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+	  }).catch(function(err) {
+	    // registration failed :(
+	    console.log('ServiceWorker registration failed: ', err);
+	  });
+	}
+	
+	// DOM parameters
+	var mainWindow = localStorage.mainWindow;
+	
+	var selectTones = document.getElementById('Tones');
+	var selectLessons = document.getElementById('Part');
+	var wordListName = document.getElementById('WordListName');
+
+	
+	// Global settings
+	var sgc3_settings = {
+		settingsRead: false,
+		recSecs: 3,
+		ttsSpeed: 110,
+		ttsVariant: "f3",
+		shuffleLists: true,
+		register: 249, // Must match Register_249 Id
+		wordList: "20 basic tone combinations",
+		language: "",
+		synthesis_eSpeak: false,
+		strict: 1,
+		personalWordlists: [],
+		displayNumbers: false,
+		displayPinyin: true,
+		displayChar: true,
+		displayTrans: true,
+		selectedLessons: [],
+		selectedTones: [],
+		deselectedWords: []
+	};
+	
+	// Store settings
+	function store_SGC3_settings () {
+		sgc3_settings.settingsRead = true;
+
+		for (x in sgc3_settings) {
+			localStorage[x] = JSON.stringify(sgc3_settings[x]);
+		};
+	};
+	
+	function load_SGC3_settings () {
+		for (x in sgc3_settings) {
+			// For some reason, parsing the language goes wrong
+			if (localStorage[x]) {
+				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			};
+		};
+		
+		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
+		get_wordlist (sgc3_settings.wordList);
+
+		wordListName.textContent = sgc3_settings.wordList;
+		set_selectWordsLanguage (sgc3_settings.language);
+		add_lesson_names_to_select ();
+		
+		// Set selected tones
+		if(sgc3_settings.selectedTones) {
+			for (var i=0; i< selectTones.options.length; ++i) {
+				selectTones.options[i].selected = false;
+			};
+			for (var i=0; i< sgc3_settings.selectedTones.length; ++i) {
+				var tone = sgc3_settings.selectedTones[i];
+				selectTones.options[tone+1].selected = true;
+			};
+		};
+		// Set selected lessons
+		if(sgc3_settings.selectedLessons) {
+			for (var i=0; i< selectLessons.options.length; ++i) {
+				selectLessons.options[i].selected = false;
+			};
+			for (var i=0; i< sgc3_settings.selectedLessons.length; ++i) {
+				var part = sgc3_settings.selectedLessons[i];
+				for (var j=0; j < selectLessons.options.length; ++ j) {
+					if(selectLessons.options[j].value == part) {
+						selectLessons.options[j].selected = true;
+					};
+				};
+			};
+		};
+	};
+	
+	function selectedTones (selectedOptions) {
+		sgc3_settings.selectedTones = [];
+		var erase = false;
+		for(var i=0; i < selectedOptions.length; ++i) {
+			if (selectedOptions[i].value == "---") {
+				erase = true;
+			} else {
+				sgc3_settings.selectedTones.push(Number(selectedOptions[i].value))
+			};
+		};
+		// All is nothing
+		if (erase || sgc3_settings.selectedTones.length >= selectTones.options.length - 1) sgc3_settings.selectedTones = [];
+		store_SGC3_settings (); 
+	};
+	
+	function selectedLessons (selectedOptions) {
+		sgc3_settings.selectedLessons = []; 
+		for(var i=0; i < selectedOptions.length; ++i) {
+			sgc3_settings.selectedLessons.push(selectedOptions[i].value + "")
+		};
+		// All is nothing
+		if (sgc3_settings.selectedLessons.length >= selectLessons.options.length - 1 || sgc3_settings.selectedLessons.indexOf("---") > -1) sgc3_settings.selectedLessons = [];
+		store_SGC3_settings (); 
+	};
+	
+	// Initialize to stored settings
+	load_SGC3_settings ();
+	
+	// Set language (make that selectable)
+	if (!sgc3_settings.language) {
+		sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+	};
+	set_selectWordsLanguage (sgc3_settings.language);
+
+
+	function add_lesson_names_to_select () {
+		var selector = document.getElementById('Part');
+		var i = 0;
+		// First, remove old entries
+		var numOptions = selector.options.length
+		for(var i = numOptions - 1; i > 0; --i) {
+			selector.remove(i);
+		};
+		
+		// Create a list with lesson names/numbers
+		var lessons = [];
+		for (var i=0; i < currentWordlist.length; ++ i) {
+			var currentLesson = currentWordlist[i][4];
+			if (currentLesson && currentLesson != "-" && lessons.indexOf(currentLesson) <= -1) {
+				lessons.push(currentLesson+"");
+			};
+		};
+		
+		// Add new entries
+		for(i=0; i < lessons.length; ++i) {
+			var lastOption = selector.options.length - 1;
+			var lessonTitle = lessons[i];
+			var newOption = selector.options[0].cloneNode(true);
+			newOption.value = lessonTitle;
+			newOption.text = lessonTitle;
+			selector.add(newOption);
+		};
+	};
+
+
+	//]]>	
+	</script>
+	
+</body>
+</html>
