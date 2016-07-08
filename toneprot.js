@@ -26,6 +26,7 @@
  */
 
 var performanceRecord = {};
+var recordPerformance = true;
 
 var setDrawingParam = function (canvasId) {
 	var drawingArea = document.getElementById(canvasId);
@@ -734,7 +735,8 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 			"Low" : 0,
 			"Wide" : 0,
 			"Narrow" : 0,
-			"Wordlist" : ""
+			"Wordlist" : "",
+			"Date" : ""
 		};
 	};
 	++performanceRecord[pinyin][recognition.Label];
@@ -743,6 +745,8 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 	if(sgc3_settings) {
 		performanceRecord[pinyin]["Wordlist"] = sgc3_settings.wordList;
 	};
+	var d = new Date();
+	performanceRecord[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 };
 	
 // Handle sound after decoding (used in audioProcessing.js)
@@ -759,7 +763,7 @@ function processRecordedSound () {
 		};
 		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
 		
-		recognition2performance(currentPinyin, recognition, performanceRecord);
+		if(recordPerformance) recognition2performance(currentPinyin, recognition, performanceRecord);
 console.log(performanceRecord);
 		
 		// Write results
