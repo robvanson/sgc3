@@ -25,6 +25,8 @@
  * 
  */
 
+var performanceRecord = {};
+
 var setDrawingParam = function (canvasId) {
 	var drawingArea = document.getElementById(canvasId);
 	var drawingCtx = drawingArea.getContext("2d");
@@ -719,7 +721,29 @@ var recognition = {
 		Recognition: "",
 		Feedback: "",
 		Label: "Correct",
+		Register: "OK",
+		Range: "OK"
 	};
+	
+function recognition2performance (pinyin, recognition, performanceRecord) {
+	if (! performanceRecord[pinyin] ) {
+		performanceRecord[pinyin] = {
+			"Correct" : 0,
+			"Wrong" : 0,
+			"High" : 0,
+			"Low" : 0,
+			"Wide" : 0,
+			"Narrow" : 0,
+			"Wordlist" : ""
+		};
+	};
+	++performanceRecord[pinyin][recognition.Label];
+	if(recognition.Register != "OK")++performanceRecord[pinyin][recognition.Register];
+	if(recognition.Range != "OK")++performanceRecord[pinyin][recognition.Range];
+	if(sgc3_settings) {
+		performanceRecord[pinyin]["Wordlist"] = sgc3_settings.wordList;
+	};
+};
 	
 // Handle sound after decoding (used in audioProcessing.js)
 function processRecordedSound () {
@@ -734,7 +758,10 @@ function processRecordedSound () {
 			recordedPitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate)
 		};
 		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
-	
+		
+		recognition2performance(currentPinyin, recognition, performanceRecord);
+console.log(performanceRecord);
+		
 		// Write results
 		document.getElementById("ResultString").textContent = recognition.Recognition;
 		document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
@@ -957,13 +984,13 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 			feedbackText = toneFeedback_tables[language]["Correct"];
 		};
 	};
-
-	
 	
 	var result = {
 		Recognition: recognitionText,
 		Feedback: feedbackText,
 		Label: labelText,
+		Register: registerUsed,
+		Range: rangeUsed
 	};
 	
 	return result;
