@@ -393,7 +393,9 @@ function get_percentiles (points, compare, remove, percentiles) {
 	sortList.sort(compare);
 	var sortListLength = sortList.length
 	for (var i = sortListLength-1; i >= 0; --i) {
-		if (remove(sortList[i])) sortList.splice(i, 1);
+		if (remove(sortList[i])) {
+			sortList.splice(i, 1);
+		};
 	};
 	for (var i = 0; i < percentiles.length; ++i) {
 		var perc = percentiles[i];

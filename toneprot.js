@@ -815,8 +815,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	
 	// Get top and range of model
 	var tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
-	maximumModelFzero = tonePercentiles[1].value > 0 ? tonePercentiles[1].value : 0;
-	minimumModelFzero = tonePercentiles[0].value > 0 ? tonePercentiles[0].value : 0;
+	maximumModelFzero = (tonePercentiles[1]["value"].value > 0) ? tonePercentiles[1]["value"].value : 0;
+	minimumModelFzero = (tonePercentiles[0]["value"].value > 0) ? tonePercentiles[0]["value"].value : 0;
 	var modelPitchRange = 2; // 1 octave
 	if (minimumModelFzero > 0) {
     	modelPitchRange = maximumModelFzero / minimumModelFzero;
@@ -826,8 +826,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	
 	// Get top and range of recorded word
 	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
-	maximumRecFzero = pitchPercentiles[1].value > 0 ? pitchPercentiles[1].value : 0;
-	minimumRecFzero = pitchPercentiles[0].value > 0 ? pitchPercentiles[0].value : 0;
+	maximumRecFzero = pitchPercentiles[1]["value"].value > 0 ? pitchPercentiles[1]["value"].value : 0;
+	minimumRecFzero = pitchPercentiles[0]["value"].value > 0 ? pitchPercentiles[0]["value"].value : 0;
 	var recPitchRange = 2; // 1 octave
 	if (minimumRecFzero > 0) {
     	recPitchRange = maximumRecFzero / minimumRecFzero;
@@ -865,7 +865,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	if (modelDuration > spacing) {
 	   speedFactor = (speechDuration - spacing) / (modelDuration - spacing)
 	};
-console.log(registerUsed, rangeUsed, speedFactor);
+
 	// Round values
 	newRegister = Math.round(newRegister);
 
