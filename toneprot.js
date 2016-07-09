@@ -727,26 +727,25 @@ var recognition = {
 	};
 	
 function recognition2performance (pinyin, recognition, performanceRecord) {
-	if (! performanceRecord[pinyin] ) {
-		performanceRecord[pinyin] = {
+	if (! performanceRecord [sgc3_settings.wordList] ) 
+			performanceRecord [sgc3_settings.wordList] = {};
+	var wordList = performanceRecord [sgc3_settings.wordList];
+	if (! wordList[pinyin] ) {
+		wordList[pinyin] = {
 			"Correct" : 0,
 			"Wrong" : 0,
 			"High" : 0,
 			"Low" : 0,
 			"Wide" : 0,
 			"Narrow" : 0,
-			"Wordlist" : "",
 			"Date" : ""
 		};
 	};
-	++performanceRecord[pinyin][recognition.Label];
-	if(recognition.Register != "OK")++performanceRecord[pinyin][recognition.Register];
-	if(recognition.Range != "OK")++performanceRecord[pinyin][recognition.Range];
-	if(sgc3_settings) {
-		performanceRecord[pinyin]["Wordlist"] = sgc3_settings.wordList;
-	};
+	++wordList[pinyin][recognition.Label];
+	if(recognition.Register != "OK")++wordList[pinyin][recognition.Register];
+	if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
 	var d = new Date();
-	performanceRecord[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+	wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 };
 	
 // Handle sound after decoding (used in audioProcessing.js)
@@ -866,7 +865,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	if (modelDuration > spacing) {
 	   speedFactor = (speechDuration - spacing) / (modelDuration - spacing)
 	};
-
+console.log(registerUsed, rangeUsed, speedFactor);
 	// Round values
 	newRegister = Math.round(newRegister);
 
