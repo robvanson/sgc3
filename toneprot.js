@@ -476,6 +476,7 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 }
 
 // Take a word and create tone contour
+// !!! Add addapted highest tone and range !!!
 function word2tones (pinyin, topLine) {
 	var toneContour = [];
 	var word;
@@ -893,6 +894,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	
 	// Special cases (frequent recognition errors)
 	// Not ultra strict and wrong
+	//
+	// !!! Add rules for 3[12] to 30 confusions, 00 misidentification !!!
 	if (proficiency < 3 && choiceReference != pinyin) {
 		var currentPinyin = choiceReference;
 		
