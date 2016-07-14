@@ -116,7 +116,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div style="position: fixed; color: gray; bottom: 13%; left: 20%; height: 5%; width: 27%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
-	<div title=""><button type="button" style="color: black; bottom: 5%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
+	<div title=""><button type="button" style="color: black; bottom: 25%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
 		<div style="color: gray; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
 		<span id="SaveAudio" >---</span></button>
 	</div>
@@ -146,6 +146,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var displayPinyinButton = document.getElementById('DisplayPinyinButton');
 	var displayCharButton = document.getElementById('DisplayCharButton');
 	var displayTransButton = document.getElementById('DisplayTransButton');
+	var saveAudioButton = document.getElementById('SaveAudioButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
 	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
 	openWordlistButton.onclick = function () {
@@ -171,6 +172,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayPinyin: true,
 		displayChar: true,
 		displayTrans: true,
+		saveAudio: false,
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []
@@ -205,6 +207,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		get_wordlist (sgc3_settings.wordList);
 		currentWordlistName.textContent = sgc3_settings.wordList;
 		currentWordlistName.style.color = "gray";
+		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
 		deleteWordlistButton.style.color = "gray";
 		deleteWordlistButton.disabled = true;
 		if (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) {
@@ -242,6 +246,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 	};
 
+	
 	if (sgc3_settings.displayNumbers) {
 		displayNumbersButton.style.color = "red";
 		displayNumbersButton.background = "rgb(256,245,245)";
@@ -366,6 +371,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 	};
 	
+	// Record all Audio
+	saveAudioButton.onclick = function () {
+		sgc3_settings.saveAudio = ! sgc3_settings.saveAudio;
+		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
+		store_SGC3_settings ();
+	};
 	
 	function getTTSvoice(){
 		var selectedVoice;

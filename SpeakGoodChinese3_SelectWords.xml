@@ -116,6 +116,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayPinyin: true,
 		displayChar: true,
 		displayTrans: true,
+		saveAudio: false,
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []

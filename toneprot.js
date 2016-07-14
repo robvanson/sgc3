@@ -625,7 +625,7 @@ function display_recording_level (id, recordedArray) {
 		};
 	};
 	var power = sumSquare / nSamples;
-	var dBpower = (power > 0) ? maxPowerRecorded + Math.log10(power) * 10 : 0;
+	var dBpower = (power > 0) ? maxPowerRecorded + 2*Math.log10(power) * 10 : 0;
 	var recordingLight = document.getElementById(id);
 	var currentWidth = 100*recordingLight.clientWidth/window.innerWidth;
 	var currentHeight = 100*recordingLight.clientHeight/window.innerHeight;
