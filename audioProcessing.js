@@ -56,6 +56,9 @@ function processAudio (blob) {
 };
 
 // You need a function "processRecordedSound ()"
+// Set some switches to prevent stored data are reused
+sessionStorage["recorded"] = "false";
+var retrievedData = false;
 function decodedDone(decoded) {
 	var typedArray = new Float32Array(decoded.length);
 	typedArray = decoded.getChannelData(0);
@@ -71,8 +74,12 @@ function decodedDone(decoded) {
 	windowStart = 0;
 	windowEnd = recordedDuration;
 
-	// make sure this funciton is defined!!!
+	// make sure this function is defined!!!
+	if (!retrievedData) sessionStorage["recorded"] = "true";
 	processRecordedSound ();
+	sessionStorage["recorded"] = "false";
+	// Note this one should be switched AFTER processRecordedSound ahs been called.
+	retrievedData = false;
 };
 
 function play_soundArray (soundArray, sampleRate, start, end) {
@@ -114,6 +121,7 @@ function writeUTFBytes(view, offset, string){
 // Write selection [start, end] to a WAV blob
 function arrayToBlob (array, start, end, sampleRate) {
 	if(!array) return;
+	if(end <= 0) end = array.length;
 	var window = array.slice(start*sampleRate, end*sampleRate);
 
 	// create the buffer and view to create the .WAV file
@@ -485,20 +493,68 @@ function get_time_of_minmax (points) {
 };
 
 // Use IndexedDB as an Audio storage
-// Remove entries that have the same name
-// The structure is: Directory, Filename, Binary data
-function addAudioBlob(storeName, name, blob) {
-	var date = new Date().toLocaleString();
-	var db;
-	var request = indexedDB.open("Audio", 1);
+function saveCurrentAudioWindow (map, fileName) {
+console.log("saveCurrentAudioWindow ", map, fileName);
+	if (!currentAudioWindow || currentAudioWindow.length <= 0 || ! recordedSampleRate || recordedSampleRate <= 0) return;
+	var blob = arrayToBlob (currentAudioWindow, 0, 0, recordedSampleRate);
+	if (map && map.length > 0 && fileName && fileName.length > 0) {
+		addAudioBlob(map, fileName, blob);
+	};
+};
+
+var indexedDBversion = 2;
+function getCurrentAudioWindow (map, name) {
+	var request = indexedDB.open("Audio", indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};
 	request.onsuccess = function(event) {
 		db = this.result;
-		var request = db.transaction([storeName], "readwrite")
-			.objectStore(storeName)
-			.put({ name: name, date: date, audio: blob });
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.get(map+"/"+name);
+		
+		request.onsuccess = function(event) {
+			var record = this.result;
+			if(record) {
+				if(record.audio){
+					// processAudio is resolved asynchronously, reset retrievedData when it is finished
+					retrievedData = true;
+					processAudio (record.audio);
+				};
+			};
+		};
+		
+		// Data not found
+		request.onerror = function(event) {
+			console.log("Unable to ertrieve data: "+map+"/"+name+" cannot be found");
+		};
+	};
+	request.onerror = function(event) {
+		console.log("Error: ", event);
+	}
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		var objectStore = db.createObjectStore("Recordings");
+	};
+};
+
+// Use IndexedDB as an Audio storage
+// Remove entries that have the same name
+// The structure is: Directory, Filename, Binary data
+function addAudioBlob(map, name, blob) {
+	var date = new Date().toLocaleString();
+	var db;
+	var request = indexedDB.open("Audio", indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.put({ map: map, name: name, date: date, audio: blob }, map+"/"+name);
 		
 		request.onsuccess = function(event) {
 			console.log("Success: ", this.result, " ", date);
@@ -515,14 +571,14 @@ function addAudioBlob(storeName, name, blob) {
 	request.onupgradeneeded = function(event) {
 		var db = this.result;
 		// Create an objectStore to hold audio blobs.
-		var objectStore = db.createObjectStore(storeName, { keyPath: "name", autoincrement: false });
+		var objectStore = db.createObjectStore("Recordings");
 		// Use transaction oncomplete to make sure the objectStore creation is 
 		// finished before adding data into it.
 		objectStore.transaction.oncomplete = function(event) {
 			// Store values in the newly created objectStore.
 			var date = new Date().toLocaleString();
-			var customerObjectStore = db.transaction([storeName], "readwrite").objectStore(storeName);
-			customerObjectStore.add({name: name, date: date, audio: blob });
+			var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
+			customerObjectStore.add({ map: map, name: name, date: date, audio: blob }, map+"/"+name);
 			request.onsuccess = function(event) {
 				console.log("Success: ", this.result, " ", date);
 	

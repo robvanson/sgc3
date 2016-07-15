@@ -763,14 +763,28 @@ function processRecordedSound () {
 		};
 		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
 		
-		if(recordPerformance) recognition2performance(currentPinyin, recognition, performanceRecord);
-console.log(performanceRecord);
+		// Only do this ONCE for every recording
+		if(recordPerformance && sessionStorage.recorded == "true") recognition2performance(currentPinyin, recognition, performanceRecord);
+		if(sgc3_settings.saveAudio && sessionStorage.recorded == "true") {
+			// get Lesson
+			var currentWord = JSON.parse(localStorage.currentWord);
+			var lesson = currentWordlist[currentWord][4];
+			lesson = (lesson && lesson != "-") ? " "+lesson : "";
+			saveCurrentAudioWindow (sgc3_settings.wordList+lesson, currentPinyin+".wav");
+		};
 		
 		// Write results
 		document.getElementById("ResultString").textContent = recognition.Recognition;
 		document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
 		document.getElementById("FeedbackString").textContent = recognition.Feedback;
 		document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+		
+		// Set play button
+		if(currentAudioWindow.length > 0) {
+			document.getElementById('PlayButton').disabled = false;
+			document.getElementById('PlayButton').style.color = "red";
+		};		    
+
 	};
 };
 

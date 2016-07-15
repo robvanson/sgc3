@@ -445,7 +445,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		draw_example_pinyin ("TonePlot", currentPinyin);
 
 		// Draw current sound
-		processRecordedSound ()
+		// First, check whether there is a recorded sound stored
+		if(sgc3_settings.saveAudio) {
+			var lesson = (lessonText != "-") ? " "+lessonText : "";
+			getCurrentAudioWindow (sgc3_settings.wordList+lesson, currentPinyin+".wav");
+			
+		} else {
+			processRecordedSound ()
+		};
 	};
 	
 	function write_WordlistName () {
