@@ -351,6 +351,20 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 	return pitchArray;
 };
 
+// PitchTier definition
+function Tier () {
+	this.xmin = undefined;
+	this.xmax = undefined;
+	this.dT = undefined;
+	this.size = undefined;
+	this.items = undefined;
+	this.time = undefined;
+	this.values = undefined;
+	this.item = function (i) {
+		return {x: this.time [i], value: this.values [i]};
+	};
+};
+
 // Pitch tracking and candidate selection
 function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var pitchArray = calculate_Pitch (sound, sampleRate, fMin, fMax, dT);
@@ -365,16 +379,28 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 		timeSeries.push(pitchArray [i].x);
 		valueSeries.push(Math.max(...(pitchArray [i].values)));
 	};
-	var pitchTier = {xmin: 0, xmax: duration, dT: dT, points: {size: points.length, items: points, time: timeSeries, value: valueSeries}};
+	var pitchTier = new Tier();
+	pitchTier.xmin = 0;
+	pitchTier.xmax = duration; 
+	pitchTier.dT = dT;
+	pitchTier.size = points.length; 
+	pitchTier.items = points;
+	pitchTier.time = timeSeries; 
+	pitchTier.values = valueSeries;
+	
 	return pitchTier;
 }
+
+
 
 // DTW between two pitchTiers
 function toDTW (pitchTier1, pitchTier2) {
 	var dtw = {distance: 0, path: [], matrix: undefined};
 	
-	var pitch1 = pitchTier1.points.items;
-	var pitch2 = pitchTier2.points.items;
+	var pitch1 = pitchTier1.values;
+	var pitch2 = pitchTier2.values;
+	pitch1 = pitchTier1.items;
+	pitch2 = pitchTier2.items;
 	
 	// Stub code giving fake results
 	dtw.distance = Math.random()*Math.max(pitch1.length, pitch2.length);
@@ -476,13 +502,14 @@ function get_percentiles (points, compare, remove, percentiles) {
 };
 
 // return the minim and maximum and their times
-function get_time_of_minmax (points) {
+function get_time_of_minmax (tier) {
 	var min = Infinity;
 	var max = -Infinity;
 	var tmin = tmax = 0;
-	for (var i = 0; i < points.length; ++i) {
-		var currentValue = points[i].value;
-		var currentTime = points[i].time;
+	for (var i = 0; i < tier.points.size; ++i) {
+		var item = tier.item(i);
+		var currentValue = item.value;
+		var currentTime = item.x;
 		if (currentValue < min) {
 			min = currentValue;
 			tmin = currentTime;
