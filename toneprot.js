@@ -513,6 +513,8 @@ function word2tones (pinyin, topLine) {
 	 */
 	// First create points
 	var points = [];
+	var timeSeries = [];
+	var valueSeries = [];
 	for(x = dx/2; x < time; x += dx) {
 		// Locate tone stretch
 		var i = 0;
@@ -529,9 +531,11 @@ function word2tones (pinyin, topLine) {
 		}
 
 		points.push({"x": x, "value": value});
+		timeSeries.push(x);
+		valueSeries.push(value);
 	};
 	
-	pitchTier = {"xmin": 0, "xmax": time, "points": {"size": points.length, "items": points}};
+	pitchTier = {"xmin": 0, "xmax": time, "points": {"size": points.length, "items": points, time: timeSeries, value: valueSeries}};
 	return pitchTier;
 }
 
@@ -542,14 +546,19 @@ function smooth_pitchTier (pitchTier) {
 	var currentTime = -1;
 	var currentValue = 0;
 	var items = pitchTier.points.items;
+	var timeSeries = pitchTier.points.time;
+	var valueSeries = pitchTier.points.value;
 	for(var i = 1; i < items.length; i+=1) {
-		var nextTime = items[i].x;
-		var nextValue = items[i].value;
+		var nextTime = timeSeries[i];
+		var nextValue = valueSeries[i];
+		nextTime = items[i].x;
+		nextValue = items[i].value;
 		
 		// Change currentValue as the average of prev, current, and next
 		// NOTE: Do not use the changed value for the next round!!!
 		if (prevValue > 0 && currentValue > 0 && nextValue > 0) {
 			items[i-1].value = (prevValue + currentValue + nextValue) / 3;
+			valueSeries[i-1] = (prevValue + currentValue + nextValue) / 3;
 		};
 		// Next round
 		prevTime = currentTime;
@@ -579,9 +588,13 @@ function plot_pitchTier (canvasId, color, lineWidth, topLine, pitchTier) {
 	var prevTime = -1;
 	var prevValue = 0;
 	var items = pitchTier.points.items;
+	var timeSeries = pitchTier.points.time;
+	var valueSeries = pitchTier.points.value;
 	for(var i = 1; i < items.length; i+=1) {
-		var currentTime = items[i].x;
-		var currentValue = items[i].value;
+		var currentTime = timeSeries[i];
+		var currentValue = valueSeries[i];
+		currentTime = items[i].x;
+		currentValue = items[i].value;
 		if(prevValue > 0 && currentValue > 0) {
 			drawingCtx.lineTo(currentTime * tScale, plotHeight - currentValue * vScale);
 		} else if (prevValue <= 0 && currentValue > 0) {
@@ -686,6 +699,8 @@ function testPitchTracker (duration, sampleRate) {
 	var dT = 0.010;
 	var windowLength = sampleRate * windowDuration;
 	var points = [];
+	var timeSeries = [];
+	var valueSeries = [];
 	var t = windowDuration / 2;
 	
 	// Step through sound
@@ -711,11 +726,13 @@ function testPitchTracker (duration, sampleRate) {
 		var pitchValue = pitch.findTone();
 
 		points.push({"x": t, "value": (pitchValue ? pitchValue.freq : 0)});
+		timeSeries.push(t);
+		valueSeries.push(t);
 
 		t += dT;
 	};
 	
-	pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
+	pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points, "time": timeSeries, "value": valueSeries}};
 	return pitchTier;
 }
 
@@ -829,7 +846,9 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var lowBoundaryFactor = 1/precisionFactor
 	
 	// Get top and range of model
-	var tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
+	var tonePercentiles = get_percentiles (tonePitchTier.points.value, function (a, b) { return a-b;}, function(a) { return a <= 0;}, [5, 95]);
+console.log("get_percentiles ", tonePercentiles);
+	tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
 	maximumModelFzero = (tonePercentiles[1]["value"].value > 0) ? tonePercentiles[1]["value"].value : 0;
 	minimumModelFzero = (tonePercentiles[0]["value"].value > 0) ? tonePercentiles[0]["value"].value : 0;
 	var modelPitchRange = 2; // 1 octave
@@ -840,7 +859,9 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	};
 	
 	// Get top and range of recorded word
-	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
+	var pitchPercentiles = get_percentiles (pitchTier.points.value, function (a, b) { return a-b;}, function(a) { return a <= 0;}, [5, 95]);
+console.log("get_percentiles ", tonePercentiles);
+	pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
 	maximumRecFzero = pitchPercentiles[1]["value"].value > 0 ? pitchPercentiles[1]["value"].value : 0;
 	minimumRecFzero = pitchPercentiles[0]["value"].value > 0 ? pitchPercentiles[0]["value"].value : 0;
 	var recPitchRange = 2; // 1 octave
@@ -849,6 +870,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
     } else {
 		recPitchRange = 0;
 	};
+// !!! Convert to two lists
 	var recordedMinMax = get_time_of_minmax (pitchTier.points.items);
 	
 	// Rescale register (ignore model tone ranges <= 3 semitones)

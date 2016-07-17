@@ -356,13 +356,16 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var pitchArray = calculate_Pitch (sound, sampleRate, fMin, fMax, dT);
 	var duration = sampleRate > 0 ? sound.length / sampleRate : 0;
 	var points = [];
+	var timeSeries = [];
+	var valueSeries = [];
 	
 	// Select the best pitch candidates using tracking etc.
 	for (var i=0; i < pitchArray.length; ++ i) {
 		points.push({x: pitchArray [i].x, value: pitchArray [i].values [0] });
+		timeSeries.push(pitchArray [i].x);
+		valueSeries.push(Math.max(...(pitchArray [i].values)));
 	};
-	var pitchTier = {xmin: 0, xmax: duration, dT: dT, points: {size: points.length, items: points}};
-
+	var pitchTier = {xmin: 0, xmax: duration, dT: dT, points: {size: points.length, items: points, time: timeSeries, value: valueSeries}};
 	return pitchTier;
 }
 
