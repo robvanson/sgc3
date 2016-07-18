@@ -358,7 +358,6 @@ function Tier () {
 	this.xmax = undefined;
 	this.dT = undefined;
 	this.size = undefined;
-	this.items = [];
 	this.time = [];
 	this.values = [];
 	
@@ -370,7 +369,6 @@ function Tier () {
 	};
 	this.writeItem = function (i, item) {
 		if ( i < this.time.length ) {
-			this.items [i] = item;
 			this.time [i] = item.x;
 			this.values [i] = item.value;
 			return i;
@@ -380,7 +378,6 @@ function Tier () {
 		}
 	};
 	this.pushItem = function (item) {
-		this.items.push(item);
 		this.time.push(item.x);
 		this.values.push(item.value);
 		this.size = this.time.length;
@@ -398,20 +395,12 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var valueSeries = [];
 	
 	// Select the best pitch candidates using tracking etc.
-	for (var i=0; i < pitchArray.length; ++ i) {
-		points.push({x: pitchArray [i].x, value: pitchArray [i].values [0] });
-		timeSeries.push(pitchArray [i].x);
-		valueSeries.push(Math.max(...(pitchArray [i].values)));
-	};
 	var pitchTier = new Tier();
 	pitchTier.xmin = 0;
-	pitchTier.xmax = duration; 
 	pitchTier.dT = dT;
-	pitchTier.size = points.length;
-	
-	pitchTier.items = points;
-	pitchTier.time = timeSeries; 
-	pitchTier.values = valueSeries;
+	for (var i=0; i < pitchArray.length; ++ i) {
+		pitchTier.pushItem ({x: pitchArray [i].x, value: pitchArray [i].values [0] })
+	};
 	
 	return pitchTier;
 }
