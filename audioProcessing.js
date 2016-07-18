@@ -356,6 +356,8 @@ function Tier () {
 	// data
 	this.xmin = undefined;
 	this.xmax = undefined;
+	this.valuemin = Infinity;
+	this.valuemax = -Infinity;
 	this.dT = undefined;
 	this.size = undefined;
 	this.time = [];
@@ -370,7 +372,11 @@ function Tier () {
 	this.writeItem = function (i, item) {
 		if ( i < this.time.length ) {
 			this.time [i] = item.x;
+			if(item.x < this.xmin)this.xmin = item.x;
+			if(item.x > this.xmax)this.xmax = item.x;
 			this.values [i] = item.value;
+			if(item.value < this.valuemin) this.valuemin = item.value;
+			if(item.value > this.valuemax) this.valuemax = item.value;
 			return i;
 		} else {
 			console.log("Item "+i+" does not exist");
@@ -379,9 +385,12 @@ function Tier () {
 	};
 	this.pushItem = function (item) {
 		this.time.push(item.x);
+		if(item.x < this.xmin)this.xmin = item.x;
+		if(item.x > this.xmax)this.xmax = item.x;
 		this.values.push(item.value);
+		if(item.value < this.valuemin) this.valuemin = item.value;
+		if(item.value > this.valuemax) this.valuemax = item.value;
 		this.size = this.time.length;
-		this.xmax = item.x;
 		return this.size;
 	};
 };
