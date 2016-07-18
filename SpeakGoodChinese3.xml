@@ -264,6 +264,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		saveAudio: false,
+		currentDataStore: "SGC3 audio",
+		audioDataBases: [],
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []

@@ -555,7 +555,7 @@ console.log("saveCurrentAudioWindow ", map, fileName);
 
 var indexedDBversion = 2;
 function getCurrentAudioWindow (map, name) {
-	var request = indexedDB.open("Audio", indexedDBversion);
+	var request = indexedDB.open(sgc3_settings.currentDataStore, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};
@@ -580,6 +580,9 @@ function getCurrentAudioWindow (map, name) {
 		request.onerror = function(event) {
 			console.log("Unable to ertrieve data: "+map+"/"+name+" cannot be found");
 		};
+		
+		// Store db name
+		if (sgc3_settings.audioDataBases.indexOf(sgc3_settings.currentDataStore) < 0) sgc3_settings.audioDataBases.push(sgc3_settings.currentDataStore);
 	};
 	request.onerror = function(event) {
 		console.log("Error: ", event);
@@ -597,7 +600,7 @@ function getCurrentAudioWindow (map, name) {
 function addAudioBlob(map, name, blob) {
 	var date = new Date().toLocaleString();
 	var db;
-	var request = indexedDB.open("Audio", indexedDBversion);
+	var request = indexedDB.open(sgc3_settings.currentDataStore, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};
@@ -617,6 +620,9 @@ function addAudioBlob(map, name, blob) {
 			alert("Unable to add data\r\n"+name+" cannot be created or updated");
 			console.log("Unable to add data: "+name+" cannot be created or updated");
 		};
+		
+		// Store db name
+		if (sgc3_settings.audioDataBases.indexOf(sgc3_settings.currentDataStore) < 0) sgc3_settings.audioDataBases.push(sgc3_settings.currentDataStore);
 	};
 
 	request.onupgradeneeded = function(event) {
