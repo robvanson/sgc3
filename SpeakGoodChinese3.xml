@@ -58,7 +58,7 @@ button {
 <script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
 </head>
 
-<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close(); " >
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload=" sgc3_settings.saveAudio = false; store_SGC3_settings (); if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close();" >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -314,6 +314,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	if(localStorage.language) {
 		load_SGC3_settings ();
 	} else {
+		// Dohard initialization of stored parameters
+		sgc3_settings.saveAudio = false;
+	
 		store_SGC3_settings ();
 	};
 	
@@ -685,7 +688,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var url = window.location.href;
 	url = url.replace(/[^\/]+$/, "wordlists/");
 	readAllRemoteWordlists (url);
-
+	
 	//]]>	
 	</script>
 </body>

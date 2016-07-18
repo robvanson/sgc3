@@ -353,15 +353,39 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 
 // PitchTier definition
 function Tier () {
+	// data
 	this.xmin = undefined;
 	this.xmax = undefined;
 	this.dT = undefined;
 	this.size = undefined;
-	this.items = undefined;
-	this.time = undefined;
-	this.values = undefined;
+	this.items = [];
+	this.time = [];
+	this.values = [];
+	
+	// access functions
+	this.valueSeries = function () {return this.values; };
+	this.timeSeries = function () {return this.time; };
 	this.item = function (i) {
 		return {x: this.time [i], value: this.values [i]};
+	};
+	this.writeItem = function (i, item) {
+		if ( i < this.time.length ) {
+			this.items [i] = item;
+			this.time [i] = item.x;
+			this.values [i] = item.value;
+			return i;
+		} else {
+			console.log("Item "+i+" does not exist");
+			return false;
+		}
+	};
+	this.pushItem = function (item) {
+		this.items.push(item);
+		this.time.push(item.x);
+		this.values.push(item.value);
+		this.size = this.time.length;
+		this.xmax = item.x;
+		return this.size;
 	};
 };
 
@@ -383,7 +407,8 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	pitchTier.xmin = 0;
 	pitchTier.xmax = duration; 
 	pitchTier.dT = dT;
-	pitchTier.size = points.length; 
+	pitchTier.size = points.length;
+	
 	pitchTier.items = points;
 	pitchTier.time = timeSeries; 
 	pitchTier.values = valueSeries;
@@ -397,10 +422,8 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 function toDTW (pitchTier1, pitchTier2) {
 	var dtw = {distance: 0, path: [], matrix: undefined};
 	
-	var pitch1 = pitchTier1.values;
-	var pitch2 = pitchTier2.values;
-	pitch1 = pitchTier1.items;
-	pitch2 = pitchTier2.items;
+	var pitch1 = pitchTier1.valueSeries();
+	var pitch2 = pitchTier2.valueSeries();
 	
 	// Stub code giving fake results
 	dtw.distance = Math.random()*Math.max(pitch1.length, pitch2.length);
@@ -506,7 +529,7 @@ function get_time_of_minmax (tier) {
 	var min = Infinity;
 	var max = -Infinity;
 	var tmin = tmax = 0;
-	for (var i = 0; i < tier.points.size; ++i) {
+	for (var i = 0; i < tier.size; ++i) {
 		var item = tier.item(i);
 		var currentValue = item.value;
 		var currentTime = item.x;
