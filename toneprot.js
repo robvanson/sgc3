@@ -516,7 +516,6 @@ function word2tones (pinyin, topLine) {
 	var timeSeries = [];
 	var valueSeries = [];
 	var pitchTier = new Tier ();
-	pitchTier.xmin = 0;
 	pitchTier.dT = dx;
 	for(x = dx/2; x < time; x += dx) {
 		// Locate tone stretch
@@ -534,7 +533,6 @@ function word2tones (pinyin, topLine) {
 		}
 		pitchTier.pushItem({"x": x, "value": value});
 	};
-	
 	return pitchTier;
 }
 

@@ -354,8 +354,8 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 // PitchTier definition
 function Tier () {
 	// data
-	this.xmin = undefined;
-	this.xmax = undefined;
+	this.xmin = Infinity;
+	this.xmax = -Infinity;
 	this.valuemin = Infinity;
 	this.valuemax = -Infinity;
 	this.dT = undefined;
