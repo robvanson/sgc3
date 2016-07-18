@@ -371,6 +371,7 @@ var selector_tables = {
 		Register_125:	["男性 超低", "如果发音人为男性且声音很低，那么选择此项。"],
 		Strict: ["水平", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"],
 		RecordingTime: ["记录", "录音时间（秒）"],
+		AudioName: ["保存", "录音保存的位置。"],
 		},
 	EN: {
 		Language: ["Language", "Select a language"],
@@ -384,6 +385,7 @@ var selector_tables = {
 		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"],
 		Strict: ["Level", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
 		RecordingTime: ["Recording", "Time of recording in seconds"],
+		AudioName: ["Archive", "Name of the active recording session"],
 		},
 	JA: {
 		Language: ["言語", "表示言語を設定します。"],
@@ -397,6 +399,7 @@ var selector_tables = {
 		Register_125:	["男性　更に低め", "発話者が男性でかつ声が更に低めのとき選択します。"],
 		Strict: ["レベル", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
 		RecordingTime: ["録音", "録音時間の秒数"],
+		AudioName: ["アーカイブ", "現在の録音セッションの名前です。"],
 		},
 	DE: {
 		Language: ["Sprache", "Wähle die gewünschte Sprache"],
@@ -410,6 +413,7 @@ var selector_tables = {
 		Register_125:	["Man Xtr tief", "Wähle diesen Knopf  wenn Sie ein Mann mit eine sehr tiefe Stimme sind"],
 		Strict: ["Stufe", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
 		RecordingTime: ["Aufnahme", "Aufnahmezeit in Secunden"],
+		AudioName: ["Aufbewahren", "Name der aktieven Aufzeichnungssitzung"],
 		},
 	NL: {
 		Language: ["Taal", "Selecteer de gewenste taal"],
@@ -423,6 +427,7 @@ var selector_tables = {
 		Register_125:	["Man Xtr Laag", "Kies dit als u een man bent met een zeer lage stem"],
 		Strict:	["Niveau", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."],
 		RecordingTime: ["Opname", "Opnametijd in seconden"],
+		AudioName: ["Bewaren", "Naam van de actieve opnamesessie"],
 		},
 }
 

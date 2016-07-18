@@ -120,6 +120,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<div style="color: gray; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
 		<span id="SaveAudio" >---</span></button>
 	</div>
+	
+	<div style="position: fixed; color: black; bottom: 10%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="AudioNameCaption">---</div>	
+	<select id="AudioName" style="position: fixed; color: black; bottom: 5%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="store_SGC3_settings (); " >
+		<option value="---" ><span id="AudioNameCaption2" title="" >---</span></option>
+	</select> 
+	
     <script type="text/javascript">
 	//<![CDATA[
 	// Install the service worker for offline use
