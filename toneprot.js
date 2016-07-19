@@ -707,7 +707,7 @@ function processRecordedSound () {
 			var currentWord = JSON.parse(localStorage.currentWord);
 			var lesson = currentWordlist[currentWord][4];
 			lesson = (lesson && lesson != "-") ? " "+lesson : "";
-			saveCurrentAudioWindow (sgc3_settings.wordList+lesson, currentPinyin+".wav");
+			saveCurrentAudioWindow (sgc3_settings.currentCollection, sgc3_settings.wordList+lesson, currentPinyin+".wav");
 		};
 		
 		// Write results

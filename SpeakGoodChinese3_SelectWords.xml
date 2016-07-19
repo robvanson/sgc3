@@ -117,8 +117,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		saveAudio: false,
-		currentDataStore: "SGC3 audio",
-		audioDataBases: [],
+		audioDatabaseName: "SGC3 audio",
+		currentCollection: "---",
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []
@@ -140,6 +140,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				sgc3_settings[x] = JSON.parse(localStorage[x]);
 			};
 		};
+		audioDatabaseName = sgc3_settings.audioDatabaseName;
 		
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 		get_wordlist (sgc3_settings.wordList);
