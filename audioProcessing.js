@@ -632,13 +632,11 @@ function addAudioBlob(collection, map, name, blob) {
 		// Use transaction oncomplete to make sure the objectStore creation is 
 		// finished before adding data into it.
 		objectStore.transaction.oncomplete = function(event) {
-			console.log("Success (add): ", this);
 			// Store values in the newly created objectStore.
 			var date = new Date().toLocaleString();
 			var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
 			customerObjectStore.add({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);
 			request.onsuccess = function(event) {
-				console.log("Success: ", this.result, " ", date);
 	
 			};
 			
