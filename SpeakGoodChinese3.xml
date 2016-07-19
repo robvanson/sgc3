@@ -268,7 +268,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		saveAudio: false,
 		audioDatabaseName: "SGC3 audio",
 		currentCollection: "SGC3",
-		audioDataBases: [],
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []
