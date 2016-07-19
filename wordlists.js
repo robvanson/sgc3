@@ -232,12 +232,12 @@ function processWordlist (file, allText, delimiter) {
 	wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 	get_wordlist (sgc3_settings.wordList);
 	// Force new worlists into local storage
-	localStorage.personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
+	localStorage.sgc3_personalWordlists = JSON.stringify(sgc3_settings.personalWordlists);
 	if (document.getElementById('CurrentWordlist')) {
 		// Set new current, but only if it was selected manually
 		sgc3_settings.wordList = newWordlist[0];
-		localStorage.wordList = JSON.stringify(sgc3_settings.wordList);
-		localStorage.currentWord = JSON.stringify(0);
+		localStorage.sgc3_wordList = JSON.stringify(sgc3_settings.wordList);
+		localStorage.sgc3_currentWord = JSON.stringify(0);
 		document.getElementById('CurrentWordlist').textContent = sgc3_settings.wordList;
 		var isDeletable = wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList);
 		document.getElementById('CurrentWordlist').style.color = isDeletable ? "blue" : "gray";

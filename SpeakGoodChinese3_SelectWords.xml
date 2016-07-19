@@ -92,7 +92,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	}
 	
 	// DOM parameters
-	var mainWindow = localStorage.mainWindow;
+	var mainWindow = localStorage.sgc3_mainWindow;
 	
 	var selectTones = document.getElementById('Tones');
 	var selectLessons = document.getElementById('Part');
@@ -129,15 +129,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsRead = true;
 
 		for (x in sgc3_settings) {
-			localStorage[x] = JSON.stringify(sgc3_settings[x]);
+			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
 		};
 	};
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
 			// For some reason, parsing the language goes wrong
-			if (localStorage[x]) {
-				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			if (localStorage["sgc3_"+x]) {
+				sgc3_settings[x] = JSON.parse(localStorage["sgc3_"+x]);
 			};
 		};
 		audioDatabaseName = sgc3_settings.audioDatabaseName;

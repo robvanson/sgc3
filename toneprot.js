@@ -704,7 +704,7 @@ function processRecordedSound () {
 		if(recordPerformance && sessionStorage.recorded == "true") recognition2performance(currentPinyin, recognition, performanceRecord);
 		if(sgc3_settings.saveAudio && sessionStorage.recorded == "true") {
 			// get Lesson
-			var currentWord = JSON.parse(localStorage.currentWord);
+			var currentWord = JSON.parse(localStorage.sgc3_currentWord);
 			var lesson = currentWordlist[currentWord][4];
 			lesson = (lesson && lesson != "-") ? " "+lesson : "";
 			saveCurrentAudioWindow (sgc3_settings.currentCollection, sgc3_settings.wordList+lesson, currentPinyin+".wav");

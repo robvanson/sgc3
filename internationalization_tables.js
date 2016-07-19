@@ -97,7 +97,7 @@ function set_mainpageLanguage (language) {
 		};
 	};
 	
-	localStorage.language = JSON.stringify(language);
+	localStorage.sgc3_language = JSON.stringify(language);
 };
 
 function set_configLanguage (language) {
@@ -123,7 +123,7 @@ function set_configLanguage (language) {
 			};
 		};
 	};
-	localStorage.language = JSON.stringify(language);
+	localStorage.sgc3_language = JSON.stringify(language);
 };
 
 function set_selectWordsLanguage (language) {

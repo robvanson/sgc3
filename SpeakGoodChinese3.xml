@@ -53,12 +53,13 @@ button {
 <script type="text/javascript" src="audioProcessing.js" ></script>   
 <script type="text/javascript" src="toneprot.js" ></script>   
 <script type="text/javascript" src="RecordRTC.min.js" defer="true" ></script> 
+<script type="text/javascript" src="jszip.min.js" defer="true" ></script> 
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>
 <script type="text/javascript" src="fft.js/lib/real.js" defer="true" ></script>
 <script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
 </head>
 
-<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();localStorage.saveAudio = JSON.stringify(false);" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="sgc3_settings.saveAudio = false; store_SGC3_settings (); if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close();" >
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();localStorage.sgc3_saveAudio = JSON.stringify(false);" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="sgc3_settings.saveAudio = false; store_SGC3_settings (); if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close();" >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -107,6 +108,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
+ 	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 5%; height: 14%; width: 10%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" >&#9679;</div>
+ 		
 	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
@@ -115,8 +118,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
- 	<div style="color: blue; position: fixed; bottom: 24%; right: 5%; height: 14%; width: 10%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
- 		
 	<script type="text/javascript">
 	//<![CDATA[
 	// Install the service worker for offline use
@@ -243,9 +244,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 
 	// Global settings
 	// This setting is NOT stored
-	localStorage.currentWord = JSON.stringify(0);
+	localStorage.sgc3_currentWord = JSON.stringify(0);
 	sessionStorage.lastPinyin = "";
-	localStorage.saveAudio = JSON.stringify(false);
+	localStorage.sgc3_saveAudio = JSON.stringify(false);
 	
 	// These settings are stored
 	var sgc3_settings = {
@@ -276,16 +277,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Store settings
 	function store_SGC3_settings () {
 		for (x in sgc3_settings) {
-			localStorage[x] = JSON.stringify(sgc3_settings[x]);
+			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
 		};
-		 localStorage.currentWord = JSON.stringify(currentWord);
+		 localStorage.sgc3_currentWord = JSON.stringify(currentWord);
 	};
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
 			// For some reason, parsing the language goes wrong
-			if (localStorage[x]) {
-				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			if (localStorage["sgc3_"+x]) {
+				sgc3_settings[x] = JSON.parse(localStorage["sgc3_"+x]);
 			};
 		};
 		
@@ -300,8 +301,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// Reset currentWord if the wordlist has changed
 		currentWord = 0;
-		if (localStorage.currentWord) {
-			currentWord = JSON.parse(localStorage.currentWord);
+		if (localStorage.sgc3_currentWord) {
+			currentWord = JSON.parse(localStorage.sgc3_currentWord);
 		};
 		if (currentWord < 0){
 			clearRecordedData ();
@@ -316,7 +317,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	// Initialize to stored settings
-	if(localStorage.language) {
+	if(localStorage.sgc3_language) {
 		load_SGC3_settings ();
 	} else {
 		// Do hard initialization of stored parameters
@@ -497,12 +498,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Settings button
 	settingsButton.onclick = function () {
-		if (localStorage.settingsWindow && settingsWindow) {
+		if (localStorage.sgc3_settingsWindow && settingsWindow) {
 			settingsWindow.focus();
 		} else {
 			if (settingsWindow) settingsWindow.close();
 			settingsWindow = window.open('SpeakGoodChinese3_Settings.xml', '_blank');
-			localStorage.settingsWindow = JSON.stringify(true);
+			localStorage.sgc3_settingsWindow = JSON.stringify(true);
 		}
 	};
 	
