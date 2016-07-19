@@ -49,6 +49,8 @@ button {
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="wordlists_plus.js" ></script>   
+<script type="text/javascript" src="audioProcessing.js" ></script>   
+<script type="text/javascript" src="jszip.min.js" defer="true" ></script> 
 </head>
 <body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('sgc3_settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
 <!--
@@ -80,6 +82,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="LanguageCaption2" title="" >---</span></option>
 	</select> 
 
+	<a href="" id="HiddenDownloadLink" name="Download" style="display:none" title="Download" ></a>
 	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="RegisterCaption">---</div>	
 	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
@@ -116,6 +119,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div style="position: fixed; color: gray; bottom: 13%; left: 20%; height: 5%; width: 27%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
+	<div title=""><button type="button" style="color: black; bottom: 5%; right: 25%; height: 8%;" id="ExportAudioButton" ><span id="ExportAudio" >Export</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 25%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
 		<div style="color: gray; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
 		<span id="SaveAudio" >---</span></button>
@@ -152,6 +156,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var displayPinyinButton = document.getElementById('DisplayPinyinButton');
 	var displayCharButton = document.getElementById('DisplayCharButton');
 	var displayTransButton = document.getElementById('DisplayTransButton');
+	var hiddenDownloadLink = document.getElementById('HiddenDownloadLink');
+	var exportAudioButton = document.getElementById('ExportAudioButton');
 	var saveAudioButton = document.getElementById('SaveAudioButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
 	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
@@ -437,6 +443,29 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		};
 	};
+	
+	// Export audio
+	exportAudioButton.onclick = function (){
+		if (hiddenDownloadLink.href != "") URL.revokeObjectURL(hiddenDownloadLink.href);
+		getAllRecords (sgc3_settings.currentCollection, zipAudio);
+	};
+	
+	var zipAudio = function (records) {
+		var zip = new JSZip();
+		var topMap = zip.folder(sgc3_settings.currentCollection);
+		
+		for(var i=0; i <  records.length; ++i) {
+			var filename = records[i].map+"/"+records[i].name;
+			var blob = records[i].audio;
+			topMap.file(filename, blob, {binary: true});
+		};
+		zip.generateAsync({type:"blob"})
+		.then(function(content) {
+	        hiddenDownloadLink.download = sgc3_settings.currentCollection+".zip";
+	        hiddenDownloadLink.href = URL.createObjectURL(content);
+	        hiddenDownloadLink.click();
+		});		
+	};	
 	
 	// Set Register
 	setRegister (sgc3_settings.register);

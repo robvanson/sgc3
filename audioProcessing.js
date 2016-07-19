@@ -546,7 +546,6 @@ function get_time_of_minmax (tier) {
 
 // Use IndexedDB as an Audio storage
 function saveCurrentAudioWindow (collection, map, fileName) {
-console.log("saveCurrentAudioWindow ", collection, map, fileName);
 	if (!currentAudioWindow || currentAudioWindow.length <= 0 || ! recordedSampleRate || recordedSampleRate <= 0) return;
 	var blob = arrayToBlob (currentAudioWindow, 0, 0, recordedSampleRate);
 	if (collection && collection.length > 0 && map && map.length > 0 && fileName && fileName.length > 0) {
@@ -554,7 +553,7 @@ console.log("saveCurrentAudioWindow ", collection, map, fileName);
 	};
 };
 
-var indexedDBversion = 1;
+var indexedDBversion = 2;
 function getCurrentAudioWindow (collection, map, name) {
 	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
 	request.onerror = function(event) {
@@ -643,6 +642,31 @@ function addAudioBlob(collection, map, name, blob) {
 			request.onerror = function(event) {
 				console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
 			};
+		};
+	};
+};
+
+// Iterate over all records
+function getAllRecords (collection, processRecords) {
+	var collectRecords = [];
+	var db;
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var objectStore = db.transaction("Recordings").objectStore("Recordings");
+		var index = objectStore.index("collection");
+		index.openCursor().onsuccess = function(event) {
+		  var cursor = event.target.result;
+		  if (cursor) {
+			collectRecords.push(cursor.value);
+		    cursor.continue();
+		  } else {
+			console.log(collectRecords);
+			processRecords(collectRecords);
+		  };
 		};
 	};
 };
