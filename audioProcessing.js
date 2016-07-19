@@ -643,7 +643,6 @@ function addAudioBlob(collection, map, name, blob) {
 			};
 			
 			request.onerror = function(event) {
-				alert("Unable to add data\r\n"+collection+"/"+map+"/"+name+" cannot be created or updated");
 				console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
 			};
 		};
@@ -670,7 +669,6 @@ function clearDataStorage (databaseName, storeName) {
 		
 		// If data already exist, update it
 		request.onerror = function(event) {
-			alert("Unable to clear "+storeName);
 			console.log("Unable to clear "+storeName);
 		};
 	};
