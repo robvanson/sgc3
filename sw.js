@@ -56,6 +56,7 @@ self.addEventListener('install', function(event) {
 	'wordlists.js',
 	'wordlists_plus.js',
 	'RecordRTC.min.js',
+	'jszip.min.js',
 	'xhtml-default.css'
   ];
 
