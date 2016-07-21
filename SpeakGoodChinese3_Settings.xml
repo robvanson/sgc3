@@ -119,7 +119,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div style="position: fixed; color: gray; bottom: 13%; left: 20%; height: 5%; width: 27%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
-	<div title=""><button type="button" style="color: black; bottom: 5%; right: 25%; height: 8%;" id="ExportAudioButton" ><span id="ExportAudio" >Export</span></button></div>
+	<input type="file" id="HiddenImportAudio" name="ImportAudio" style="display:none" onchange='importAudio (this.files); this.value="";' title="OpenWord" />
+	<div title=""><button type="button" style="color: black; bottom: 5%; right: 33%; height: 8%; width: 8% " id="LocalImportAudio" ><span id="ImportAudio" style="font-size: 2vmin;" >Import</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 5%; right: 23%; height: 8%; width: 8% " id="ExportAudioButton" ><span id="ExportAudio" style="font-size: 2vmin;" >Export</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 25%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
 		<div style="color: gray; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
 		<span id="SaveAudio" >---</span></button>
@@ -127,6 +129,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	<div style="position: fixed; color: black; bottom: 10%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="AudioNameCaption">---</div>	
 	<select id="AudioName" style="position: fixed; color: black; bottom: 5%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="store_SGC3_settings (); " >
+		<option value="---" ><span title="" >New</span></option>
 		<option value="---" ><span id="AudioNameCaption2" title="" >---</span></option>
 	</select> 
 	
@@ -160,6 +163,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var exportAudioButton = document.getElementById('ExportAudioButton');
 	var saveAudioButton = document.getElementById('SaveAudioButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
+	var openAudioButton = document.getElementById('LocalOpenAudio');
+	var hiddenImportAudio = document.getElementById('HiddenImportAudio');
+	var importAudioButton = document.getElementById('LocalImportAudio');
+	importAudioButton.onclick = function () {
+	    document.getElementById('HiddenImportAudio').click();
+	};
 	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
 	openWordlistButton.onclick = function () {
 	    document.getElementById('HiddenOpenWordlist').click();
@@ -343,7 +352,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		};
 	};
-	
+		
 	deleteWordlistButton.onclick = function () {
 		var wordlistName = sgc3_settings.wordList;
 		var canBeDeleted = wordlistExist (sgc3_settings.personalWordlists, wordlistName);
@@ -444,6 +453,30 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		};
 	};
 	
+
+	// Construct a list of Collections
+	function add_collections_names_to_select () {
+		var selector = document.getElementById('AudioName');
+		var i = 0;
+		// First, remove old entries
+		var numOptions = selector.options.length
+		for(var i = numOptions - 1; i > 1; --i) {
+			selector.remove(i);
+		};
+		// Get the names of the collections
+		getAllRecords (sgc3_settings.currentCollection, zipAudio);
+		
+		// Add new entries
+		for(i=0; i < wordlists.length; ++i) {
+			var lastOption = selector.options.length - 1;
+			var wordlistTitle = wordlists[i][0];
+			var newOption = selector.options[0].cloneNode(true);
+			newOption.value = wordlistTitle;
+			newOption.text = wordlistTitle;
+			selector.add(newOption);
+		};
+	};
+
 	// Export audio
 	exportAudioButton.onclick = function (){
 		if (hiddenDownloadLink.href != "") URL.revokeObjectURL(hiddenDownloadLink.href);
@@ -452,12 +485,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	var zipAudio = function (records) {
 		var zip = new JSZip();
-		var topMap = zip.folder(sgc3_settings.currentCollection);
+		// Create a file listing (also to force the whole path into the zip archive)
+		var text = "";
+		for (var i = 0; i<records.length; ++ i) {
+			text += records[i].collection+"/"+records[i].map+"/"+records[i].name+"\t"+records[i].audio.size+"\t"+records[i].date+"\n";
+		};
+		zip.file("README.txt", text, {text: true});
 		
 		for(var i=0; i <  records.length; ++i) {
-			var filename = records[i].map+"/"+records[i].name;
-			var blob = records[i].audio;
-			topMap.file(filename, blob, {binary: true});
+			if (records[i].collection == sgc3_settings.currentCollection) {
+				var filename = records[i].collection+"/"+records[i].map+"/"+records[i].name;
+				var blob = records[i].audio;
+				zip.file(filename, blob, {binary: true});
+			};
 		};
 		zip.generateAsync({type:"blob"})
 		.then(function(content) {
@@ -466,6 +506,43 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	        hiddenDownloadLink.click();
 		});		
 	};	
+	
+	// Import audio
+	function importAudio (files) {
+		var zipReader = new FileReader();
+		zipReader.onload = function(){
+			var zip = new JSZip();
+			zip.loadAsync(zipReader.result).then(unZipAudio);
+		};
+		zipReader.onerror = function(err) {
+			console.log("Open zip file",err);
+		};
+		zipReader.readAsArrayBuffer(files[0]);
+	};
+	
+	var unZipAudio = function (zip) {
+		zip.forEach(function (relativePath, file){
+			if(relativePath.match(/\.(wav|flac|mp3|spx|ogg|tsv)$/ig)) {
+				var collection = sgc3_settings.currentCollection;
+				var map = "Recordings";
+				var name = "Audio.wav";
+				var path = relativePath.split("/");
+				name = path[path.length - 1];
+				if (path.length >= 3) {
+					collection = path[path.length - 3];
+				};
+				if (path.length >= 2) {
+					map = path[path.length - 2];
+				};
+				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
+				zip.file(relativePath).async("arraybuffer").then(function (data) {	
+					var blob = new Blob([data], {type : type});
+					addAudioBlob(collection, map, name, blob);
+				}, function(event){console.log("Error", event)});
+			};
+		});
+
+	};
 	
 	// Set Register
 	setRegister (sgc3_settings.register);

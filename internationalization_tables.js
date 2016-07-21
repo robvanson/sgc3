@@ -241,6 +241,8 @@ var config_tables = {
 		DisplayChar: ["汉字 C", "如果单词表提供了汉字，则显示汉字。"],
 		DisplayTrans: ["翻译 T", "如果单词表提供了翻译，则显示翻译。"],
 		SaveAudio: ["保存录音 K", "将录音保存到文件夹（只保存每个单词的最后一次发音）。"],
+		ExportAudio: ["Export", "Export stored recordings"],
+		ImportAudio: ["Import", "Import recordings to storage"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -265,6 +267,8 @@ var config_tables = {
 		DisplayChar: ["Characters", "Display chinese characters if they are available"],
 		DisplayTrans: ["Translation", "Display translation if available"],
 		SaveAudio: ["Save Audio", "Store the recordings in a directory (last version of each pinyin word is kept)"],
+		ExportAudio: ["Export", "Export stored recordings"],
+		ImportAudio: ["Import", "Import recordings to storage"],
 		},
 			
 	JA: {
@@ -290,6 +294,8 @@ var config_tables = {
 		DisplayChar: ["漢字 C", "可能ならば練習画面で漢字を表示します。"],
 		DisplayTrans: ["翻訳 T", "可能ならば練習画面で単語の意味を表示します。"],
 		SaveAudio: ["録音の保存", "録音データをディレクトリに保存します（各単語の最後の発音を保存）。"],
+		ExportAudio: ["Export", "Export stored recordings"],
+		ImportAudio: ["Import", "Import recordings to storage"],
 		},
 		
 	DE: {
@@ -315,6 +321,8 @@ var config_tables = {
 		DisplayChar: ["Schriftzeichen", "Wiedergabe chinesische Schriftzeichen wenn anwesend"],
 		DisplayTrans: ["Übersetzung", "Übersetzung wenn anwesend"],
 		SaveAudio: ["Audio", "Aufnahmen speichern in ein Verzeichnis (letste Aufnahme jedes pinyin Wort)"],
+		ExportAudio: ["Exportiere", "Exportiere gespeicherte Audfnahmen"],
+		ImportAudio: ["Importiere", "Importiere Aufnahmen"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -339,6 +347,8 @@ var config_tables = {
 		DisplayChar: ["Karakters", "Laat Chinese karakters zien als ze beschikbaar zijn"],
 		DisplayTrans: ["Vertaling", "Geef vertaling al die beschikbaar is"],
 		SaveAudio: ["Bewaar Audio", "Bewaar opnamen in een map (laatste versie van ieder pinyin woord)"],
+		ExportAudio: ["Exporteer", "Exproteer de opgeslagen opnamen"],
+		ImportAudio: ["Importeer", "Importeer opnamen naar opslag"],
 		}
 };
 

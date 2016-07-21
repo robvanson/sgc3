@@ -17,6 +17,16 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
+var mimeTypes = {
+	"wav": "audio/wav",
+	"mp3": "audio/mpeg",
+	"flac": "audio/flac",
+	"ogg": "audio/ogg",
+	"spx": "audio/ogg",
+	"aif": "audio/aifc",
+	"tsv": "text/tsv",
+	"csv": "text/csv"
+};
 // Global variables
 var recordedBlob, recordedBlobURL;
 var recordedArray;
@@ -636,7 +646,7 @@ function addAudioBlob(collection, map, name, blob) {
 			var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
 			customerObjectStore.add({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);
 			request.onsuccess = function(event) {
-	
+				console.log("Success: ", this.result, " ", date);
 			};
 			
 			request.onerror = function(event) {
@@ -661,7 +671,7 @@ function getAllRecords (collection, processRecords) {
 		index.openCursor().onsuccess = function(event) {
 		  var cursor = event.target.result;
 		  if (cursor) {
-			collectRecords.push(cursor.value);
+			if (cursor.value.collection == collection) collectRecords.push(cursor.value);
 		    cursor.continue();
 		  } else {
 			console.log(collectRecords);
