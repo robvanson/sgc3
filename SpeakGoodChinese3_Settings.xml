@@ -240,6 +240,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			deleteWordlistButton.disabled = false;
 		};
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
+		add_collections_names_to_select ();
 	};
 	
 	// Initialize to stored settings
@@ -455,28 +456,35 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 
 	// Construct a list of Collections
-	function add_collections_names_to_select () {
-		var selector = document.getElementById('AudioName');
-		var i = 0;
+	function addCollectionsToSelect (records) {
+		var collectionList = [];
+		for (var i = 0; i<records.length; ++ i) {
+			var collection = records[i].collection;
+			if (collectionList.indexOf(collection) < 0) collectionList.push(collection);
+		};
 		// First, remove old entries
+		var selector = document.getElementById('AudioName');
 		var numOptions = selector.options.length
-		for(var i = numOptions - 1; i > 1; --i) {
+		for(var i = numOptions - 1; i > 0; --i) {
 			selector.remove(i);
 		};
-		// Get the names of the collections
-		getAllRecords (sgc3_settings.currentCollection, zipAudio);
-		
 		// Add new entries
-		for(i=0; i < wordlists.length; ++i) {
+		for(var i=0; i < collectionList.length; ++i) {
 			var lastOption = selector.options.length - 1;
-			var wordlistTitle = wordlists[i][0];
+			var collectionTitle = collectionList[i];
 			var newOption = selector.options[0].cloneNode(true);
-			newOption.value = wordlistTitle;
-			newOption.text = wordlistTitle;
+			newOption.value = collectionTitle;
+			newOption.text = collectionTitle;
 			selector.add(newOption);
 		};
+		
 	};
-
+	
+	function add_collections_names_to_select () {
+		// Get the names of the collections
+		getAllRecords (undefined, addCollectionsToSelect);
+	};
+	
 	// Export audio
 	exportAudioButton.onclick = function (){
 		if (hiddenDownloadLink.href != "") URL.revokeObjectURL(hiddenDownloadLink.href);

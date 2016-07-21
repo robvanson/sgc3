@@ -671,10 +671,9 @@ function getAllRecords (collection, processRecords) {
 		index.openCursor().onsuccess = function(event) {
 		  var cursor = event.target.result;
 		  if (cursor) {
-			if (cursor.value.collection == collection) collectRecords.push(cursor.value);
+			if (!collection || cursor.value.collection == collection) collectRecords.push(cursor.value);
 		    cursor.continue();
 		  } else {
-			console.log(collectRecords);
 			processRecords(collectRecords);
 		  };
 		};
