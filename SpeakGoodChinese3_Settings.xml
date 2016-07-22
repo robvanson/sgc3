@@ -462,7 +462,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			var collection = records[i].collection;
 			if (collectionList.indexOf(collection) < 0) collectionList.push(collection);
 		};
-		collection.sort();
+		collectionList.sort();
 		// First, remove old entries
 		var selector = document.getElementById('AudioName');
 		var numOptions = selector.options.length
