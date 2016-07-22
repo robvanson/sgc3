@@ -128,8 +128,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	</div>
 	
 	<div style="position: fixed; color: black; bottom: 10%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="AudioNameCaption">---</div>	
-	<select id="AudioName" style="position: fixed; color: black; bottom: 5%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="store_SGC3_settings (); " >
-		<option value="---" ><span id="NewCollection" title="" >New</span></option>
+	<select id="AudioName" style="position: fixed; color: black; bottom: 5%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="changeCollection(this.selectedIndex); store_SGC3_settings (); " >
+		<option value="NewCollection" ><span id="NewCollection" title="" >New</span></option>
 	</select> 
 	
     <script type="text/javascript">
@@ -452,8 +452,21 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		};
 	};
-	
 
+	// New Collection
+	function changeCollection(index) {
+		var selector = document.getElementById('AudioName');
+		var value = selector.options[index].value;
+		if (index == 0) {
+			var promptText = config_tables[sgc3_settings.language]["NewCollection"][1];
+			var collectionName = prompt(promptText, sgc3_settings.currentCollection);
+			if (collectionName && collectionName.length > 0) sgc3_settings.currentCollection = collectionName;
+		} else {
+			sgc3_settings.currentCollection = value;
+		};
+		getCurrentMetaData (sgc3_settings.currentCollection);
+	};
+		
 	// Construct a list of Collections
 	function addCollectionsToSelect (records) {
 		var collectionList = [];
@@ -463,6 +476,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			if (collectionList.indexOf(collection) < 0) collectionList.push(collection);
 		};
 		collectionList.sort();
+		
 		// First, remove old entries
 		var selector = document.getElementById('AudioName');
 		var numOptions = selector.options.length
@@ -470,6 +484,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			selector.remove(i);
 		};
 		// Add new entries
+		var selectedIndex = 1;
 		for(var i=0; i < collectionList.length; ++i) {
 			var lastOption = selector.options.length - 1;
 			var collectionTitle = collectionList[i];
@@ -477,11 +492,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			newOption.value = collectionTitle;
 			newOption.text = collectionTitle;
 			selector.add(newOption);
+			if (collectionTitle == sgc3_settings.currentCollection) selectedIndex = selector.options.length - 1;
 		};
-		
+		selector.selectedIndex = selectedIndex;
 	};
 	
 	function add_collections_names_to_select () {
+		// Read localStorage
+		sgc3_settings.currentCollection = JSON.parse(localStorage.sgc3_currentCollection);
 		// Get the names of the collections
 		getAllRecords (undefined, addCollectionsToSelect);
 	};
@@ -518,6 +536,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Import audio
 	function importAudio (files) {
+
 		var zipReader = new FileReader();
 		zipReader.onload = function(){
 			var zip = new JSZip();
@@ -530,19 +549,35 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	var unZipAudio = function (zip) {
+		var fileList = zip.folder("\/$").files;
+		var defaultCollection = Object.getOwnPropertyNames(fileList).find(function(name){return name.match(/^[^\/]+\/$/g)});
+		defaultCollection = defaultCollection.replace(/\/$/g, "");
+		
+		// Ask whether to override the collection of the import.
+		var collectionName = defaultCollection;
+		var promptText = config_tables[sgc3_settings.language]["NewCollection"][1];
+		var newCollectionName = prompt(promptText, defaultCollection);
+		if (newCollectionName && newCollectionName.length > 0 && newCollectionName != defaultCollection) collectionName = newCollectionName;
+		// Set new current collection
+		sgc3_settings.currentCollection = collectionName;
+		localStorage.sgc3_currentCollection = JSON.stringify(sgc3_settings.currentCollection);
+			
 		zip.forEach(function (relativePath, file){
 			if(relativePath.match(/\.(wav|flac|mp3|spx|ogg|tsv)$/ig)) {
-				var collection = sgc3_settings.currentCollection;
-				var map = "Recordings";
+				var collection = collectionName;
+				var map = "";
 				var name = "Audio.wav";
 				var path = relativePath.split("/");
 				name = path[path.length - 1];
-				if (path.length >= 3) {
-					collection = path[path.length - 3];
-				};
-				if (path.length >= 2) {
+				if (path.length > 2) {
 					map = path[path.length - 2];
+					origCollection = path[path.length - 3];
+				} else if (path.length == 2) {
+					origCollection = path[path.length - 2];
 				};
+				// Change the name of hte TSV file
+				if (origCollection != collection && name == origCollection+".tsv") name = collection+".tsv";
+				
 				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
 				zip.file(relativePath).async("arraybuffer").then(function (data) {	
 					var blob = new Blob([data], {type : type});
