@@ -79,8 +79,13 @@ function set_mainpageLanguage (language) {
 	var labels = mainpage_tables[language];
 	for(x in labels) {
 		if(document.getElementById(x)) {
-			document.getElementById(x).textContent = labels[x][0];
-			document.getElementById(x).parentNode.parentNode.title = labels[x][1];
+			if(document.getElementById(x).label) {
+				document.getElementById(x).label = labels[x][0];
+				document.getElementById(x).title = labels[x][1];
+			} else {
+				document.getElementById(x).textContent = labels[x][0];
+				document.getElementById(x).parentNode.parentNode.title = labels[x][1];
+			};
 		};
 	};
 	
@@ -165,7 +170,8 @@ var mainpage_tables = {
 		WordlistCaption: ["单词表", "更换单词表。"],
 		SelectWords: ["选择单词", "选择要练习的单词"],
 		WordlistUp: ["上一个", "切换到上一个单词表。"],
-		WordlistDown: ["下一个", "切换到下一个单词表。"]
+		WordlistDown: ["下一个", "切换到下一个单词表。"],
+		GRADE: ["评分", "选择数字0-9给出评分。"],
 		},
 	EN: {
 		Config: ["Settings", "Go to settings page"],
@@ -177,7 +183,8 @@ var mainpage_tables = {
 		WordlistCaption: ["Word List", "Change word list"],
 		SelectWords: ["Words", "Select words to practise"],
 		WordlistUp: ["Previous", "Previous word list"],
-		WordlistDown: ["Next", "Next word list"]
+		WordlistDown: ["Next", "Next word list"],
+		GRADE: ["Grading", "Grading of pronunciation 0-9"],
 		},
 	JA: {
 		Config: ["設定 S", "設定画面に進みます。"],
@@ -189,7 +196,8 @@ var mainpage_tables = {
 		WordlistCaption: ["単語表", "単語表を変更します。"],
 		SelectWords: ["単語の選択", "練習で使う単語を選択します"],
 		WordlistUp: ["戻る", "一つ前の単語表に戻ります。"],
-		WordlistDown: ["次へ", "次の単語表に進みます。"]
+		WordlistDown: ["次へ", "次の単語表に進みます。"],
+		GRADE: ["評価", "発音を0-9の値で評価します。"],
 		},
 	DE: {
 		Config: ["Einstellungen", "Zur Seite 'Einstellungen'"],
@@ -201,7 +209,8 @@ var mainpage_tables = {
 		WordlistCaption: ["Wordliste", "Ändere Wordliste"],
 		SelectWords: ["Wörter", "Wähle die Wörter zum üben"],
 		WordlistUp: ["vorige", "Zur voriger Liste"],
-		WordlistDown: ["nächste", "Zur nächster Liste"]
+		WordlistDown: ["nächste", "Zur nächster Liste"],
+		GRADE: ["Beurteilung", "Beurteilung Aussprache 0-9"],
 		},
 	NL: {
 		Config: ["Instellingen", "Ga naar de pagina met instellingen"],
@@ -213,7 +222,8 @@ var mainpage_tables = {
 		WordlistCaption: ["Woordenlijst", "Andere woordenlijst"],
 		SelectWords: ["Woorden", "Kies de woorden om te oefenen"],
 		WordlistUp: ["Vorige", "Vorige woordenlijst"],
-		WordlistDown: ["Volgende", "Volgende woordenlijst"]
+		WordlistDown: ["Volgende", "Volgende woordenlijst"],
+		GRADE: ["Beoordeling", "Beoordeling uitspraak 0-9"],
 	}
 };
 
