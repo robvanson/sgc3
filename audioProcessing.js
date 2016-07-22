@@ -571,9 +571,10 @@ function getCurrentAudioWindow (collection, map, name) {
 	};
 	request.onsuccess = function(event) {
 		db = this.result;
+		var key = (map.length > 0) ? collection+"/"+map+"/"+name : collection+"/"+name;
 		var request = db.transaction(["Recordings"], "readwrite")
 			.objectStore("Recordings")
-			.get(collection+"/"+map+"/"+name);
+			.get(key);
 		
 		request.onsuccess = function(event) {
 			var record = this.result;
@@ -691,9 +692,10 @@ function addAudioBlob(collection, map, name, blob) {
 	};
 	request.onsuccess = function(event) {
 		db = this.result;
+		var key = (map.length > 0) ? collection+"/"+map+"/"+name : collection+"/"+name;
 		var request = db.transaction(["Recordings"], "readwrite")
 			.objectStore("Recordings")
-			.put({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);
+			.put({ collection: collection, map: map, name: name, date: date, audio: blob }, key);
 		
 		request.onsuccess = function(event) {
 			console.log("Success: ", this.result, " ", date);
@@ -702,7 +704,7 @@ function addAudioBlob(collection, map, name, blob) {
 		
 		// If data already exist, update it
 		request.onerror = function(event) {
-			console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
+			console.log("Unable to add data: "+key+" cannot be created or updated");
 		};
 		
 	};
