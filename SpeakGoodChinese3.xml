@@ -687,6 +687,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		navigator.webkitGetUserMedia(mediaConstraints, successCallback, errorCallback);
 	};
 
+	// Initialize Audio storage
+	load_SGC3_settings ();
+	initializeDataStorage (sgc3_settings.currentCollection);
+	
 	// Read remote lists
 	var url = window.location.href;
 	url = url.replace(/[^\/]+$/, "wordlists/");

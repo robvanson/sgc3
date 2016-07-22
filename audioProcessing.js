@@ -588,7 +588,7 @@ function getCurrentAudioWindow (collection, map, name) {
 		
 		// Data not found
 		request.onerror = function(event) {
-			console.log("Unable to ertrieve data: "+map+"/"+name+" cannot be found");
+			console.log("Unable to retrieve data: "+map+"/"+name+" cannot be found");
 		};
 		
 	};
@@ -598,9 +598,84 @@ function getCurrentAudioWindow (collection, map, name) {
 	request.onupgradeneeded = function(event) {
 		var db = this.result;
 		// Create an objectStore to hold audio blobs.
-		var objectStore = db.createObjectStore("Recordings");
-		objectStore.createIndex("collection", "collection", { unique: false });
-		objectStore.createIndex("map", "map", { unique: false });
+		initializeObjectStore (db, collection);
+	};
+};
+
+function getCurrentMetaData (collection) {
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.get(collection+"/"+collection+".tsv");
+		
+		request.onsuccess = function(event) {
+			var record = this.result;
+			if(record) {
+				if(record.audio){
+					// processAudio is resolved asynchronously, reset retrievedData when it is finished
+					retrievedData = true;
+					// DO SOMETHING;
+				};
+			} else {
+				var date = new Date().toLocaleString();
+				var blob = new Blob([''], { type: 'text/tsv', endings: 'native' });
+				var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
+				var request = customerObjectStore.add({ collection: collection, map: "", name: collection+".tsv", date: date, audio: blob }, collection+"/"+collection+".tsv");
+		
+				request.onsuccess = function(event) {
+					console.log("Success: ", this.result, " ", date);
+				};
+		
+				request.onerror = function(event) {
+					console.log("Unable to add data: "+collection+"/"+collection+".tsv"+" cannot be created or updated");
+				};		
+			};
+		};
+		
+		// Data not found
+		request.onerror = function(event) {
+			console.log("Unable to retrieve metadata file: "+collection+"/"+collection+".tsv cannot be found");
+		};
+		
+	};
+	request.onerror = function(event) {
+		console.log("Error: ", event);
+	}
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection);
+	};
+};
+
+// Create an objectStore to hold audio blobs.
+function initializeObjectStore (db, collection) {
+	var objectStore = db.createObjectStore("Recordings");
+	objectStore.createIndex("collection", "collection", { unique: false });
+	objectStore.createIndex("map", "map", { unique: false });
+	// initialize metadata file
+	// Use transaction oncomplete to make sure the objectStore creation is 
+	// finished before adding data into it.
+	objectStore.transaction.oncomplete = function(event) {
+		// Store values in the newly created objectStore.
+		var date = new Date().toLocaleString();
+		var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
+		// create empty text blob
+		var blob = new Blob([''], { type: 'text/tsv', endings: 'native' });
+		var request = customerObjectStore.add({ collection: collection, map: "", name: collection+".tsv", date: date, audio: blob }, collection+"/"+collection+".tsv");
+
+		request.onsuccess = function(event) {
+			console.log("Success: ", this.result, " ", date);
+		};
+
+		request.onerror = function(event) {
+			console.log("Unable to add data: "+collection+"/"+collection+".tsv"+" cannot be created or updated");
+		};
 	};
 };
 
@@ -644,12 +719,23 @@ function addAudioBlob(collection, map, name, blob) {
 			// Store values in the newly created objectStore.
 			var date = new Date().toLocaleString();
 			var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
-			customerObjectStore.add({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);
-			request.onsuccess = function(event) {
+
+			var tsvBlob = new Blob([''], { type: 'text/tsv', endings: 'native' });
+			var request1 = customerObjectStore.add({ collection: collection, map: "", name: collection+".tsv", date: date, audio: tsvBlob }, collection+"/"+collection+".tsv");
+			request1.onsuccess = function(event) {
 				console.log("Success: ", this.result, " ", date);
 			};
 			
-			request.onerror = function(event) {
+			request1.onerror = function(event) {
+				console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
+			};
+			
+			var request2 = customerObjectStore.add({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);
+			request2.onsuccess = function(event) {
+				console.log("Success: ", this.result, " ", date);
+			};
+			
+			request2.onerror = function(event) {
 				console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
 			};
 		};
@@ -678,6 +764,18 @@ function getAllRecords (collection, processRecords) {
 		  };
 		};
 	};
+
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection)
+	};
+};
+
+
+// Initialize Audio storage
+function initializeDataStorage (collection) {
+	getCurrentMetaData (collection);
 };
 
 // Remove Audio storage, including ALL data
