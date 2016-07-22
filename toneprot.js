@@ -663,13 +663,14 @@ var recognition = {
 		Register: "OK",
 		Range: "OK"
 	};
-	
+
 function recognition2performance (pinyin, recognition, performanceRecord) {
-	if (! performanceRecord [sgc3_settings.wordList] ) 
-			performanceRecord [sgc3_settings.wordList] = {};
-	var wordList = performanceRecord [sgc3_settings.wordList];
+	if (! performanceRecord [sgc3_settings.currentCollection] ) 
+			performanceRecord [sgc3_settings.currentCollection] = {};
+	var wordList = performanceRecord [sgc3_settings.currentCollection];
 	if (! wordList[pinyin] ) {
 		wordList[pinyin] = {
+			"Grade" : -1,
 			"Correct" : 0,
 			"Wrong" : 0,
 			"High" : 0,
@@ -684,6 +685,26 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 	if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
 	var d = new Date();
 	wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+};
+
+function setGRADE (pinyin, grade) {
+	if (! performanceRecord [sgc3_settings.currentCollection] ) 
+			performanceRecord [sgc3_settings.currentCollection] = {};
+	var wordList = performanceRecord [sgc3_settings.currentCollection];
+	if (! wordList[pinyin] ) {
+		wordList[pinyin] = {
+			"Grade" : -1,
+			"Correct" : 0,
+			"Wrong" : 0,
+			"High" : 0,
+			"Low" : 0,
+			"Wide" : 0,
+			"Narrow" : 0,
+			"Date" : ""
+		};
+	};
+	wordList[pinyin].Grade = grade == 0 ? 10 : grade;
+console.log(performanceRecord);
 };
 	
 // Handle sound after decoding (used in audioProcessing.js)

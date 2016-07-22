@@ -59,7 +59,7 @@ button {
 <script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
 </head>
 
-<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();localStorage.sgc3_saveAudio = JSON.stringify(false);" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="sgc3_settings.saveAudio = false; store_SGC3_settings (); if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close();" >
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();localStorage.sgc3_saveAudio = JSON.stringify(false);" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="sgc3_settings.saveAudio = false; store_SGC3_settings (); if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close();" contextmenu="mymenu" >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -83,7 +83,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	<div id="DisplayText" title="" >
 	<div style="color: black; position: fixed; top: 60%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
-		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span></div>
+		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span><span id="GradeString" style="font-style: italic; font-size: 4vmin; color: blue; "></span></div>
 	<div style="color: green; position: fixed; top: 68%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
 	<div style="color: green; position: fixed; top: 73%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
 	</div>
@@ -175,6 +175,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else if (key == " " || key == "Space") {
 			example.onclick()
 		}  else {
+			if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].indexOf(key) > -1) {
+				setGRADE(currentPinyin, key);
+			};
 		};
 	};
 	window.onkeydown = keyPress;
@@ -698,5 +701,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	//]]>	
 	</script>
+	<menu type="context" id="mymenu">
+		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
+			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE4" label="4" onclick="setGRADE(currentPinyin,4);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE5" label="5" onclick="setGRADE(currentPinyin,5);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE6" label="6" onclick="setGRADE(currentPinyin,6);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE7" label="7" onclick="setGRADE(currentPinyin,7);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE8" label="8" onclick="setGRADE(currentPinyin,8);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE9" label="9" onclick="setGRADE(currentPinyin,9);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE10" label="10" onclick="setGRADE(currentPinyin,10);" icon="sgc.png" title="1" ></menuitem>
+		</menu>
+	</menu>
 </body>
 </html>
