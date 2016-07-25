@@ -664,11 +664,8 @@ var recognition = {
 		Range: "OK"
 	};
 
+// currentLesson is defined!!!
 function recognition2performance (pinyin, recognition, performanceRecord) {
-	var lesson = currentItem[4];
-	lesson = (lesson && lesson != "-") ? " "+lesson : "";
-	var currentLesson = sgc3_settings.wordList+lesson;
-	
 	if (! performanceRecord [currentLesson] ) 
 			performanceRecord [currentLesson] = {};
 	var wordList = performanceRecord [currentLesson];
@@ -691,19 +688,52 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 		var d = new Date();
 		wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 	};
+	
+	// Write performance table to storage
+	var objectList = performanceRecord2objectList (performanceRecord);
+	writeCSV(sgc3_settings.currentCollection, objectList);
 };
 
-function setGRADE (pinyin, grade) {
-	var lesson = currentItem[4];
-	lesson = (lesson && lesson != "-") ? " "+lesson : "";
-	var currentLesson = sgc3_settings.wordList+lesson;
-	
+// currentLesson is defined!!!
+function setGRADE (pinyin, grade) {	
 	var wordList = performanceRecord [currentLesson];
 	if (wordList && wordList[pinyin] ) {
 		wordList[pinyin].Grade = grade == 0 ? 10 : grade;
+	
+		// Write performance table to storage
+		var objectList = performanceRecord2objectList (performanceRecord);
+		writeCSV(sgc3_settings.currentCollection, objectList);
+		// Display grade
+		document.getElementById("GradeString").textContent = "["+wordList[pinyin].Grade+"]";
 	};
 };
-	
+
+function performanceRecord2objectList (performanceRecord) {
+	var objectList = [];
+	lessonList = Object.keys(performanceRecord);
+	for (var l=0; l<lessonList.length; ++l) {
+		var lesson = lessonList[l];
+		var wordList = Object.keys(performanceRecord[lesson]);
+		for (var p=0; p<wordList.length; ++p) {
+			var pinyin = wordList[p];
+			var record = performanceRecord[lesson][pinyin];
+			objectList.push({
+			"pinyin": pinyin, 
+			"Grade" : record.Grade,
+			"Correct" : record.Correct,
+			"Wrong" : record.Wrong,
+			"High" : record.High,
+			"Low" : record.Low,
+			"Wide" : record.Wide,
+			"Narrow" : record.Narrow,
+			"Date" : record.Date,
+			"Lesson" : lesson 
+			});
+		};
+	};
+	return objectList;
+};
+
 // Handle sound after decoding (used in audioProcessing.js)
 function processRecordedSound () {
 	if(recordedArray) {
@@ -721,12 +751,8 @@ function processRecordedSound () {
 		// Only do this ONCE for every recording
 		if(sgc3_settings.saveAudio) {
 			if (sessionStorage.recorded == "true") {
+				saveCurrentAudioWindow (sgc3_settings.currentCollection, currentLesson, currentPinyin+".wav");
 				recognition2performance(currentPinyin, recognition, performanceRecord);
-				// get Lesson
-				var currentWord = JSON.parse(localStorage.sgc3_currentWord);
-				var lesson = currentWordlist[currentWord][4];
-				lesson = (lesson && lesson != "-") ? " "+lesson : "";
-				saveCurrentAudioWindow (sgc3_settings.currentCollection, sgc3_settings.wordList+lesson, currentPinyin+".wav");
 			} else {
 				// Create empty record
 				recognition2performance(currentPinyin, {}, performanceRecord);				
@@ -738,6 +764,11 @@ function processRecordedSound () {
 		document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
 		document.getElementById("FeedbackString").textContent = recognition.Feedback;
 		document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+
+		// Write out grade
+		if(performanceRecord && performanceRecord [currentLesson] && performanceRecord [currentLesson][currentPinyin].Grade >=0) {
+			document.getElementById("GradeString").textContent = "["+performanceRecord [currentLesson][currentPinyin].Grade+"]";
+		};
 		
 		// Set play button
 		if(currentAudioWindow.length > 0) {
