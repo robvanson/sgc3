@@ -665,9 +665,13 @@ var recognition = {
 	};
 
 function recognition2performance (pinyin, recognition, performanceRecord) {
-	if (! performanceRecord [sgc3_settings.currentCollection] ) 
-			performanceRecord [sgc3_settings.currentCollection] = {};
-	var wordList = performanceRecord [sgc3_settings.currentCollection];
+	var lesson = currentItem[4];
+	lesson = (lesson && lesson != "-") ? " "+lesson : "";
+	var currentLesson = sgc3_settings.wordList+lesson;
+	
+	if (! performanceRecord [currentLesson] ) 
+			performanceRecord [currentLesson] = {};
+	var wordList = performanceRecord [currentLesson];
 	if (! wordList[pinyin] ) {
 		wordList[pinyin] = {
 			"Grade" : -1,
@@ -680,31 +684,24 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 			"Date" : ""
 		};
 	};
-	++wordList[pinyin][recognition.Label];
-	if(recognition.Register != "OK")++wordList[pinyin][recognition.Register];
-	if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
-	var d = new Date();
-	wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+	if (Object.keys(recognition).length > 0) {
+		++wordList[pinyin][recognition.Label];
+		if(recognition.Register != "OK")++wordList[pinyin][recognition.Register];
+		if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
+		var d = new Date();
+		wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+	};
 };
 
 function setGRADE (pinyin, grade) {
-	if (! performanceRecord [sgc3_settings.currentCollection] ) 
-			performanceRecord [sgc3_settings.currentCollection] = {};
-	var wordList = performanceRecord [sgc3_settings.currentCollection];
-	if (! wordList[pinyin] ) {
-		wordList[pinyin] = {
-			"Grade" : -1,
-			"Correct" : 0,
-			"Wrong" : 0,
-			"High" : 0,
-			"Low" : 0,
-			"Wide" : 0,
-			"Narrow" : 0,
-			"Date" : ""
-		};
+	var lesson = currentItem[4];
+	lesson = (lesson && lesson != "-") ? " "+lesson : "";
+	var currentLesson = sgc3_settings.wordList+lesson;
+	
+	var wordList = performanceRecord [currentLesson];
+	if (wordList && wordList[pinyin] ) {
+		wordList[pinyin].Grade = grade == 0 ? 10 : grade;
 	};
-	wordList[pinyin].Grade = grade == 0 ? 10 : grade;
-console.log(performanceRecord);
 };
 	
 // Handle sound after decoding (used in audioProcessing.js)
@@ -722,13 +719,18 @@ function processRecordedSound () {
 		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
 		
 		// Only do this ONCE for every recording
-		if(recordPerformance && sessionStorage.recorded == "true") recognition2performance(currentPinyin, recognition, performanceRecord);
-		if(sgc3_settings.saveAudio && sessionStorage.recorded == "true") {
-			// get Lesson
-			var currentWord = JSON.parse(localStorage.sgc3_currentWord);
-			var lesson = currentWordlist[currentWord][4];
-			lesson = (lesson && lesson != "-") ? " "+lesson : "";
-			saveCurrentAudioWindow (sgc3_settings.currentCollection, sgc3_settings.wordList+lesson, currentPinyin+".wav");
+		if(sgc3_settings.saveAudio) {
+			if (sessionStorage.recorded == "true") {
+				recognition2performance(currentPinyin, recognition, performanceRecord);
+				// get Lesson
+				var currentWord = JSON.parse(localStorage.sgc3_currentWord);
+				var lesson = currentWordlist[currentWord][4];
+				lesson = (lesson && lesson != "-") ? " "+lesson : "";
+				saveCurrentAudioWindow (sgc3_settings.currentCollection, sgc3_settings.wordList+lesson, currentPinyin+".wav");
+			} else {
+				// Create empty record
+				recognition2performance(currentPinyin, {}, performanceRecord);				
+			};
 		};
 		
 		// Write results

@@ -118,18 +118,18 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
-	<menu type="context" id="mymenu">
+	<menu type="context" id="mymenu" >
 		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
 			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE4" label="4" onclick="setGRADE(currentPinyin,4);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE5" label="5" onclick="setGRADE(currentPinyin,5);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE6" label="6" onclick="setGRADE(currentPinyin,6);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE7" label="7" onclick="setGRADE(currentPinyin,7);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE8" label="8" onclick="setGRADE(currentPinyin,8);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE9" label="9" onclick="setGRADE(currentPinyin,9);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE10" label="10" onclick="setGRADE(currentPinyin,10);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="2" ></menuitem>
+			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="3" ></menuitem>
+			<menuitem id="GRADE4" label="4" onclick="setGRADE(currentPinyin,4);" icon="sgc.png" title="4" ></menuitem>
+			<menuitem id="GRADE5" label="5" onclick="setGRADE(currentPinyin,5);" icon="sgc.png" title="5" ></menuitem>
+			<menuitem id="GRADE6" label="6" onclick="setGRADE(currentPinyin,6);" icon="sgc.png" title="6" ></menuitem>
+			<menuitem id="GRADE7" label="7" onclick="setGRADE(currentPinyin,7);" icon="sgc.png" title="7" ></menuitem>
+			<menuitem id="GRADE8" label="8" onclick="setGRADE(currentPinyin,8);" icon="sgc.png" title="8" ></menuitem>
+			<menuitem id="GRADE9" label="9" onclick="setGRADE(currentPinyin,9);" icon="sgc.png" title="9" ></menuitem>
+			<menuitem id="GRADE10" label="10" onclick="setGRADE(currentPinyin,10);" icon="sgc.png" title="10" ></menuitem>
 		</menu>
 	</menu>
 
@@ -149,6 +149,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Set DOM parameters
 	var settingsWindow;
 	var selectWordsWindow;
+	var gradingMenu = document.getElementById('GRADE');
 	var recordingLight = document.getElementById('RecordingLight');
 	var tonePlotArea = document.getElementById('TonePlot');
 	var record = document.getElementById('RecordButton');
@@ -296,7 +297,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		for (x in sgc3_settings) {
 			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
 		};
-		 localStorage.sgc3_currentWord = JSON.stringify(currentWord);
+		localStorage.sgc3_currentWord = JSON.stringify(currentWord);
 	};
 	
 	function load_SGC3_settings () {
@@ -315,7 +316,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		add_wordlist_names_to_select ();
 		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
 		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'rgb(250,250,250)';
-		
+
+		// Disabling/hiding the menu does not work everywhere
+		gradingMenu.disabled = ! sgc3_settings.saveAudio;
+		gradingMenu.hidden = ! sgc3_settings.saveAudio;
+
 		// Reset currentWord if the wordlist has changed
 		currentWord = 0;
 		if (localStorage.sgc3_currentWord) {
