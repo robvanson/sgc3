@@ -253,6 +253,7 @@ var config_tables = {
 		SaveAudio: ["保存录音 K", "将录音保存到文件夹（只保存每个单词的最后一次发音）。"],
 		ExportAudio: ["Export", "Export stored recordings"],
 		ImportAudio: ["Import", "Import recordings to storage"],
+		DeleteAudio: ["Delete", "Delete recordings in storage"],
 		NewCollection: ["New", "Name of new collection of recordings"],
 		},
 	EN: {
@@ -280,6 +281,7 @@ var config_tables = {
 		SaveAudio: ["Save Audio", "Store the recordings in a directory (last version of each pinyin word is kept)"],
 		ExportAudio: ["Export", "Export stored recordings"],
 		ImportAudio: ["Import", "Import recordings to storage"],
+		DeleteAudio: ["Delete", "Delete recordings in storage"],
 		NewCollection: ["New", "Name of new collection of recordings"],
 		},
 			
@@ -308,6 +310,7 @@ var config_tables = {
 		SaveAudio: ["録音の保存", "録音データをディレクトリに保存します（各単語の最後の発音を保存）。"],
 		ExportAudio: ["Export", "Export stored recordings"],
 		ImportAudio: ["Import", "Import recordings to storage"],
+		DeleteAudio: ["Delete", "Delete recordings in storage"],
 		NewCollection: ["New", "Name of new collection of recordings"],
 		},
 		
@@ -336,6 +339,7 @@ var config_tables = {
 		SaveAudio: ["Audio", "Aufnahmen speichern in ein Verzeichnis (letste Aufnahme jedes pinyin Wort)"],
 		ExportAudio: ["Exportiere", "Exportiere gespeicherte Aufnahmen"],
 		ImportAudio: ["Importiere", "Importiere Aufnahmen"],
+		DeleteAudio: ["Lössche", "Lössche Aufnahmen"],
 		NewCollection: ["Neu", "Name einer neuen Collection von Aufnahmen"],
 		},		
 	NL: {
@@ -363,6 +367,7 @@ var config_tables = {
 		SaveAudio: ["Bewaar Audio", "Bewaar opnamen in een map (laatste versie van ieder pinyin woord)"],
 		ExportAudio: ["Exporteer", "Exproteer de opgeslagen opnamen"],
 		ImportAudio: ["Importeer", "Importeer opnamen naar opslag"],
+		DeleteAudio: ["Verwijder", "Verwijder opnamen"],
 		NewCollection: ["Nieuw", "Naam van nieuwe opnamengroep"],
 		}
 };

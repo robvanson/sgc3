@@ -120,6 +120,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
 	<input type="file" id="HiddenImportAudio" name="ImportAudio" style="display:none" onchange='importAudio (this.files); this.value="";' title="OpenWord" />
+	<div title=""><button type="button" style="color: black; bottom: 5%; right: 43%; height: 8%; width: 8% " id="LocalDeleteAudio" ><span id="DeleteAudio" style="font-size: 2vmin;" >Delete</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 5%; right: 33%; height: 8%; width: 8% " id="LocalImportAudio" ><span id="ImportAudio" style="font-size: 2vmin;" >Import</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 5%; right: 23%; height: 8%; width: 8% " id="ExportAudioButton" ><span id="ExportAudio" style="font-size: 2vmin;" >Export</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 25%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
@@ -163,10 +164,25 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var saveAudioButton = document.getElementById('SaveAudioButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
 	var openAudioButton = document.getElementById('LocalOpenAudio');
+	var deleteAudioButton = document.getElementById('LocalDeleteAudio');
 	var hiddenImportAudio = document.getElementById('HiddenImportAudio');
 	var importAudioButton = document.getElementById('LocalImportAudio');
 	importAudioButton.onclick = function () {
 	    document.getElementById('HiddenImportAudio').click();
+	};
+	// Remove collection after confirm
+	deleteAudioButton.onclick = function () {
+		var confirmText = config_tables[sgc3_settings.language].DeleteWordlistConfirm[1];
+		var canBeDeleted = confirm(confirmText);
+		if (canBeDeleted) {
+			// Note that the currentCollection is reset AFTER the removal
+			removeCollection (sgc3_settings.currentCollection, function () {
+				localStorage.sgc3_currentCollection = JSON.stringify("SGC3");
+				load_SGC3_settings ();
+			});
+			sgc3_settings.currentCollection = "SGC3";
+			load_SGC3_settings ();
+		}
 	};
 	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
 	openWordlistButton.onclick = function () {
@@ -194,7 +210,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayTrans: true,
 		saveAudio: false,
 		audioDatabaseName: "SGC3 audio",
-		currentCollection: "---",
+		currentCollection: "SGC3",
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []

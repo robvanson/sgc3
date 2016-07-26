@@ -118,7 +118,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayTrans: true,
 		saveAudio: false,
 		audioDatabaseName: "SGC3 audio",
-		currentCollection: "---",
+		currentCollection: "SGC3",
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []
