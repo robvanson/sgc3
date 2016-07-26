@@ -603,7 +603,7 @@ function getCurrentAudioWindow (collection, map, name) {
 	};
 };
 
-function getCurrentMetaData (collection) {
+function getCurrentMetaData (collection, processData) {
 	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
@@ -618,10 +618,10 @@ function getCurrentMetaData (collection) {
 			var record = this.result;
 			if(record) {
 				if(record.audio){
-					// processAudio is resolved asynchronously, reset retrievedData when it is finished
-					retrievedData = true;
-					// DO SOMETHING;
-					retrievedData = false;
+					// This is a text blob
+					if (processData) {
+						var objectList = csvblob2objectlist(record.audio, processData);
+					};
 				};
 			} else {
 				var date = new Date().toLocaleString();
@@ -786,7 +786,7 @@ function getAllRecords (collection, processRecords) {
 
 // Initialize Audio storage
 function initializeDataStorage (collection) {
-	getCurrentMetaData (collection);
+	getCurrentMetaData (collection, false);
 };
 
 // Remove Audio storage, including ALL data
@@ -843,4 +843,27 @@ function objectlist2csvblob (csvList) {
 	};
 	var blob = new Blob ([text], {type: 'text/tsv', endings: 'native'});
 	return blob;
+};
+
+function csvblob2objectlist (blob, handleList) {
+	if(blob.type != "text/tsv") return undefined;
+	var reader = new FileReader();
+	reader.addEventListener("loadend", function() {
+	   // reader.result contains the contents of blob as a typed array
+		var lines = reader.result.split(/\r\n|\n/);
+		var columnNames = lines[0].split(/\t/);
+		var objectList = [];
+		for (var i=1; i<lines.length; ++i) {
+			if(lines[i].match(/\t/)) {
+				var values = lines[i].split(/\t/);
+				var record = {};
+				for(var p=0; p<columnNames.length; ++p) {
+					record[columnNames[p]] = values[p];
+				};
+				objectList.push(record);
+			};
+		};
+		handleList(objectList);
+	});
+	reader.readAsText(blob);	
 };

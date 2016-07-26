@@ -110,7 +110,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	</select> 
 
  	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 5%; height: 14%; width: 10%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" >&#9679; <br/>
- 	<span id="GradeString" style="font-style: italic; font-size: 4vmin; "></span></div>
+ 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></div>
  	
  		
 	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
@@ -339,6 +339,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		// update display
 		write_CurrentString ();
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
+		
+		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){console.log(list)});
 	};
 	
 	// Initialize to stored settings
@@ -437,6 +439,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else {
 			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
+			currentItem = [];
 		};
 		// This cannot be the recorded Pinyin, therefor, clear all recorded data
 		if (currentPinyin == "" || currentPinyin != sessionStorage.lastPinyin) clearRecordedData ();

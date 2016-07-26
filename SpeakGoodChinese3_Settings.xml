@@ -403,8 +403,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 		
 		// Get performance data
-		getCurrentMetaData (sgc3_settings.currentCollection);
-		var lines = processCSV (file, allText, "\t")
+		getCurrentMetaData (sgc3_settings.currentCollection, false);
 	};
 	
 	function getTTSvoice(){
@@ -468,7 +467,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else {
 			sgc3_settings.currentCollection = value;
 		};
-		getCurrentMetaData (sgc3_settings.currentCollection);
+		getCurrentMetaData (sgc3_settings.currentCollection, false);
 	};
 		
 	// Construct a list of Collections

@@ -678,7 +678,12 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 			"Low" : 0,
 			"Wide" : 0,
 			"Narrow" : 0,
-			"Date" : ""
+			"Date" : "",
+			"Lesson" : currentLesson,
+			"Mark" : currentItem[1],
+			"Character" : currentItem[2],
+			"Translation" : currentItem[3],
+			"Example" : currentItem[currentItem.length - 1]
 		};
 	};
 	if (Object.keys(recognition).length > 0) {
@@ -704,7 +709,7 @@ function setGRADE (pinyin, grade) {
 		var objectList = performanceRecord2objectList (performanceRecord);
 		writeCSV(sgc3_settings.currentCollection, objectList);
 		// Display grade
-		document.getElementById("GradeString").textContent = "["+wordList[pinyin].Grade+"]";
+		document.getElementById("GradeString").textContent = wordList[pinyin].Grade;
 	};
 };
 
@@ -718,7 +723,7 @@ function performanceRecord2objectList (performanceRecord) {
 			var pinyin = wordList[p];
 			var record = performanceRecord[lesson][pinyin];
 			objectList.push({
-			"pinyin": pinyin, 
+			"Pinyin": pinyin, 
 			"Grade" : record.Grade,
 			"Correct" : record.Correct,
 			"Wrong" : record.Wrong,
@@ -727,7 +732,11 @@ function performanceRecord2objectList (performanceRecord) {
 			"Wide" : record.Wide,
 			"Narrow" : record.Narrow,
 			"Date" : record.Date,
-			"Lesson" : lesson 
+			"Lesson" : record.Lesson,
+			"Mark" : record.Mark,
+			"Character" : record.Character,
+			"Translation" : record.Translation,
+			"Example" : record.Example
 			});
 		};
 	};
@@ -767,7 +776,7 @@ function processRecordedSound () {
 
 		// Write out grade
 		if(performanceRecord && performanceRecord [currentLesson] && performanceRecord [currentLesson][currentPinyin].Grade >=0) {
-			document.getElementById("GradeString").textContent = "["+performanceRecord [currentLesson][currentPinyin].Grade+"]";
+			document.getElementById("GradeString").textContent = performanceRecord [currentLesson][currentPinyin].Grade;
 		};
 		
 		// Set play button
