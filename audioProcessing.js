@@ -789,6 +789,42 @@ function initializeDataStorage (collection) {
 	getCurrentMetaData (collection, false);
 };
 
+// Remove a collection
+function removeCollection (collection, complete) {
+	var db;
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var objectStore = db.transaction("Recordings", "readwrite").objectStore("Recordings");
+		var index = objectStore.index("collection");
+		index.openCursor().onsuccess = function(event) {
+		  var cursor = event.target.result;
+		  if (cursor) {
+			if (!collection || cursor.value.collection == collection) {
+				var value = cursor.value;
+		        var request = cursor.delete();
+		        request.onsuccess = function() {
+					console.log('Delete', value);
+				};
+			} else {
+				if(complete)complete(collection);
+			};
+		    cursor.continue();
+		  };
+		};
+	};
+
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection)
+	};
+	
+};
+
 // Remove Audio storage, including ALL data
 function clearDataStorage (databaseName, storeName) {
 	var db;
