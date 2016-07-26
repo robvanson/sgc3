@@ -49,8 +49,10 @@ button {
 <script type="text/javascript" src="internationalization_tables.js" ></script>   
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="wordlists_plus.js" ></script>   
+<script type="text/javascript" src="audioProcessing.js" ></script>   
+<script type="text/javascript" src="jszip.min.js" defer="true" ></script> 
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
+<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('sgc3_settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -80,6 +82,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="LanguageCaption2" title="" >---</span></option>
 	</select> 
 
+	<a href="" id="HiddenDownloadLink" name="Download" style="display:none" title="Download" ></a>
 	<div style="position: fixed; color: black; bottom: 70%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="RegisterCaption">---</div>	
 	<select id="Register" style="position: fixed; color: black; bottom: 65%; left: 25%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister(); store_SGC3_settings (); " >
 		<option value="---" ><span id="RegisterCaption2" title="" >---</span></option>
@@ -116,6 +119,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div style="position: fixed; color: gray; bottom: 13%; left: 20%; height: 5%; width: 27%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="CurrentWordlist">---</div>	
 	<div title=""><button type="button" style="color: black; bottom: 5%; left: 25%; height: 8%;" id="DeleteWordlistButton" ><span id="DeleteWordlist" >---</span></button></div>
 
+	<input type="file" id="HiddenImportAudio" name="ImportAudio" style="display:none" onchange='importAudio (this.files); this.value="";' title="OpenWord" />
+	<div title=""><button type="button" style="color: black; bottom: 5%; right: 33%; height: 8%; width: 8% " id="LocalImportAudio" ><span id="ImportAudio" style="font-size: 2vmin;" >Import</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 5%; right: 23%; height: 8%; width: 8% " id="ExportAudioButton" ><span id="ExportAudio" style="font-size: 2vmin;" >Export</span></button></div>
+	<div title=""><button type="button" style="color: black; bottom: 25%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
+		<div style="color: gray; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
+		<span id="SaveAudio" >---</span></button>
+	</div>
+	
+	<div style="position: fixed; color: black; bottom: 10%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 4vmin; text-align: center " id="AudioNameCaption">---</div>	
+	<select id="AudioName" style="position: fixed; color: black; bottom: 5%; right: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; background-color: rgb(220,220,220); " onchange="changeCollection(this.selectedIndex); store_SGC3_settings (); " >
+		<option value="NewCollection" ><span id="NewCollection" title="" >New</span></option>
+	</select> 
+	
     <script type="text/javascript">
 	//<![CDATA[
 	// Install the service worker for offline use
@@ -130,7 +146,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	}
 	
 	// DOM parameters
-	var mainWindow = localStorage.mainWindow;
+	var mainWindow = localStorage.sgc3_mainWindow;
 	var creditsWindow;
 	
 	var localSynthesis = document.getElementById('LocalSynthesis');
@@ -142,7 +158,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var displayPinyinButton = document.getElementById('DisplayPinyinButton');
 	var displayCharButton = document.getElementById('DisplayCharButton');
 	var displayTransButton = document.getElementById('DisplayTransButton');
+	var hiddenDownloadLink = document.getElementById('HiddenDownloadLink');
+	var exportAudioButton = document.getElementById('ExportAudioButton');
+	var saveAudioButton = document.getElementById('SaveAudioButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
+	var openAudioButton = document.getElementById('LocalOpenAudio');
+	var hiddenImportAudio = document.getElementById('HiddenImportAudio');
+	var importAudioButton = document.getElementById('LocalImportAudio');
+	importAudioButton.onclick = function () {
+	    document.getElementById('HiddenImportAudio').click();
+	};
 	var hiddenOpenWordlist = document.getElementById('HiddenOpenWordlist');
 	openWordlistButton.onclick = function () {
 	    document.getElementById('HiddenOpenWordlist').click();
@@ -167,6 +192,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayPinyin: true,
 		displayChar: true,
 		displayTrans: true,
+		saveAudio: false,
+		audioDatabaseName: "SGC3 audio",
+		currentCollection: "---",
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []
@@ -177,15 +205,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		sgc3_settings.settingsRead = true;
 
 		for (x in sgc3_settings) {
-			localStorage[x] = JSON.stringify(sgc3_settings[x]);
+			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
 		};
 	};
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
 			// For some reason, parsing the language goes wrong
-			if (localStorage[x]) {
-				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			if (localStorage["sgc3_"+x]) {
+				sgc3_settings[x] = JSON.parse(localStorage["sgc3_"+x]);
 			};
 		};
 		
@@ -201,6 +229,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		get_wordlist (sgc3_settings.wordList);
 		currentWordlistName.textContent = sgc3_settings.wordList;
 		currentWordlistName.style.color = "gray";
+		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
 		deleteWordlistButton.style.color = "gray";
 		deleteWordlistButton.disabled = true;
 		if (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) {
@@ -208,6 +238,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			deleteWordlistButton.style.color = "black";
 			deleteWordlistButton.disabled = false;
 		};
+		audioDatabaseName = sgc3_settings.audioDatabaseName;
+		add_collections_names_to_select ();
 	};
 	
 	// Initialize to stored settings
@@ -238,6 +270,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 	};
 
+	
 	if (sgc3_settings.displayNumbers) {
 		displayNumbersButton.style.color = "red";
 		displayNumbersButton.background = "rgb(256,245,245)";
@@ -319,7 +352,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			};
 		};
 	};
-	
+		
 	deleteWordlistButton.onclick = function () {
 		var wordlistName = sgc3_settings.wordList;
 		var canBeDeleted = wordlistExist (sgc3_settings.personalWordlists, wordlistName);
@@ -336,7 +369,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 			wordlistNumber = (wordlistNumber < wordlists.length) ? wordlistNumber : 0;
 			sgc3_settings.wordList = wordlists[wordlistNumber][0];
-			localStorage.currentWord = JSON.stringify(0);
+			localStorage.sgc3_currentWord = JSON.stringify(0);
 			store_SGC3_settings ();
 			load_SGC3_settings ();
 			// Remove last recording
@@ -362,6 +395,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		store_SGC3_settings ();
 	};
 	
+	// Record all Audio
+	saveAudioButton.onclick = function () {
+		sgc3_settings.saveAudio = ! sgc3_settings.saveAudio;
+		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
+		store_SGC3_settings ();
+		
+		// Get performance data
+		getCurrentMetaData (sgc3_settings.currentCollection, false);
+	};
 	
 	function getTTSvoice(){
 		var selectedVoice;
@@ -411,6 +454,141 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				document.getElementById("Strict").selectedIndex = x;
 			};
 		};
+	};
+
+	// New Collection
+	function changeCollection(index) {
+		var selector = document.getElementById('AudioName');
+		var value = selector.options[index].value;
+		if (index == 0) {
+			var promptText = config_tables[sgc3_settings.language]["NewCollection"][1];
+			var collectionName = prompt(promptText, sgc3_settings.currentCollection);
+			if (collectionName && collectionName.length > 0) sgc3_settings.currentCollection = collectionName;
+		} else {
+			sgc3_settings.currentCollection = value;
+		};
+		getCurrentMetaData (sgc3_settings.currentCollection, false);
+	};
+		
+	// Construct a list of Collections
+	function addCollectionsToSelect (records) {
+		var collectionList = [];
+		if(sgc3_settings.currentCollection && sgc3_settings.currentCollection.length > 0) collectionList.push(sgc3_settings.currentCollection);
+		for (var i = 0; i<records.length; ++ i) {
+			var collection = records[i].collection;
+			if (collectionList.indexOf(collection) < 0) collectionList.push(collection);
+		};
+		collectionList.sort();
+		
+		// First, remove old entries
+		var selector = document.getElementById('AudioName');
+		var numOptions = selector.options.length
+		for(var i = numOptions - 1; i > 0; --i) {
+			selector.remove(i);
+		};
+		// Add new entries
+		var selectedIndex = 1;
+		for(var i=0; i < collectionList.length; ++i) {
+			var lastOption = selector.options.length - 1;
+			var collectionTitle = collectionList[i];
+			var newOption = selector.options[0].cloneNode(true);
+			newOption.value = collectionTitle;
+			newOption.text = collectionTitle;
+			selector.add(newOption);
+			if (collectionTitle == sgc3_settings.currentCollection) selectedIndex = selector.options.length - 1;
+		};
+		selector.selectedIndex = selectedIndex;
+	};
+	
+	function add_collections_names_to_select () {
+		// Read localStorage
+		sgc3_settings.currentCollection = JSON.parse(localStorage.sgc3_currentCollection);
+		// Get the names of the collections
+		getAllRecords (undefined, addCollectionsToSelect);
+	};
+	
+	// Export audio
+	exportAudioButton.onclick = function (){
+		if (hiddenDownloadLink.href != "") URL.revokeObjectURL(hiddenDownloadLink.href);
+		getAllRecords (sgc3_settings.currentCollection, zipAudio);
+	};
+	
+	var zipAudio = function (records) {
+		var zip = new JSZip();
+		// Create a file listing (also to force the whole path into the zip archive)
+		var text = "";
+		for (var i = 0; i<records.length; ++ i) {
+			text += records[i].collection+"/"+records[i].map+"/"+records[i].name+"\t"+records[i].audio.size+"\t"+records[i].date+"\n";
+		};
+		zip.file("README.txt", text, {text: true});
+		
+		for(var i=0; i <  records.length; ++i) {
+			if (records[i].collection == sgc3_settings.currentCollection) {
+				var filename = records[i].collection+"/"+records[i].map+"/"+records[i].name;
+				var blob = records[i].audio;
+				zip.file(filename, blob, {binary: true});
+			};
+		};
+		zip.generateAsync({type:"blob"})
+		.then(function(content) {
+	        hiddenDownloadLink.download = sgc3_settings.currentCollection+".zip";
+	        hiddenDownloadLink.href = URL.createObjectURL(content);
+	        hiddenDownloadLink.click();
+		});		
+	};	
+	
+	// Import audio
+	function importAudio (files) {
+
+		var zipReader = new FileReader();
+		zipReader.onload = function(){
+			var zip = new JSZip();
+			zip.loadAsync(zipReader.result).then(unZipAudio);
+		};
+		zipReader.onerror = function(err) {
+			console.log("Open zip file",err);
+		};
+		zipReader.readAsArrayBuffer(files[0]);
+	};
+	
+	var unZipAudio = function (zip) {
+		var fileList = zip.folder("\/$").files;
+		var defaultCollection = Object.getOwnPropertyNames(fileList).find(function(name){return name.match(/^[^\/]+\/$/g)});
+		defaultCollection = defaultCollection.replace(/\/$/g, "");
+		
+		// Ask whether to override the collection of the import.
+		var collectionName = defaultCollection;
+		var promptText = config_tables[sgc3_settings.language]["NewCollection"][1];
+		var newCollectionName = prompt(promptText, defaultCollection);
+		if (newCollectionName && newCollectionName.length > 0 && newCollectionName != defaultCollection) collectionName = newCollectionName;
+		// Set new current collection
+		sgc3_settings.currentCollection = collectionName;
+		localStorage.sgc3_currentCollection = JSON.stringify(sgc3_settings.currentCollection);
+			
+		zip.forEach(function (relativePath, file){
+			if(relativePath.match(/\.(wav|flac|mp3|spx|ogg|tsv)$/ig)) {
+				var collection = collectionName;
+				var map = "";
+				var name = "Audio.wav";
+				var path = relativePath.split("/");
+				name = path[path.length - 1];
+				if (path.length > 2) {
+					map = path[path.length - 2];
+					origCollection = path[path.length - 3];
+				} else if (path.length == 2) {
+					origCollection = path[path.length - 2];
+				};
+				// Change the name of hte TSV file
+				if (origCollection != collection && name == origCollection+".tsv") name = collection+".tsv";
+				
+				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
+				zip.file(relativePath).async("arraybuffer").then(function (data) {	
+					var blob = new Blob([data], {type : type});
+					addAudioBlob(collection, map, name, blob);
+				}, function(event){console.log("Error", event)});
+			};
+		});
+
 	};
 	
 	// Set Register

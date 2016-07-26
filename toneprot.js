@@ -25,6 +25,9 @@
  * 
  */
 
+var performanceRecord = {};
+var recordPerformance = true;
+
 var setDrawingParam = function (canvasId) {
 	var drawingArea = document.getElementById(canvasId);
 	var drawingCtx = drawingArea.getContext("2d");
@@ -473,6 +476,7 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 }
 
 // Take a word and create tone contour
+// !!! Add addapted highest tone and range !!!
 function word2tones (pinyin, topLine) {
 	var toneContour = [];
 	var word;
@@ -509,6 +513,10 @@ function word2tones (pinyin, topLine) {
 	 */
 	// First create points
 	var points = [];
+	var timeSeries = [];
+	var valueSeries = [];
+	var pitchTier = new Tier ();
+	pitchTier.dT = dx;
 	for(x = dx/2; x < time; x += dx) {
 		// Locate tone stretch
 		var i = 0;
@@ -523,11 +531,8 @@ function word2tones (pinyin, topLine) {
 		if(prefF > 0 && nextF > 0) {
 			value = Number(prefF) + Number((x - prefT)/(nextT - prefT)*(nextF - prefF));
 		}
-
-		points.push({"x": x, "value": value});
+		pitchTier.pushItem({"x": x, "value": value});
 	};
-	
-	pitchTier = {"xmin": 0, "xmax": time, "points": {"size": points.length, "items": points}};
 	return pitchTier;
 }
 
@@ -537,15 +542,17 @@ function smooth_pitchTier (pitchTier) {
 	var prevValue = 0;
 	var currentTime = -1;
 	var currentValue = 0;
-	var items = pitchTier.points.items;
-	for(var i = 1; i < items.length; i+=1) {
-		var nextTime = items[i].x;
-		var nextValue = items[i].value;
+	for(var i = 1; i < pitchTier.size; i+=1) {
+		var item = pitchTier.item(i);
+		nextTime = item.x;
+		nextValue = item.value;
 		
 		// Change currentValue as the average of prev, current, and next
 		// NOTE: Do not use the changed value for the next round!!!
 		if (prevValue > 0 && currentValue > 0 && nextValue > 0) {
-			items[i-1].value = (prevValue + currentValue + nextValue) / 3;
+			var item = pitchTier.item(i-1);
+			item.value = (prevValue + currentValue + nextValue) / 3;
+			pitchTier.writeItem(i-1, item);
 		};
 		// Next round
 		prevTime = currentTime;
@@ -574,10 +581,10 @@ function plot_pitchTier (canvasId, color, lineWidth, topLine, pitchTier) {
 	
 	var prevTime = -1;
 	var prevValue = 0;
-	var items = pitchTier.points.items;
-	for(var i = 1; i < items.length; i+=1) {
-		var currentTime = items[i].x;
-		var currentValue = items[i].value;
+	for(var i = 1; i < pitchTier.size; i+=1) {
+		var item = pitchTier.item(i);
+		currentTime = item.x;
+		currentValue = item.value;
 		if(prevValue > 0 && currentValue > 0) {
 			drawingCtx.lineTo(currentTime * tScale, plotHeight - currentValue * vScale);
 		} else if (prevValue <= 0 && currentValue > 0) {
@@ -621,7 +628,7 @@ function display_recording_level (id, recordedArray) {
 		};
 	};
 	var power = sumSquare / nSamples;
-	var dBpower = (power > 0) ? maxPowerRecorded + Math.log10(power) * 10 : 0;
+	var dBpower = (power > 0) ? maxPowerRecorded + 2*Math.log10(power) * 10 : 0;
 	var recordingLight = document.getElementById(id);
 	var currentWidth = 100*recordingLight.clientWidth/window.innerWidth;
 	var currentHeight = 100*recordingLight.clientHeight/window.innerHeight;
@@ -649,78 +656,121 @@ function draw_tone (id, color, typedArray, sampleRate) {
 	return pitchTier;
 }
 
-// Pitch trackers 
-
-function testPitchTracker (duration, sampleRate) {
-	// Create a sound buffer
-	var audioCtx = new AudioContext();
-	var audioBuffer = audioCtx.createBuffer(1, duration*sampleRate, sampleRate);
-	var audioRecording = audioBuffer.getChannelData(0);
-	
-	// Do something with the recorded blob and the AudioContext.decodeAudioData
-	
-	// Fill it with a sum of sine waves
-	var harmonics = [185];
-	var numHarmonics = 10;
-	for (var h = 1; h < numHarmonics; ++h) {
-		harmonics [h] = h * harmonics [0];
-	}; 
-	var phase = 2 * Math.PI * Math.random();
-	var maxAmp = 0.71;
-	// Scale recording to [-1, 1]
-	var scale = maxAmp / harmonics.length;
-	for (var i = 0; i < duration * sampleRate; ++i) {
-		audioRecording [i] = 0.1*Math.random();
-		var fm = 1 + 0.1 * Math.sin (2 * Math.PI * i / (duration * sampleRate) + phase);
-		for (var h = 0; h < numHarmonics; ++h) {
-			audioRecording [i] += scale * Math.sin (2 * Math.PI * i * fm * harmonics [h] / sampleRate);
-		};
-	};
-
-	// make a PitchTier with 25.6 ms windows, step 10 ms
-	var windowDuration = 0.0256;
-	var dT = 0.010;
-	var windowLength = sampleRate * windowDuration;
-	var points = [];
-	var t = windowDuration / 2;
-	
-	// Step through sound
-	// Create an audio buffer
-	var bufferCtx = new AudioContext();
-	var bufBuffer = audioCtx.createBuffer(1, windowLength, sampleRate);
-	var buf = audioBuffer.getChannelData(0);
-	/* Create a new pitch detector */
-	var pitch = new PitchAnalyzer(sampleRate);
-	while (t < duration - windowDuration) {
-		
-		var x = Math.floor(t * sampleRate - windowLength / 2);
-		for (var i = 0; i < windowLength; ++i) {
-			buf [i] = audioRecording [x + i] // * Math.sin ( Math.PI * i / windowLength) ;
-		};
-	
-		/* Copy samples to the internal buffer */
-		pitch.input(buf);
-		
-		/* Process the current input in the internal buffer */
-		pitch.process();
-	
-		var pitchValue = pitch.findTone();
-
-		points.push({"x": t, "value": (pitchValue ? pitchValue.freq : 0)});
-
-		t += dT;
-	};
-	
-	pitchTier = {"xmin": 0, "xmax": duration, "points": {"size": points.length, "items": points}};
-	return pitchTier;
-}
-
 var recognition = {
 		Recognition: "",
 		Feedback: "",
 		Label: "Correct",
+		Register: "OK",
+		Range: "OK"
+	};
+
+// currentLesson is defined!!!
+function recognition2performance (pinyin, recognition, performanceRecord) {
+	if (! performanceRecord [currentLesson] ) 
+			performanceRecord [currentLesson] = {};
+	var wordList = performanceRecord [currentLesson];
+	if (! wordList[pinyin] ) {
+		wordList[pinyin] = {
+			"Grade" : -1,
+			"Correct" : 0,
+			"Wrong" : 0,
+			"High" : 0,
+			"Low" : 0,
+			"Wide" : 0,
+			"Narrow" : 0,
+			"Date" : "",
+			"Lesson" : currentLesson,
+			"Mark" : currentItem[1],
+			"Character" : currentItem[2],
+			"Translation" : currentItem[3],
+			"Example" : currentItem[currentItem.length - 1]
+		};
+	};
+	if (Object.keys(recognition).length > 0) {
+		++wordList[pinyin][recognition.Label];
+		if(recognition.Register != "OK")++wordList[pinyin][recognition.Register];
+		if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
+		var d = new Date();
+		wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 	};
 	
+	// Write performance table to storage
+	var objectList = performanceRecord2objectList (performanceRecord);
+	writeCSV(sgc3_settings.currentCollection, objectList);
+};
+
+// currentLesson is defined!!!
+function setGRADE (pinyin, grade) {	
+	var wordList = performanceRecord [currentLesson];
+	if (wordList && wordList[pinyin] ) {
+		wordList[pinyin].Grade = grade == 0 ? 10 : grade;
+	
+		// Write performance table to storage
+		var objectList = performanceRecord2objectList (performanceRecord);
+		writeCSV(sgc3_settings.currentCollection, objectList);
+		// Display grade
+		document.getElementById("GradeString").textContent = wordList[pinyin].Grade;
+	};
+};
+
+function performanceRecord2objectList (performanceRecord) {
+	var objectList = [];
+	lessonList = Object.keys(performanceRecord);
+	for (var l=0; l<lessonList.length; ++l) {
+		var lesson = lessonList[l];
+		var wordList = Object.keys(performanceRecord[lesson]);
+		for (var p=0; p<wordList.length; ++p) {
+			var pinyin = wordList[p];
+			var record = performanceRecord[lesson][pinyin];
+			objectList.push({
+			"Pinyin": pinyin, 
+			"Grade" : record.Grade,
+			"Correct" : record.Correct,
+			"Wrong" : record.Wrong,
+			"High" : record.High,
+			"Low" : record.Low,
+			"Wide" : record.Wide,
+			"Narrow" : record.Narrow,
+			"Date" : record.Date,
+			"Lesson" : record.Lesson,
+			"Mark" : record.Mark,
+			"Character" : record.Character,
+			"Translation" : record.Translation,
+			"Example" : record.Example
+			});
+		};
+	};
+	return objectList;
+};
+
+function objectList2performanceRecord (objectList) {
+	var performanceRecord = {};
+	var headerList = Object.keys(objectList[0]);
+	for (var i=0; i<objectList.length; ++i) {
+		var record = objectList[i];
+		if(!record.Lesson) continue;
+		if(!performanceRecord[record.Lesson])performanceRecord[record.Lesson] = {};
+		performanceRecord[record.Lesson][record.Pinyin] = {
+			"Grade" : record.Grade,
+			"Correct" : record.Correct,
+			"Wrong" : record.Wrong,
+			"High" : record.High,
+			"Low" : record.Low,
+			"Wide" : record.Wide,
+			"Narrow" : record.Narrow,
+			"Date" : record.Date,
+			"Lesson" : record.Lesson,
+			"Mark" : record.Mark,
+			"Character" : record.Character,
+			"Translation" : record.Translation,
+			"Example" : record.Example
+		};
+		
+	};
+	
+	return performanceRecord;
+};
+
 // Handle sound after decoding (used in audioProcessing.js)
 function processRecordedSound () {
 	if(recordedArray) {
@@ -734,12 +784,35 @@ function processRecordedSound () {
 			recordedPitchTier = draw_tone ("TonePlot", "red", recordedArray, recordedSampleRate)
 		};
 		recognition = sgc_ToneProt (pitchTier, currentPinyin, sgc3_settings.register, sgc3_settings.strict, sgc3_settings.language);
-	
+		
+		// Only do this ONCE for every recording
+		if(sgc3_settings.saveAudio) {
+			if (sessionStorage.recorded == "true") {
+				saveCurrentAudioWindow (sgc3_settings.currentCollection, currentLesson, currentPinyin+".wav");
+				recognition2performance(currentPinyin, recognition, performanceRecord);
+			} else {
+				// Create empty record
+				recognition2performance(currentPinyin, {}, performanceRecord);				
+			};
+		};
+		
 		// Write results
 		document.getElementById("ResultString").textContent = recognition.Recognition;
 		document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
 		document.getElementById("FeedbackString").textContent = recognition.Feedback;
 		document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+
+		// Write out grade
+		if(performanceRecord && performanceRecord [currentLesson] && performanceRecord [currentLesson][currentPinyin].Grade >=0) {
+			document.getElementById("GradeString").textContent = performanceRecord [currentLesson][currentPinyin].Grade;
+		};
+		
+		// Set play button
+		if(currentAudioWindow.length > 0) {
+			document.getElementById('PlayButton').disabled = false;
+			document.getElementById('PlayButton').style.color = "red";
+		};		    
+
 	};
 };
 
@@ -784,9 +857,9 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	var lowBoundaryFactor = 1/precisionFactor
 	
 	// Get top and range of model
-	var tonePercentiles = get_percentiles (tonePitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
-	maximumModelFzero = tonePercentiles[1].value > 0 ? tonePercentiles[1].value : 0;
-	minimumModelFzero = tonePercentiles[0].value > 0 ? tonePercentiles[0].value : 0;
+	var tonePercentiles = get_percentiles (tonePitchTier.valueSeries(), function (a, b) { return a-b;}, function(a) { return a <= 0;}, [5, 95]);
+	maximumModelFzero = (tonePercentiles[1].value > 0) ? tonePercentiles[1].value : 0;
+	minimumModelFzero = (tonePercentiles[0].value > 0) ? tonePercentiles[0].value : 0;
 	var modelPitchRange = 2; // 1 octave
 	if (minimumModelFzero > 0) {
     	modelPitchRange = maximumModelFzero / minimumModelFzero;
@@ -795,7 +868,7 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	};
 	
 	// Get top and range of recorded word
-	var pitchPercentiles = get_percentiles (pitchTier.points.items, function (a, b) { return a.value-b.value;}, function(a) { return a.value <= 0;}, [5, 95]);
+	var pitchPercentiles = get_percentiles (pitchTier.valueSeries(), function (a, b) { return a-b;}, function(a) { return a <= 0;}, [5, 95]);
 	maximumRecFzero = pitchPercentiles[1].value > 0 ? pitchPercentiles[1].value : 0;
 	minimumRecFzero = pitchPercentiles[0].value > 0 ? pitchPercentiles[0].value : 0;
 	var recPitchRange = 2; // 1 octave
@@ -804,7 +877,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
     } else {
 		recPitchRange = 0;
 	};
-	var recordedMinMax = get_time_of_minmax (pitchTier.points.items);
+
+	var recordedMinMax = get_time_of_minmax (pitchTier);
 	
 	// Rescale register (ignore model tone ranges <= 3 semitones)
 	newRegister = (maximumModelFzero > 0) ? maximumRecFzero / maximumModelFzero * register : register;
@@ -842,10 +916,13 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	// Remove all pitch points outside a band around the newRegister
 	var upperCutOff = 1.5*newRegister;
 	var lowerCutOff = newRegister/3;	
-	var items = pitchTier.points.items;
 
-	for (var i=0; i < items.length; ++i) {
-		if(items[i].value > upperCutOff || items[i].value < lowerCutOff) items[i].value = 0;
+	for (var i=0; i < pitchTier.size; ++i) {
+		var item = pitchTier.item(i);
+		if(item.value > upperCutOff || item.value < lowerCutOff) {
+			item.value = 0;
+			pitchTier.writeItem(i, item);
+		};
 	};
 	
 	// Do the tone recognition
@@ -863,6 +940,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	
 	// Special cases (frequent recognition errors)
 	// Not ultra strict and wrong
+	//
+	// !!! Add rules for 3[12] to 30 confusions, 00 misidentification !!!
 	if (proficiency < 3 && choiceReference != pinyin) {
 		var currentPinyin = choiceReference;
 		
@@ -957,13 +1036,13 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 			feedbackText = toneFeedback_tables[language]["Correct"];
 		};
 	};
-
-	
 	
 	var result = {
 		Recognition: recognitionText,
 		Feedback: feedbackText,
 		Label: labelText,
+		Register: registerUsed,
+		Range: rangeUsed
 	};
 	
 	return result;

@@ -17,12 +17,25 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
+var mimeTypes = {
+	"wav": "audio/wav",
+	"mp3": "audio/mpeg",
+	"flac": "audio/flac",
+	"ogg": "audio/ogg",
+	"spx": "audio/ogg",
+	"aif": "audio/aifc",
+	"tsv": "text/tsv",
+	"csv": "text/csv"
+};
 // Global variables
 var recordedBlob, recordedBlobURL;
-var recordedArray, currentAudioWindow;
-var recordedSampleRate, recordedDuration;
+var recordedArray;
+var recordedDuration;
 var recordedPitchTier;
 var windowStart = windowEnd = 0;
+var recordedSampleRate = 0;
+var currentAudioWindow = undefined;
+var audioDatabaseName = "Audio";
 
 var clearRecording = function () { 
 	recordedBlob = undefined;
@@ -54,6 +67,9 @@ function processAudio (blob) {
 };
 
 // You need a function "processRecordedSound ()"
+// Set some switches to prevent stored data are reused
+sessionStorage["recorded"] = "false";
+var retrievedData = false;
 function decodedDone(decoded) {
 	var typedArray = new Float32Array(decoded.length);
 	typedArray = decoded.getChannelData(0);
@@ -69,8 +85,12 @@ function decodedDone(decoded) {
 	windowStart = 0;
 	windowEnd = recordedDuration;
 
-	// make sure this funciton is defined!!!
+	// make sure this function is defined!!!
+	if (!retrievedData) sessionStorage["recorded"] = "true";
 	processRecordedSound ();
+	sessionStorage["recorded"] = "false";
+	// Note this one should be switched AFTER processRecordedSound has been called.
+	retrievedData = false;
 };
 
 function play_soundArray (soundArray, sampleRate, start, end) {
@@ -96,6 +116,61 @@ function play_soundArray (soundArray, sampleRate, start, end) {
 	source.connect(audioContext.destination);
 	// start the source playing
 	source.start();
+};
+
+/*
+ * Convert typed mono array to WAV blob
+ * 
+ */
+function writeUTFBytes(view, offset, string){ 
+  var lng = string.length;
+  for (var i = 0; i < lng; i++){
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
+}
+
+// Write selection [start, end] to a WAV blob
+function arrayToBlob (array, start, end, sampleRate) {
+	if(!array) return;
+	if(end <= 0) end = array.length;
+	var window = array.slice(start*sampleRate, end*sampleRate);
+
+	// create the buffer and view to create the .WAV file
+	var buffer = new ArrayBuffer(44 + window.length * 2);
+	var view = new DataView(buffer);
+
+	// write the WAV container, check spec at: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+	// RIFF chunk descriptor
+	writeUTFBytes(view, 0, 'RIFF');
+	view.setUint32(4, 44 + window.length * 2, true);
+	writeUTFBytes(view, 8, 'WAVE');
+	// FMT sub-chunk
+	writeUTFBytes(view, 12, 'fmt ');
+	view.setUint32(16, 16, true);
+	view.setUint16(20, 1, true);
+	// mono (2 channels)
+	view.setUint16(22, 1, true);
+	view.setUint32(24, sampleRate, true);
+	view.setUint32(28, sampleRate * 2, true);
+	view.setUint16(32, 2, true);
+	view.setUint16(34, 16, true);
+	// data sub-chunk
+	writeUTFBytes(view, 36, 'data');
+	view.setUint32(40, window.length * 2, true);
+
+	// write the PCM samples
+	var lng = window.length;
+	var index = 44;
+	var volume = 1;
+	for (var i = 0; i < lng; i++){
+	    view.setInt16(index, window[i] * (0x7FFF * volume), true);
+	    index += 2;
+	}
+	
+	// our final binary blob that we can hand off
+	var blob = new Blob ( [ view ], { type : 'audio/wav' } );
+	
+	return blob;
 };
 
 // Set up window 
@@ -287,27 +362,77 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 	return pitchArray;
 };
 
+// PitchTier definition
+function Tier () {
+	// data
+	this.xmin = Infinity;
+	this.xmax = -Infinity;
+	this.valuemin = Infinity;
+	this.valuemax = -Infinity;
+	this.dT = undefined;
+	this.size = undefined;
+	this.time = [];
+	this.values = [];
+	
+	// access functions
+	this.valueSeries = function () {return this.values; };
+	this.timeSeries = function () {return this.time; };
+	this.item = function (i) {
+		return {x: this.time [i], value: this.values [i]};
+	};
+	this.writeItem = function (i, item) {
+		if ( i < this.time.length ) {
+			this.time [i] = item.x;
+			if(item.x < this.xmin)this.xmin = item.x;
+			if(item.x > this.xmax)this.xmax = item.x;
+			this.values [i] = item.value;
+			if(item.value < this.valuemin) this.valuemin = item.value;
+			if(item.value > this.valuemax) this.valuemax = item.value;
+			return i;
+		} else {
+			console.log("Item "+i+" does not exist");
+			return false;
+		}
+	};
+	this.pushItem = function (item) {
+		this.time.push(item.x);
+		if(item.x < this.xmin)this.xmin = item.x;
+		if(item.x > this.xmax)this.xmax = item.x;
+		this.values.push(item.value);
+		if(item.value < this.valuemin) this.valuemin = item.value;
+		if(item.value > this.valuemax) this.valuemax = item.value;
+		this.size = this.time.length;
+		return this.size;
+	};
+};
+
 // Pitch tracking and candidate selection
 function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var pitchArray = calculate_Pitch (sound, sampleRate, fMin, fMax, dT);
 	var duration = sampleRate > 0 ? sound.length / sampleRate : 0;
 	var points = [];
+	var timeSeries = [];
+	var valueSeries = [];
 	
 	// Select the best pitch candidates using tracking etc.
+	var pitchTier = new Tier();
+	pitchTier.xmin = 0;
+	pitchTier.dT = dT;
 	for (var i=0; i < pitchArray.length; ++ i) {
-		points.push({x: pitchArray [i].x, value: pitchArray [i].values [0] });
+		pitchTier.pushItem ({x: pitchArray [i].x, value: pitchArray [i].values [0] })
 	};
-	var pitchTier = {xmin: 0, xmax: duration, dT: dT, points: {size: points.length, items: points}};
-
+	
 	return pitchTier;
 }
+
+
 
 // DTW between two pitchTiers
 function toDTW (pitchTier1, pitchTier2) {
 	var dtw = {distance: 0, path: [], matrix: undefined};
 	
-	var pitch1 = pitchTier1.points.items;
-	var pitch2 = pitchTier2.points.items;
+	var pitch1 = pitchTier1.valueSeries();
+	var pitch2 = pitchTier2.valueSeries();
 	
 	// Stub code giving fake results
 	dtw.distance = Math.random()*Math.max(pitch1.length, pitch2.length);
@@ -393,7 +518,9 @@ function get_percentiles (points, compare, remove, percentiles) {
 	sortList.sort(compare);
 	var sortListLength = sortList.length
 	for (var i = sortListLength-1; i >= 0; --i) {
-		if (remove(sortList[i])) sortList.splice(i, 1);
+		if (remove(sortList[i])) {
+			sortList.splice(i, 1);
+		};
 	};
 	for (var i = 0; i < percentiles.length; ++i) {
 		var perc = percentiles[i];
@@ -407,13 +534,14 @@ function get_percentiles (points, compare, remove, percentiles) {
 };
 
 // return the minim and maximum and their times
-function get_time_of_minmax (points) {
+function get_time_of_minmax (tier) {
 	var min = Infinity;
 	var max = -Infinity;
 	var tmin = tmax = 0;
-	for (var i = 0; i < points.length; ++i) {
-		var currentValue = points[i].value;
-		var currentTime = points[i].time;
+	for (var i = 0; i < tier.size; ++i) {
+		var item = tier.item(i);
+		var currentValue = item.value;
+		var currentTime = item.x;
 		if (currentValue < min) {
 			min = currentValue;
 			tmin = currentTime;
@@ -424,4 +552,318 @@ function get_time_of_minmax (points) {
 		};
 	};
 	return {min: min, max: max, tmin: tmin, tmax: tmax};
+};
+
+// Use IndexedDB as an Audio storage
+function saveCurrentAudioWindow (collection, map, fileName) {
+	if (!currentAudioWindow || currentAudioWindow.length <= 0 || ! recordedSampleRate || recordedSampleRate <= 0) return;
+	var blob = arrayToBlob (currentAudioWindow, 0, 0, recordedSampleRate);
+	if (collection && collection.length > 0 && map && map.length > 0 && fileName && fileName.length > 0) {
+		addAudioBlob(collection, map, fileName, blob);
+	};
+};
+
+var indexedDBversion = 2;
+function getCurrentAudioWindow (collection, map, name) {
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var key = (map.length > 0) ? collection+"/"+map+"/"+name : collection+"/"+name;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.get(key);
+		
+		request.onsuccess = function(event) {
+			var record = this.result;
+			if(record) {
+				if(record.audio){
+					// processAudio is resolved asynchronously, reset retrievedData when it is finished
+					retrievedData = true;
+					processAudio (record.audio);
+				};
+			};
+		};
+		
+		// Data not found
+		request.onerror = function(event) {
+			console.log("Unable to retrieve data: "+map+"/"+name+" cannot be found");
+		};
+		
+	};
+	request.onerror = function(event) {
+		console.log("Error: ", event);
+	}
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection);
+	};
+};
+
+function getCurrentMetaData (collection, processData) {
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.get(collection+"/"+collection+".tsv");
+		
+		request.onsuccess = function(event) {
+			var record = this.result;
+			if(record) {
+				if(record.audio){
+					// This is a text blob
+					if (processData) {
+						var objectList = csvblob2objectlist(record.audio, processData);
+					};
+				};
+			} else {
+				var date = new Date().toLocaleString();
+				var blob = new Blob([''], { type: 'text/tsv', endings: 'native' });
+				var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
+				var request = customerObjectStore.add({ collection: collection, map: "", name: collection+".tsv", date: date, audio: blob }, collection+"/"+collection+".tsv");
+		
+				request.onsuccess = function(event) {
+					console.log("Success: ", this.result, " ", date);
+				};
+		
+				request.onerror = function(event) {
+					console.log("Unable to add data: "+collection+"/"+collection+".tsv"+" cannot be created or updated");
+				};		
+			};
+		};
+		
+		// Data not found
+		request.onerror = function(event) {
+			console.log("Unable to retrieve metadata file: "+collection+"/"+collection+".tsv cannot be found");
+		};
+		
+	};
+	request.onerror = function(event) {
+		console.log("Error: ", event);
+	}
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection);
+	};
+};
+
+// Create an objectStore to hold audio blobs.
+function initializeObjectStore (db, collection) {
+	var objectStore = db.createObjectStore("Recordings");
+	objectStore.createIndex("collection", "collection", { unique: false });
+	objectStore.createIndex("map", "map", { unique: false });
+	// initialize metadata file
+	// Use transaction oncomplete to make sure the objectStore creation is 
+	// finished before adding data into it.
+	objectStore.transaction.oncomplete = function(event) {
+		// Store values in the newly created objectStore.
+		var date = new Date().toLocaleString();
+		var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
+		// create empty text blob
+		var blob = new Blob([''], { type: 'text/tsv', endings: 'native' });
+		var request = customerObjectStore.add({ collection: collection, map: "", name: collection+".tsv", date: date, audio: blob }, collection+"/"+collection+".tsv");
+
+		request.onsuccess = function(event) {
+			console.log("Success: ", this.result, " ", date);
+		};
+
+		request.onerror = function(event) {
+			console.log("Unable to add data: "+collection+"/"+collection+".tsv"+" cannot be created or updated");
+		};
+	};
+};
+
+// Use IndexedDB as an Audio storage
+// Remove entries that have the same name
+// The structure is: Directory, Filename, Binary data
+function addAudioBlob(collection, map, name, blob) {
+	var date = new Date().toLocaleString();
+	var db;
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var key = (map.length > 0) ? collection+"/"+map+"/"+name : collection+"/"+name;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.put({ collection: collection, map: map, name: name, date: date, audio: blob }, key);
+		
+		request.onsuccess = function(event) {
+			console.log("Success: ", this.result, " ", date);
+
+		};
+		
+		// If data already exist, update it
+		request.onerror = function(event) {
+			console.log("Unable to add data: "+key+" cannot be created or updated");
+		};
+		
+	};
+
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		var objectStore = db.createObjectStore("Recordings");
+		objectStore.createIndex("collection", "collection", { unique: false });
+		objectStore.createIndex("map", "map", { unique: false });
+		// Use transaction oncomplete to make sure the objectStore creation is 
+		// finished before adding data into it.
+		objectStore.transaction.oncomplete = function(event) {
+			// Store values in the newly created objectStore.
+			var date = new Date().toLocaleString();
+			var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
+			
+			var request2 = customerObjectStore.add({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);
+			request2.onsuccess = function(event) {
+				console.log("Success: ", this.result, " ", date);
+			};
+			
+			request2.onerror = function(event) {
+				console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
+			};
+
+			var tsvBlob = new Blob([''], { type: 'text/tsv', endings: 'native' });
+			var request1 = customerObjectStore.add({ collection: collection, map: "", name: collection+".tsv", date: date, audio: tsvBlob }, collection+"/"+collection+".tsv");
+			request1.onsuccess = function(event) {
+				console.log("Success: ", this.result, " ", date);
+			};
+			
+			request1.onerror = function(event) {
+				console.log("Unable to add data: "+collection+"/"+map+"/"+name+" cannot be created or updated");
+			};
+		};
+	};
+};
+
+// CSV is a list of objects, each with the same properties
+function writeCSV(collection, csvList) {
+	var map = "";
+	var name = collection+".tsv";
+	var blob = objectlist2csvblob (csvList);
+	addAudioBlob(collection, map, name, blob);
+};
+
+// Iterate over all records
+function getAllRecords (collection, processRecords) {
+	var collectRecords = [];
+	var db;
+	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var objectStore = db.transaction("Recordings").objectStore("Recordings");
+		var index = objectStore.index("collection");
+		index.openCursor().onsuccess = function(event) {
+		  var cursor = event.target.result;
+		  if (cursor) {
+			if (!collection || cursor.value.collection == collection) collectRecords.push(cursor.value);
+		    cursor.continue();
+		  } else {
+			processRecords(collectRecords);
+		  };
+		};
+	};
+
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection)
+	};
+};
+
+
+// Initialize Audio storage
+function initializeDataStorage (collection) {
+	getCurrentMetaData (collection, false);
+};
+
+// Remove Audio storage, including ALL data
+function clearDataStorage (databaseName, storeName) {
+	var db;
+	var request = indexedDB.open(databaseName, 1);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var request = db.transaction([storeName], "readwrite")
+			.objectStore(storeName)
+			.clear();
+		
+		request.onsuccess = function(event) {
+			console.log("Success: ", storeName);
+
+		};
+		
+		// If data already exist, update it
+		request.onerror = function(event) {
+			console.log("Unable to clear "+storeName);
+		};
+	};
+};
+	
+
+// Remove Audio storage, including ALL data
+function deleteDatabase (databaseName) {
+	var req = indexedDB.deleteDatabase(databaseName);
+	req.onsuccess = function () {
+	    console.log("Deleted database successfully");
+	};
+	req.onerror = function () {
+	    console.log("Couldn't delete database");
+	};
+	req.onblocked = function () {
+	    console.log("Couldn't delete database due to the operation being blocked");
+	};
+};
+
+
+// Convert a list of objects to a csv blob
+function objectlist2csvblob (csvList) {
+	var headerList = Object.keys(csvList[0]);
+	var text = headerList.join("\t") + "\n";
+	for (var i=0; i<csvList.length; ++i) {
+		var valueList = [];
+		for (var p=0; p<headerList.length; ++p) {
+			valueList.push(csvList[i][headerList[p]]);
+		};
+		text += valueList.join("\t") + "\n";
+	};
+	var blob = new Blob ([text], {type: 'text/tsv', endings: 'native'});
+	return blob;
+};
+
+function csvblob2objectlist (blob, handleList) {
+	if(blob.type != "text/tsv") return undefined;
+	var reader = new FileReader();
+	reader.addEventListener("loadend", function() {
+	   // reader.result contains the contents of blob as a typed array
+		var lines = reader.result.split(/\r\n|\n/);
+		var columnNames = lines[0].split(/\t/);
+		var objectList = [];
+		for (var i=1; i<lines.length; ++i) {
+			if(lines[i].match(/\t/)) {
+				var values = lines[i].split(/\t/);
+				var record = {};
+				for(var p=0; p<columnNames.length; ++p) {
+					record[columnNames[p]] = values[p];
+				};
+				objectList.push(record);
+			};
+		};
+		handleList(objectList);
+	});
+	reader.readAsText(blob);	
 };

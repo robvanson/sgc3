@@ -53,12 +53,13 @@ button {
 <script type="text/javascript" src="audioProcessing.js" ></script>   
 <script type="text/javascript" src="toneprot.js" ></script>   
 <script type="text/javascript" src="RecordRTC.min.js" defer="true" ></script> 
+<script type="text/javascript" src="jszip.min.js" defer="true" ></script> 
 <script type="text/javascript" src="mespeak/mespeak.full.js" defer="true" ></script>
 <script type="text/javascript" src="fft.js/lib/real.js" defer="true" ></script>
 <script type="text/javascript" src="fft.js/lib/complex.js" defer="true" ></script>
 </head>
 
-<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close(); " >
+<body onload="if(window.speechSynthesis)window.speechSynthesis.getVoices();localStorage.sgc3_saveAudio = JSON.stringify(false);" onfocus="load_SGC3_settings ();" onblur="store_SGC3_settings ();" onunload="sgc3_settings.saveAudio = false; store_SGC3_settings (); if(settingsWindow)settingsWindow.close(); if(selectWordsWindow)selectWordsWindow.close();" contextmenu="mymenu" >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -87,6 +88,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div style="color: green; position: fixed; top: 73%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
 	</div>
 	
+	
 	<div style="color: blue; position: fixed; bottom: 18%; left: 5%; width: 90%; font-size: 3vmin; text-align: center; text-overflow: clip; " id="WordlistString" align="center">---</div>
 	
 	<canvas id="LeftProgress" width="1000" height="2" style="position: fixed; bottom: 18%; left: 6%; width: 15%; height: 4px; "></canvas>
@@ -107,6 +109,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
+ 	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 5%; height: 14%; width: 10%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" >&#9679; <br/>
+ 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></div>
+ 	
+ 		
 	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
 		<option value="---" ><span id="RegisterCaption" title="" >---</span></option>
 	</select> 
@@ -115,7 +121,22 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
 
-    <script type="text/javascript">
+	<menu type="context" id="mymenu" >
+		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
+			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="2" ></menuitem>
+			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="3" ></menuitem>
+			<menuitem id="GRADE4" label="4" onclick="setGRADE(currentPinyin,4);" icon="sgc.png" title="4" ></menuitem>
+			<menuitem id="GRADE5" label="5" onclick="setGRADE(currentPinyin,5);" icon="sgc.png" title="5" ></menuitem>
+			<menuitem id="GRADE6" label="6" onclick="setGRADE(currentPinyin,6);" icon="sgc.png" title="6" ></menuitem>
+			<menuitem id="GRADE7" label="7" onclick="setGRADE(currentPinyin,7);" icon="sgc.png" title="7" ></menuitem>
+			<menuitem id="GRADE8" label="8" onclick="setGRADE(currentPinyin,8);" icon="sgc.png" title="8" ></menuitem>
+			<menuitem id="GRADE9" label="9" onclick="setGRADE(currentPinyin,9);" icon="sgc.png" title="9" ></menuitem>
+			<menuitem id="GRADE10" label="10" onclick="setGRADE(currentPinyin,10);" icon="sgc.png" title="10" ></menuitem>
+		</menu>
+	</menu>
+
+	<script type="text/javascript">
 	//<![CDATA[
 	// Install the service worker for offline use
 	if ('serviceWorker' in navigator) {
@@ -131,6 +152,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Set DOM parameters
 	var settingsWindow;
 	var selectWordsWindow;
+	var gradingMenu = document.getElementById('GRADE');
 	var recordingLight = document.getElementById('RecordingLight');
 	var tonePlotArea = document.getElementById('TonePlot');
 	var record = document.getElementById('RecordButton');
@@ -172,6 +194,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else if (key == " " || key == "Space") {
 			example.onclick()
 		}  else {
+			if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].indexOf(key) > -1) {
+				setGRADE(currentPinyin, key);
+			};
 		};
 	};
 	window.onkeydown = keyPress;
@@ -241,8 +266,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 
 	// Global settings
 	// This setting is NOT stored
-	localStorage.currentWord = JSON.stringify(0);
+	localStorage.sgc3_currentWord = JSON.stringify(0);
 	sessionStorage.lastPinyin = "";
+	localStorage.sgc3_saveAudio = JSON.stringify(false);
 	
 	// These settings are stored
 	var sgc3_settings = {
@@ -261,6 +287,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayPinyin: true,
 		displayChar: true,
 		displayTrans: true,
+		saveAudio: false,
+		audioDatabaseName: "SGC3 audio",
+		currentCollection: "SGC3",
 		selectedLessons: [],
 		selectedTones: [],
 		deselectedWords: []
@@ -269,16 +298,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	// Store settings
 	function store_SGC3_settings () {
 		for (x in sgc3_settings) {
-			localStorage[x] = JSON.stringify(sgc3_settings[x]);
+			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
 		};
-		 localStorage.currentWord = JSON.stringify(currentWord);
+		localStorage.sgc3_currentWord = JSON.stringify(currentWord);
 	};
 	
 	function load_SGC3_settings () {
 		for (x in sgc3_settings) {
 			// For some reason, parsing the language goes wrong
-			if (localStorage[x]) {
-				sgc3_settings[x] = JSON.parse(localStorage[x]);
+			if (localStorage["sgc3_"+x]) {
+				sgc3_settings[x] = JSON.parse(localStorage["sgc3_"+x]);
 			};
 		};
 		
@@ -289,11 +318,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		get_wordlist(sgc3_settings.wordList);
 		add_wordlist_names_to_select ();
 		document.getElementById('WordlistString').textContent = sgc3_settings.wordList;
-		
+		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'rgb(250,250,250)';
+
+		// Disabling/hiding the menu does not work everywhere
+		gradingMenu.disabled = ! sgc3_settings.saveAudio;
+		gradingMenu.hidden = ! sgc3_settings.saveAudio;
+
 		// Reset currentWord if the wordlist has changed
 		currentWord = 0;
-		if (localStorage.currentWord) {
-			currentWord = JSON.parse(localStorage.currentWord);
+		if (localStorage.sgc3_currentWord) {
+			currentWord = JSON.parse(localStorage.sgc3_currentWord);
 		};
 		if (currentWord < 0){
 			clearRecordedData ();
@@ -304,12 +338,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// update display
 		write_CurrentString ();
+		audioDatabaseName = sgc3_settings.audioDatabaseName;
+		
+		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){performanceRecord = objectList2performanceRecord(list);});
 	};
 	
 	// Initialize to stored settings
-	if(localStorage.language) {
+	if(localStorage.sgc3_language) {
 		load_SGC3_settings ();
 	} else {
+		// Do hard initialization of stored parameters
 		store_SGC3_settings ();
 	};
 	
@@ -379,6 +417,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		write_WordlistName();
 
 		// Get texts
+		document.getElementById("GradeString").textContent = "";
 		var pinyinText = "-";
 		var characterText = "-";
 		var translationText = "-";
@@ -386,6 +425,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		exampleURL = "-";
 		if( currentWord >= 0 && currentWord < currentWordlist.length ) {
 			currentItem = currentWordlist[currentWord];
+			currentLesson = sgc3_settings.wordList;
+			currentLesson += (currentItem[4] && currentItem[4] != "-") ? " "+currentItem[4] : "";
 			
 			currentPinyin = currentItem[0];
 			currentPinyin = add_missing_neutral_tones (currentPinyin);
@@ -398,6 +439,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		} else {
 			if(sgc3_settings.shuffleLists) currentWordlist.shuffle();
 			currentPinyin = "";
+			currentItem = [];
 		};
 		// This cannot be the recorded Pinyin, therefor, clear all recorded data
 		if (currentPinyin == "" || currentPinyin != sessionStorage.lastPinyin) clearRecordedData ();
@@ -441,7 +483,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		draw_example_pinyin ("TonePlot", currentPinyin);
 
 		// Draw current sound
-		processRecordedSound ()
+		// First, check whether there is a recorded sound stored (catch an invalid call to the "Audio" database)
+		if(sgc3_settings.saveAudio && sgc3_settings.audioDatabaseName != "Audio") {
+			var lesson = (lessonText != "-") ? " "+lessonText : "";
+			getCurrentAudioWindow (sgc3_settings.currentCollection, sgc3_settings.wordList+lesson, currentPinyin+".wav");
+		} else {
+			processRecordedSound ()
+		};
 	};
 	
 	function write_WordlistName () {
@@ -461,6 +509,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var currentPinyin = currentItem[0];
 	var currentCharacter = currentItem[1];
 	var currentString = currentItem[0] + " " + currentItem[1] + " " + currentItem[2];
+	var currentLesson = "";
 	write_CurrentString ();
 		
 	// Other parameters
@@ -480,12 +529,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	// Settings button
 	settingsButton.onclick = function () {
-		if (localStorage.settingsWindow && settingsWindow) {
+		if (localStorage.sgc3_settingsWindow && settingsWindow) {
 			settingsWindow.focus();
 		} else {
 			if (settingsWindow) settingsWindow.close();
 			settingsWindow = window.open('SpeakGoodChinese3_Settings.xml', '_blank');
-			localStorage.settingsWindow = JSON.stringify(true);
+			localStorage.sgc3_settingsWindow = JSON.stringify(true);
 		}
 	};
 	
@@ -670,11 +719,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		navigator.webkitGetUserMedia(mediaConstraints, successCallback, errorCallback);
 	};
 
+	// Initialize Audio storage
+	load_SGC3_settings ();
+	initializeDataStorage (sgc3_settings.currentCollection);
+	
 	// Read remote lists
 	var url = window.location.href;
 	url = url.replace(/[^\/]+$/, "wordlists/");
 	readAllRemoteWordlists (url);
-
+	
 	//]]>	
 	</script>
 </body>

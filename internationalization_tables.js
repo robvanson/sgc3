@@ -79,8 +79,13 @@ function set_mainpageLanguage (language) {
 	var labels = mainpage_tables[language];
 	for(x in labels) {
 		if(document.getElementById(x)) {
-			document.getElementById(x).textContent = labels[x][0];
-			document.getElementById(x).parentNode.parentNode.title = labels[x][1];
+			if(document.getElementById(x).label) {
+				document.getElementById(x).label = labels[x][0];
+				document.getElementById(x).title = labels[x][1];
+			} else {
+				document.getElementById(x).textContent = labels[x][0];
+				document.getElementById(x).parentNode.parentNode.title = labels[x][1];
+			};
 		};
 	};
 	
@@ -97,7 +102,7 @@ function set_mainpageLanguage (language) {
 		};
 	};
 	
-	localStorage.language = JSON.stringify(language);
+	localStorage.sgc3_language = JSON.stringify(language);
 };
 
 function set_configLanguage (language) {
@@ -123,7 +128,7 @@ function set_configLanguage (language) {
 			};
 		};
 	};
-	localStorage.language = JSON.stringify(language);
+	localStorage.sgc3_language = JSON.stringify(language);
 };
 
 function set_selectWordsLanguage (language) {
@@ -165,7 +170,8 @@ var mainpage_tables = {
 		WordlistCaption: ["单词表", "更换单词表。"],
 		SelectWords: ["选择单词", "选择要练习的单词"],
 		WordlistUp: ["上一个", "切换到上一个单词表。"],
-		WordlistDown: ["下一个", "切换到下一个单词表。"]
+		WordlistDown: ["下一个", "切换到下一个单词表。"],
+		GRADE: ["评分", "选择数字0-9给出评分。"],
 		},
 	EN: {
 		Config: ["Settings", "Go to settings page"],
@@ -177,7 +183,8 @@ var mainpage_tables = {
 		WordlistCaption: ["Word List", "Change word list"],
 		SelectWords: ["Words", "Select words to practise"],
 		WordlistUp: ["Previous", "Previous word list"],
-		WordlistDown: ["Next", "Next word list"]
+		WordlistDown: ["Next", "Next word list"],
+		GRADE: ["Grading", "Grading of pronunciation 0-9"],
 		},
 	JA: {
 		Config: ["設定 S", "設定画面に進みます。"],
@@ -189,7 +196,8 @@ var mainpage_tables = {
 		WordlistCaption: ["単語表", "単語表を変更します。"],
 		SelectWords: ["単語の選択", "練習で使う単語を選択します"],
 		WordlistUp: ["戻る", "一つ前の単語表に戻ります。"],
-		WordlistDown: ["次へ", "次の単語表に進みます。"]
+		WordlistDown: ["次へ", "次の単語表に進みます。"],
+		GRADE: ["評価", "発音を0-9の値で評価します。"],
 		},
 	DE: {
 		Config: ["Einstellungen", "Zur Seite 'Einstellungen'"],
@@ -201,7 +209,8 @@ var mainpage_tables = {
 		WordlistCaption: ["Wordliste", "Ändere Wordliste"],
 		SelectWords: ["Wörter", "Wähle die Wörter zum üben"],
 		WordlistUp: ["vorige", "Zur voriger Liste"],
-		WordlistDown: ["nächste", "Zur nächster Liste"]
+		WordlistDown: ["nächste", "Zur nächster Liste"],
+		GRADE: ["Beurteilung", "Beurteilung Aussprache 0-9"],
 		},
 	NL: {
 		Config: ["Instellingen", "Ga naar de pagina met instellingen"],
@@ -213,7 +222,8 @@ var mainpage_tables = {
 		WordlistCaption: ["Woordenlijst", "Andere woordenlijst"],
 		SelectWords: ["Woorden", "Kies de woorden om te oefenen"],
 		WordlistUp: ["Vorige", "Vorige woordenlijst"],
-		WordlistDown: ["Volgende", "Volgende woordenlijst"]
+		WordlistDown: ["Volgende", "Volgende woordenlijst"],
+		GRADE: ["Beoordeling", "Beoordeling uitspraak 0-9"],
 	}
 };
 
@@ -240,6 +250,10 @@ var config_tables = {
 		DisplayPinyin: ["拼音 P", "练习发音的过程中显示拼音。"],
 		DisplayChar: ["汉字 C", "如果单词表提供了汉字，则显示汉字。"],
 		DisplayTrans: ["翻译 T", "如果单词表提供了翻译，则显示翻译。"],
+		SaveAudio: ["保存录音 K", "将录音保存到文件夹（只保存每个单词的最后一次发音）。"],
+		ExportAudio: ["Export", "Export stored recordings"],
+		ImportAudio: ["Import", "Import recordings to storage"],
+		NewCollection: ["New", "Name of new collection of recordings"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -263,6 +277,10 @@ var config_tables = {
 		DisplayPinyin: ["Pinyin", "Display pinyin word while practicing"],
 		DisplayChar: ["Characters", "Display chinese characters if they are available"],
 		DisplayTrans: ["Translation", "Display translation if available"],
+		SaveAudio: ["Save Audio", "Store the recordings in a directory (last version of each pinyin word is kept)"],
+		ExportAudio: ["Export", "Export stored recordings"],
+		ImportAudio: ["Import", "Import recordings to storage"],
+		NewCollection: ["New", "Name of new collection of recordings"],
 		},
 			
 	JA: {
@@ -287,6 +305,10 @@ var config_tables = {
 		DisplayPinyin: ["ピンイン P", "練習画面でピンインを表示します。"],
 		DisplayChar: ["漢字 C", "可能ならば練習画面で漢字を表示します。"],
 		DisplayTrans: ["翻訳 T", "可能ならば練習画面で単語の意味を表示します。"],
+		SaveAudio: ["録音の保存", "録音データをディレクトリに保存します（各単語の最後の発音を保存）。"],
+		ExportAudio: ["Export", "Export stored recordings"],
+		ImportAudio: ["Import", "Import recordings to storage"],
+		NewCollection: ["New", "Name of new collection of recordings"],
 		},
 		
 	DE: {
@@ -311,6 +333,10 @@ var config_tables = {
 		DisplayPinyin: ["Pinyin", "Wiedergabe Pinyin wörte während der Übungen"],
 		DisplayChar: ["Schriftzeichen", "Wiedergabe chinesische Schriftzeichen wenn anwesend"],
 		DisplayTrans: ["Übersetzung", "Übersetzung wenn anwesend"],
+		SaveAudio: ["Audio", "Aufnahmen speichern in ein Verzeichnis (letste Aufnahme jedes pinyin Wort)"],
+		ExportAudio: ["Exportiere", "Exportiere gespeicherte Aufnahmen"],
+		ImportAudio: ["Importiere", "Importiere Aufnahmen"],
+		NewCollection: ["Neu", "Name einer neuen Collection von Aufnahmen"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -334,6 +360,10 @@ var config_tables = {
 		DisplayPinyin: ["Pinyin", "Laat pinyin zien"],
 		DisplayChar: ["Karakters", "Laat Chinese karakters zien als ze beschikbaar zijn"],
 		DisplayTrans: ["Vertaling", "Geef vertaling al die beschikbaar is"],
+		SaveAudio: ["Bewaar Audio", "Bewaar opnamen in een map (laatste versie van ieder pinyin woord)"],
+		ExportAudio: ["Exporteer", "Exproteer de opgeslagen opnamen"],
+		ImportAudio: ["Importeer", "Importeer opnamen naar opslag"],
+		NewCollection: ["Nieuw", "Naam van nieuwe opnamengroep"],
 		}
 };
 
@@ -366,6 +396,7 @@ var selector_tables = {
 		Register_125:	["男性 超低", "如果发音人为男性且声音很低，那么选择此项。"],
 		Strict: ["水平", "进行审查发音时所使用的严格度（水平0-3）。水平最高时对发音的要求会非常严格。"],
 		RecordingTime: ["记录", "录音时间（秒）"],
+		AudioName: ["保存", "录音保存的位置。"],
 		},
 	EN: {
 		Language: ["Language", "Select a language"],
@@ -379,6 +410,7 @@ var selector_tables = {
 		Register_125: ["Man Xtr Low", "Pick this if you are a male with a very low voice"],
 		Strict: ["Level", "How strict tone pronunciation will be checked (Level 0-3). The highest level is quite strict."],	
 		RecordingTime: ["Recording", "Time of recording in seconds"],
+		AudioName: ["Archive", "Name of the active recording session"],
 		},
 	JA: {
 		Language: ["言語", "表示言語を設定します。"],
@@ -392,6 +424,7 @@ var selector_tables = {
 		Register_125:	["男性　更に低め", "発話者が男性でかつ声が更に低めのとき選択します。"],
 		Strict: ["レベル", "発音チェックの厳しさを設定します（レベル0-3）。最高レベルでは非常に厳しい基準でチェックされます。"],	
 		RecordingTime: ["録音", "録音時間の秒数"],
+		AudioName: ["アーカイブ", "現在の録音セッションの名前です。"],
 		},
 	DE: {
 		Language: ["Sprache", "Wähle die gewünschte Sprache"],
@@ -405,6 +438,7 @@ var selector_tables = {
 		Register_125:	["Man Xtr tief", "Wähle diesen Knopf  wenn Sie ein Mann mit eine sehr tiefe Stimme sind"],
 		Strict: ["Stufe", "Wie preziese die Aussprache der Töne geprüft wird (Stufe 0-3). Die högste Stufe fordert eine preciese Aussprage"],
 		RecordingTime: ["Aufnahme", "Aufnahmezeit in Secunden"],
+		AudioName: ["Aufbewahren", "Name der aktieven Aufzeichnungssitzung"],
 		},
 	NL: {
 		Language: ["Taal", "Selecteer de gewenste taal"],
@@ -418,6 +452,7 @@ var selector_tables = {
 		Register_125:	["Man Xtr Laag", "Kies dit als u een man bent met een zeer lage stem"],
 		Strict:	["Niveau", "Hoe strikt de uitspraak van de tonen gecontroleerd wordt (Niveau 0-3). Het hoogste niveau is strikt."],
 		RecordingTime: ["Opname", "Opnametijd in seconden"],
+		AudioName: ["Bewaren", "Naam van de actieve opnamesessie"],
 		},
 }
 
