@@ -340,7 +340,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		write_CurrentString ();
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 		
-		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){console.log(list)});
+		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){performanceRecord = objectList2performanceRecord(list);});
 	};
 	
 	// Initialize to stored settings

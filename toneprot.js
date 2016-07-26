@@ -743,6 +743,34 @@ function performanceRecord2objectList (performanceRecord) {
 	return objectList;
 };
 
+function objectList2performanceRecord (objectList) {
+	var performanceRecord = {};
+	var headerList = Object.keys(objectList[0]);
+	for (var i=0; i<objectList.length; ++i) {
+		var record = objectList[i];
+		if(!record.Lesson) continue;
+		if(!performanceRecord[record.Lesson])performanceRecord[record.Lesson] = {};
+		performanceRecord[record.Lesson][record.Pinyin] = {
+			"Grade" : record.Grade,
+			"Correct" : record.Correct,
+			"Wrong" : record.Wrong,
+			"High" : record.High,
+			"Low" : record.Low,
+			"Wide" : record.Wide,
+			"Narrow" : record.Narrow,
+			"Date" : record.Date,
+			"Lesson" : record.Lesson,
+			"Mark" : record.Mark,
+			"Character" : record.Character,
+			"Translation" : record.Translation,
+			"Example" : record.Example
+		};
+		
+	};
+	
+	return performanceRecord;
+};
+
 // Handle sound after decoding (used in audioProcessing.js)
 function processRecordedSound () {
 	if(recordedArray) {
