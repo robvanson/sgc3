@@ -77,6 +77,21 @@ GNU General Public License for more details.
 You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
+	<menu type="context" id="mymenu" >
+		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
+			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
+			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="2" ></menuitem>
+			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="3" ></menuitem>
+			<menuitem id="GRADE4" label="4" onclick="setGRADE(currentPinyin,4);" icon="sgc.png" title="4" ></menuitem>
+			<menuitem id="GRADE5" label="5" onclick="setGRADE(currentPinyin,5);" icon="sgc.png" title="5" ></menuitem>
+			<menuitem id="GRADE6" label="6" onclick="setGRADE(currentPinyin,6);" icon="sgc.png" title="6" ></menuitem>
+			<menuitem id="GRADE7" label="7" onclick="setGRADE(currentPinyin,7);" icon="sgc.png" title="7" ></menuitem>
+			<menuitem id="GRADE8" label="8" onclick="setGRADE(currentPinyin,8);" icon="sgc.png" title="8" ></menuitem>
+			<menuitem id="GRADE9" label="9" onclick="setGRADE(currentPinyin,9);" icon="sgc.png" title="9" ></menuitem>
+			<menuitem id="GRADE10" label="10" onclick="setGRADE(currentPinyin,10);" icon="sgc.png" title="10" ></menuitem>
+		</menu>
+	</menu>
+
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 15vmin" id="RecordingLight">&#9679;</div>
 	<p><audio id='ExampleAudio' controls="false" hidden="true" ></audio></p>
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
@@ -120,21 +135,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<select id="Language" style="position: fixed; color: black; bottom: 28%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.language = change_mainpageLanguage(); " >
 		<option value="---" ><span id="LanguageCaption" title="" >---</span></option>
 	</select> 
-
-	<menu type="context" id="mymenu" >
-		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
-			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
-			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="2" ></menuitem>
-			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="3" ></menuitem>
-			<menuitem id="GRADE4" label="4" onclick="setGRADE(currentPinyin,4);" icon="sgc.png" title="4" ></menuitem>
-			<menuitem id="GRADE5" label="5" onclick="setGRADE(currentPinyin,5);" icon="sgc.png" title="5" ></menuitem>
-			<menuitem id="GRADE6" label="6" onclick="setGRADE(currentPinyin,6);" icon="sgc.png" title="6" ></menuitem>
-			<menuitem id="GRADE7" label="7" onclick="setGRADE(currentPinyin,7);" icon="sgc.png" title="7" ></menuitem>
-			<menuitem id="GRADE8" label="8" onclick="setGRADE(currentPinyin,8);" icon="sgc.png" title="8" ></menuitem>
-			<menuitem id="GRADE9" label="9" onclick="setGRADE(currentPinyin,9);" icon="sgc.png" title="9" ></menuitem>
-			<menuitem id="GRADE10" label="10" onclick="setGRADE(currentPinyin,10);" icon="sgc.png" title="10" ></menuitem>
-		</menu>
-	</menu>
 
 	<script type="text/javascript">
 	//<![CDATA[
