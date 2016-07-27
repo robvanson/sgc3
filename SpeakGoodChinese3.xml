@@ -109,8 +109,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		<option value="---" ><span id="WordlistCaption" title="" >Word List</span></option>
 	</select> 
 
- 	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 5%; height: 14%; width: 10%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" >&#9679; <br/>
- 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></div>
+ 	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 5%; height: 14%; width: 10%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" ><a href="javascript:void(0)" style='color:inherit; text-decoration: none;' onclick='this.preventDefault();false;'>&#9679; <br/>
+ 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></a></div>
  	
  		
 	<select id="Register" style="position: fixed; color: black; bottom: 39%; right: 2%; height: 8%; width: 17%; font: 3.5vmin 'Helvetica'; background-color: rgb(220,220,220); " onchange="sgc3_settings.register = getRegister();" >
