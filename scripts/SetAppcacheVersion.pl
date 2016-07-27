@@ -16,6 +16,15 @@ while(my $line = shift(@appcache)) {
 			$commit = substr($1, 0, 10);
 		};
 		
+	};
+	if($line =~ m!<div id\=["']VERSION['"] style=!) {
+		if($header =~ /\# Date\:\s+(.+)\n/s) {
+			$date = $1;
+			$date =~ s/\s*[\+\-]\d+\s*$//g;
+		};
+		if($header =~ /\# commit\s+(.+)\n/s) {
+			$commit = substr($1, 0, 10);
+		};
 		$line =~ s!(<div id\=["']VERSION['"] style=["']([^"']+)["']\s*>)[^<]*(</div>)!\1V: $commit $date\3!gs;
 	};
 	if($line =~ /Copyrights © 2007-/) {
