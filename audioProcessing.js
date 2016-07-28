@@ -903,3 +903,44 @@ function csvblob2objectlist (blob, handleList) {
 	});
 	reader.readAsText(blob);	
 };
+
+// Convert csv into an object. Must contain a property .key
+function csvblob2object (blob, handleObject) {
+	if(blob.type != "text/tsv") return {};
+	var reader = new FileReader();
+	reader.addEventListener("loadend", function() {
+	   // reader.result contains the contents of blob as a typed array
+		var lines = reader.result.split(/\r\n|\n/);
+		var columnNames = lines[0].split(/\t/);
+		var object = {};
+		for (var i=1; i<lines.length; ++i) {
+			if(lines[i].match(/\t/)) {
+				var values = lines[i].split(/\t/);
+				var record = {};
+				for(var p=0; p<columnNames.length; ++p) {
+					record[columnNames[p]] = values[p];
+				};
+				object[record.key] = record;
+			};
+		};
+		handleObject(object);
+	});
+	reader.readAsText(blob);	
+};
+
+function csvList2object (csvList) {
+	var object = {};
+	for (var i=0; i<csvList.length; ++i) {
+		object[csvList[i].key] = csvList[i];
+	};
+	return object;
+};
+
+function object2csvList (csvObject) {
+	var keyList = Object.keys(csvObject);
+	var csvList = [];
+	for (var i=0; i<keyList.length; ++i) {
+		csvList.push(csvObject[keyList[i]]);
+	};
+	return csvList;
+};
