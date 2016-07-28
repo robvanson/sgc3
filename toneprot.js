@@ -661,7 +661,8 @@ var recognition = {
 		Feedback: "",
 		Label: "Correct",
 		Register: "OK",
-		Range: "OK"
+		Range: "OK",
+		Proficiency: -1
 	};
 
 // currentLesson is defined!!!
@@ -678,6 +679,7 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 			"Low" : 0,
 			"Wide" : 0,
 			"Narrow" : 0,
+			"Proficiency" : -1,
 			"Date" : "",
 			"Lesson" : currentLesson,
 			"Mark" : currentItem[1],
@@ -691,6 +693,7 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 		if(recognition.Register != "OK")++wordList[pinyin][recognition.Register];
 		if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
 		var d = new Date();
+		wordList[pinyin]["Proficiency"] = recognition.Proficiency;
 		wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 	};
 	
@@ -731,6 +734,7 @@ function performanceRecord2objectList (performanceRecord) {
 			"Low" : record.Low,
 			"Wide" : record.Wide,
 			"Narrow" : record.Narrow,
+			"Proficiency": record.Proficiency,
 			"Date" : record.Date,
 			"Lesson" : record.Lesson,
 			"Mark" : record.Mark,
@@ -758,6 +762,7 @@ function objectList2performanceRecord (objectList) {
 			"Low" : record.Low,
 			"Wide" : record.Wide,
 			"Narrow" : record.Narrow,
+			"Proficiency": record.Proficiency,
 			"Date" : record.Date,
 			"Lesson" : record.Lesson,
 			"Mark" : record.Mark,
@@ -1042,7 +1047,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		Feedback: feedbackText,
 		Label: labelText,
 		Register: registerUsed,
-		Range: rangeUsed
+		Range: rangeUsed,
+		Proficiency: proficiency
 	};
 	
 	return result;
