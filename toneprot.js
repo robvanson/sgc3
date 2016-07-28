@@ -998,6 +998,33 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 			};
 		};
 		
+    	// 32 => 30 Sometimes this is recognized as 00
+    	// A recognized 0/2 after a 3 can be a 2/0
+    	var matchedFragmentList = pinyin.match(/3[^0-9]+2/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("3"+matchedSyllable+"0", 'g'), matchedFragment)
+			currentPinyin = currentPinyin.replace(new RegExp("0"+matchedSyllable+"0", 'g'), matchedFragment)
+		};
+		
+    	var matchedFragmentList = pinyin.match(/3[^0-9]+0/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[30]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("3"+matchedSyllable+"2", 'g'), matchedFragment)
+			currentPinyin = currentPinyin.replace(new RegExp("0"+matchedSyllable+"0", 'g'), matchedFragment)
+		};
+    	
+      	// 31 => 30 
+    	// A recognized 0 after a 3 can be a 1
+		var matchedFragmentList = pinyin.match(/3[^0-9]+1/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[31]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("3"+matchedSyllable+"0", 'g'), matchedFragment)
+		};
+    	
     	// 40 <-> 42
     	// A recognized 0 after a 4 can be a 2: 4-0 => 4-2
      	var matchedFragmentList = pinyin.match(/4[^0-9]+2/g);
