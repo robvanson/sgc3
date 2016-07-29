@@ -888,7 +888,6 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	// Rescale register (ignore model tone ranges <= 3 semitones)
 	newRegister = (maximumModelFzero > 0) ? maximumRecFzero / maximumModelFzero * register : register;
 	newToneRange = (modelPitchRange > 1/toneRules_threeSemit) ? recPitchRange / modelPitchRange : 1;
-
 	// Advanced speakers must not speak too High, or too "Dramatic"
 	// Beginning speakers also not too Low or too Narrow ranges
 	var registerUsed = "OK";

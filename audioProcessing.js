@@ -322,16 +322,34 @@ function autocorrelationPeakPicker (autocorr, sampleRate, fMin, fMax) {
 	var endLag = Math.ceil(lagMax * sampleRate);
 	var bestLag = 0;
 	var bestAmp = -100;
+	// 5 point differentiation
+	var diffAmp = [];
+	var halfLength = 2;
+	for (var i=-halfLength; i<halfLength; ++i){
+		diffAmp[i+halfLength] = autocorr [startLag+i+1] - autocorr [startLag+i];
+	};
+	var peaks = [];
 	for (var j = startLag; j <= endLag; ++j) {
-		if (autocorr [j] > thressHold && autocorr [j] > bestAmp) {
-			bestAmp = autocorr [j];
-			bestLag = j;
+		for (var i=0;  i< diffAmp.length-1; ++i){
+			diffAmp[i] = diffAmp[i+1];
+		};
+		diffAmp[diffAmp.length-1] = autocorr [j+halfLength] - autocorr [j+halfLength-1];
+		// A peak is found
+		if(autocorr [j] > thressHold && diffAmp[0] > 0 && diffAmp[1] > 0 && diffAmp[2] <= 0 && diffAmp[3] <= 0) {
+			// 4 point linear regression with zero-crossing centered around 0
+			var linReg = linearRegression(diffAmp, [-1.5, -0.5, 0.5, 1.5]);
+			var offset =  - linReg.intercept/linReg.slope;
+			var zeroCrossing = j + offset;
+			// Get the maximum using a 3-point quadratic interpolation. 
+			// I would prefer a 5-point least RMSE quadratic fit
+			var pC = threePointParabola ([autocorr [j-1], autocorr [j], autocorr [j+1]], [-1, 0, 1]);
+			var maxValue = pC.a * offset*offset + pC.b*offset + pC.c;
+			peaks.push({x: sampleRate/zeroCrossing, y: maxValue});
 		};
 	};
-	var pitch = bestLag ? sampleRate / bestLag : 0;
-	resultArray.push(pitch, 0, 0, 0, 0);
-	
-	return resultArray;
+	// Switch to low to high ordering
+	peaks.reverse();
+	return peaks;
 };
 
 // Return a list of points with {t, candidates} "pairs"
@@ -419,7 +437,16 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	pitchTier.xmin = 0;
 	pitchTier.dT = dT;
 	for (var i=0; i < pitchArray.length; ++ i) {
-		pitchTier.pushItem ({x: pitchArray [i].x, value: pitchArray [i].values [0] })
+		var pitchCandidates = pitchArray [i].values;
+		var bestValue;
+		var max = -Infinity;
+		for (var j=0; j<pitchCandidates.length; ++j) {
+			if(pitchCandidates[j].y > max) {
+				max = pitchCandidates[j].y;
+				bestValue = pitchCandidates[j].x;
+			};
+		};
+		pitchTier.pushItem ({x: pitchArray [i].x, value: bestValue})
 	};
 	
 	return pitchTier;
@@ -514,6 +541,10 @@ function load_audio(url) {
  */
 function get_percentiles (points, compare, remove, percentiles) {
 	var sortList = points.slice();
+	var ax;
+	while (sortList.length > 0 && (ax = sortList.indexOf(undefined)) !== -1) {
+            sortList.splice(ax, 1);
+    }
 	var result = [];
 	sortList.sort(compare);
 	var sortListLength = sortList.length
@@ -526,8 +557,10 @@ function get_percentiles (points, compare, remove, percentiles) {
 		var perc = percentiles[i];
 		if (perc > 1) perc /= 100;
 		var newPercentile = {value: undefined, percentile: 0};
-		newPercentile.value = sortList[Math.ceil(perc * sortList.length)];
-		newPercentile.percentile = percentiles[i]; 
+		var bin = Math.ceil(perc * sortList.length) - 1;
+		bin = bin < 0 ? 0 : (bin >= sortList.length ? sortList.length : bin);
+		newPercentile.value = sortList[bin];
+		newPercentile.percentile = percentiles[i];
 		result.push(newPercentile)
 	};
 	return result;
@@ -554,6 +587,12 @@ function get_time_of_minmax (tier) {
 	return {min: min, max: max, tmin: tmin, tmax: tmax};
 };
 
+/*
+ * 
+ * Use IndexedDB as a store for audio "files"
+ * 
+ */
+ 
 // Use IndexedDB as an Audio storage
 function saveCurrentAudioWindow (collection, map, fileName) {
 	if (!currentAudioWindow || currentAudioWindow.length <= 0 || ! recordedSampleRate || recordedSampleRate <= 0) return;
@@ -865,6 +904,11 @@ function deleteDatabase (databaseName) {
 	};
 };
 
+/*
+ * 
+ * Comma/Tab-Separated-Values
+ * 
+ */
 
 // Convert a list of objects to a csv blob
 function objectlist2csvblob (csvList) {
@@ -943,4 +987,45 @@ function object2csvList (csvObject) {
 		csvList.push(csvObject[keyList[i]]);
 	};
 	return csvList;
+};
+
+// Do linear regression
+// y = [<y-values]]
+// y = [<x-values]]
+// return {slope: , intercept: , r2: }
+// 
+// (by: Trent Richardson, 
+//      http://trentrichardson.com/2010/04/06/compute-linear-regressions-in-javascript/)
+function linearRegression(y,x){
+		var lr = {};
+		var n = y.length;
+		var sum_x = 0;
+		var sum_y = 0;
+		var sum_xy = 0;
+		var sum_xx = 0;
+		var sum_yy = 0;
+		
+		for (var i = 0; i < y.length; i++) {
+			
+			sum_x += x[i];
+			sum_y += y[i];
+			sum_xy += (x[i]*y[i]);
+			sum_xx += (x[i]*x[i]);
+			sum_yy += (y[i]*y[i]);
+		} 
+		
+		lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+		lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
+		lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+		
+		return lr;
+};
+
+// find y = a*x^2 + b*x + c from three points y=[], x=[]
+// I would prefer a 5-point fit
+function threePointParabola (y, x) {
+    var a = ((y[1]-y[0])*(x[0]-x[2]) + (y[2]-y[0])*(x[1]-x[0]))/((x[0]-x[2])*(x[1]*x[1]-x[0]*x[0]) + (x[1]-x[0])*(x[2]*x[2]-x[0]*x[0]))
+    var b = ((y[1] - y[0]) - a*(x[1]*x[1] - x[0]*x[0])) / (x[1]-x[0])
+    var c = y[0] - a*x[0]*x[0] - b*x[0];
+    return {a: a, b: b, c: c};
 };
