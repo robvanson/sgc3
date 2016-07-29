@@ -661,7 +661,8 @@ var recognition = {
 		Feedback: "",
 		Label: "Correct",
 		Register: "OK",
-		Range: "OK"
+		Range: "OK",
+		Proficiency: -1
 	};
 
 // currentLesson is defined!!!
@@ -678,6 +679,7 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 			"Low" : 0,
 			"Wide" : 0,
 			"Narrow" : 0,
+			"Proficiency" : -1,
 			"Date" : "",
 			"Lesson" : currentLesson,
 			"Mark" : currentItem[1],
@@ -691,6 +693,7 @@ function recognition2performance (pinyin, recognition, performanceRecord) {
 		if(recognition.Register != "OK")++wordList[pinyin][recognition.Register];
 		if(recognition.Range != "OK")++wordList[pinyin][recognition.Range];
 		var d = new Date();
+		wordList[pinyin]["Proficiency"] = recognition.Proficiency;
 		wordList[pinyin]["Date"] = d.toLocaleDateString() + " " + d.toLocaleTimeString();
 	};
 	
@@ -731,6 +734,7 @@ function performanceRecord2objectList (performanceRecord) {
 			"Low" : record.Low,
 			"Wide" : record.Wide,
 			"Narrow" : record.Narrow,
+			"Proficiency": record.Proficiency,
 			"Date" : record.Date,
 			"Lesson" : record.Lesson,
 			"Mark" : record.Mark,
@@ -758,6 +762,7 @@ function objectList2performanceRecord (objectList) {
 			"Low" : record.Low,
 			"Wide" : record.Wide,
 			"Narrow" : record.Narrow,
+			"Proficiency": record.Proficiency,
 			"Date" : record.Date,
 			"Lesson" : record.Lesson,
 			"Mark" : record.Mark,
@@ -993,6 +998,33 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 			};
 		};
 		
+    	// 32 => 30 Sometimes this is recognized as 00
+    	// A recognized 0/2 after a 3 can be a 2/0
+    	var matchedFragmentList = pinyin.match(/3[^0-9]+2/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[23]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("3"+matchedSyllable+"0", 'g'), matchedFragment)
+			currentPinyin = currentPinyin.replace(new RegExp("0"+matchedSyllable+"0", 'g'), matchedFragment)
+		};
+		
+    	var matchedFragmentList = pinyin.match(/3[^0-9]+0/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[30]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("3"+matchedSyllable+"2", 'g'), matchedFragment)
+			currentPinyin = currentPinyin.replace(new RegExp("0"+matchedSyllable+"0", 'g'), matchedFragment)
+		};
+    	
+      	// 31 => 30 
+    	// A recognized 0 after a 3 can be a 1
+		var matchedFragmentList = pinyin.match(/3[^0-9]+1/g);
+    	while (matchedFragmentList && matchedFragmentList.length > 0) {
+			var matchedFragment = matchedFragmentList.shift();
+			var matchedSyllable = matchedFragment.replace(/[31]/g, "");
+			currentPinyin = currentPinyin.replace(new RegExp("3"+matchedSyllable+"0", 'g'), matchedFragment)
+		};
+    	
     	// 40 <-> 42
     	// A recognized 0 after a 4 can be a 2: 4-0 => 4-2
      	var matchedFragmentList = pinyin.match(/4[^0-9]+2/g);
@@ -1042,7 +1074,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		Feedback: feedbackText,
 		Label: labelText,
 		Register: registerUsed,
-		Range: rangeUsed
+		Range: rangeUsed,
+		Proficiency: proficiency
 	};
 	
 	return result;
