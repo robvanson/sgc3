@@ -438,7 +438,7 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	pitchTier.dT = dT;
 	for (var i=0; i < pitchArray.length; ++ i) {
 		var pitchCandidates = pitchArray [i].values;
-		var bestValue;
+		var bestValue = 0;
 		var max = -Infinity;
 		for (var j=0; j<pitchCandidates.length; ++j) {
 			if(pitchCandidates[j].y > max) {
