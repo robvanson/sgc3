@@ -375,6 +375,8 @@ function calculate_Pitch (sound, sampleRate, fMin, fMax, dT) {
 		
 		// Find the pitch candidates
 		var pitchCandidates = autocorrelationPeakPicker (autocorr, sampleRate, fMin, fMax);
+		// unvoiced
+		if(pitchCandidates.length == 0)pitchCandidates.push({x:0, y:0});
 		pitchArray.push({x: t, values: pitchCandidates});
 	};
 	return pitchArray;
@@ -433,25 +435,85 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var valueSeries = [];
 	
 	// Select the best pitch candidates using tracking etc.
+	var bestTrack = viterby (pitchArray);
+	
 	var pitchTier = new Tier();
 	pitchTier.xmin = 0;
 	pitchTier.dT = dT;
 	for (var i=0; i < pitchArray.length; ++ i) {
-		var pitchCandidates = pitchArray [i].values;
-		var bestValue = 0;
-		var max = -Infinity;
-		for (var j=0; j<pitchCandidates.length; ++j) {
-			if(pitchCandidates[j].y > max) {
-				max = pitchCandidates[j].y;
-				bestValue = pitchCandidates[j].x;
-			};
-		};
-		pitchTier.pushItem ({x: pitchArray [i].x, value: bestValue})
+		var bestValue = pitchArray[i].values[bestTrack[i]].x;
+		pitchTier.pushItem ({x: pitchArray [i].x, value: bestValue});
 	};
 	
 	return pitchTier;
 }
 
+// Viterbi pitch tracking
+// Takes an array of pitch candidates and returns a list of 
+// the best candidate for each frame
+function viterby (pitchArray) {
+	var costsList = [];
+	var backpointerList = [];
+	for (var i=0; i < pitchArray.length; ++i) {
+		var sumWeights = 0;
+		var pitchCandidates = pitchArray[i].values;
+		var prevCandidates = pitchArray[i-1] && pitchArray[i-1].values ? pitchArray[i-1].values : [{x:0, y:0}];
+		var previousCosts = i>0 ? costsList[i-1] : [0];
+		var candidateCosts = [];
+		var candidateBackpointers = [];
+		// Initialize variables
+		for (var j=0; j <pitchCandidates.length; ++j) {
+			sumWeights += pitchCandidates[j].y;
+			candidateCosts.push(0);
+			candidateBackpointers.push(-1);
+		};
+		// Find best continuation for each candidate
+		for (var j=0; j <pitchCandidates.length; ++j) {
+			weight = pitchCandidates[j].y > 0 ? sumWeights / pitchCandidates[j].y : 1;
+			// Initialize to handle voiceless previous frame
+			minCost = Infinity;
+			bestBackpointer = 0;
+			// The cost function is distance^2 / relative height of peak
+			for (var k=0; k<prevCandidates.length; ++k) {
+				// Previous costs of this precurser
+				var newCost = previousCosts[k];
+				// Cost added
+				if(prevCandidates[k].x > 0 && pitchCandidates[j].x > 0) {
+					newCost += weight * Math.pow((prevCandidates[k].x - pitchCandidates[j].x), 2);
+				};
+				if(newCost < minCost) {
+					minCost = newCost;
+					bestBackpointer = k;
+				};
+			};
+			candidateCosts[j] = minCost;
+			candidateBackpointers[j] = bestBackpointer;
+		};
+		costsList.push(candidateCosts);
+		backpointerList.push(candidateBackpointers);
+	};
+	// Trace back best pitch track
+	var lastItem = costsList.length - 1;
+	var costsCandidates = costsList[lastItem];
+	var minCost = costsCandidates[0];
+	var endPoint = 0;
+	// Get the end point with the lowest cost
+	for (j=1; j<costsCandidates.length; ++j) {
+		if(costsCandidates[j] < minCost) {
+			minCost = costsCandidates[j];
+			endPoint = j;
+		};
+	};
+	var resultTrack = [endPoint];
+	var lastBackpointer = endPoint;
+	for (var i=backpointerList.length - 1; i>0; --i) {
+		lastBackpointer = backpointerList[i][lastBackpointer];
+		resultTrack.push(lastBackpointer);
+	};
+	
+	// The result track is reversed
+	return resultTrack.reverse();
+};
 
 
 // DTW between two pitchTiers
