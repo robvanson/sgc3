@@ -25,9 +25,9 @@
 // flow and the old cache(s) will be purged as part of the activate event handler when the
 // updated service worker is activated.
 //
-// commit 4b80d1877fd1d2a1bb19b085c0564b3d4a945afc
+// commit 9531ab662383ad96f7d45ca45b1532f16ad234ce
 // Author: Rob van Son <r.j.j.h.vanson@gmail.com>
-// Date:   Fri Jul 29 14:32:49 2016 +0200
+// Date:   Mon Aug 1 13:40:29 2016 +0200
 var CACHE_VERSION = 1;
 var CURRENT_CACHES = {
   prefetch: 'prefetch-cache-v' + CACHE_VERSION
