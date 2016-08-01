@@ -1181,6 +1181,7 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
 
 // Calculate DTW on pitchtiers, create the reference pitchTier
 // Use toneRange and speedFactor to adapt the reference pitchTier.
+// IE. change word2tones
 function dtwTones (pitchTier, pinyin, register, toneRange, speedFactor, skipSyllables) {
 	var dtw = {distance: 0, path: [], matrix: undefined};
 	// USE toneRange and speedFactor !!!

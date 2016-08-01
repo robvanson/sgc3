@@ -258,6 +258,9 @@ function cut_silent_margins (typedArray, sampleRate) {
 
 // Calculate autocorrelation in a window (array!!!) around time
 // You should divide the result by the autocorrelation of the window!!!
+//
+// David Weenink: De autocorrelatie moet gecontroleerd worden.
+// Ik denk dat hij niet veel sneller kan.
 function autocorrelation (sound, sampleRate, time, window) {
 	// Calculate FFT
 	// This is stil just the power in dB.
@@ -312,6 +315,13 @@ function autocorrelation (sound, sampleRate, time, window) {
  */
 
 // Take a spectrum and return a list with peaks
+//
+// David Weenink: De peak picker moet geoptimaliseerd worden.
+// liefst met een "echt" peak picking algoritme. Dit is een simplistische
+// 5 punts differentiatie (4 verschillen) die halverwege door nul gaan
+// dwz, twee verschillen > 0 gevolgd door twee verschillen < 0.
+// Ik gebruik nu een 3 punts parabool om het maximum te vinden, 
+// maar ik vermoed dat een 5 punts kwadratische fit misschien beter is?
 function autocorrelationPeakPicker (autocorr, sampleRate, fMin, fMax) {
 	var thressHold = 0.001;
 	var resultArray = [];
@@ -435,7 +445,7 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 	var valueSeries = [];
 	
 	// Select the best pitch candidates using tracking etc.
-	var bestTrack = viterby (pitchArray);
+	var bestTrack = viterbi (pitchArray);
 	
 	var pitchTier = new Tier();
 	pitchTier.xmin = 0;
@@ -451,7 +461,12 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 // Viterbi pitch tracking
 // Takes an array of pitch candidates and returns a list of 
 // the best candidate for each frame
-function viterby (pitchArray) {
+//
+// David Weenink: 
+// Deze viterbi functie moet versneld en geoptimaliseerd worden.
+// De kostenfunctie is nu willekeurig gekozen.
+// Deze versie heeft ook nogal wat octaaf fouten. 
+function viterbi (pitchArray) {
 	var costsList = [];
 	var backpointerList = [];
 	for (var i=0; i < pitchArray.length; ++i) {
@@ -517,16 +532,118 @@ function viterby (pitchArray) {
 
 
 // DTW between two pitchTiers
+//
+// David Weenink:
+// Dit is de DTW functie. Die moet geoptimaliseerd en versneld worden
+// De kosten (inclusief voor voicing sprongen) zijn nu willekeurig gekozen
 function toDTW (pitchTier1, pitchTier2) {
+	var horCost = 2;
+	var verCost = 2;
+	var diagonalCost = 1;
+	var voicingCost = 100;
 	var dtw = {distance: 0, path: [], matrix: undefined};
+	var costMatrix = [];
+	var backpointerMatrix = [];
 	
 	var pitch1 = pitchTier1.valueSeries();
 	var pitch2 = pitchTier2.valueSeries();
 	
-	// Stub code giving fake results
-	dtw.distance = Math.random()*Math.max(pitch1.length, pitch2.length);
+	// Initialize the cost and backpointer matrices
+	for (var i=0; i<pitch1.length; ++i) {
+		var costColumn = [];
+		var bpColumn = [];
+		for (var j=0; j<pitch2.length; ++j) {
+			costColumn.push(0);
+			bpColumn.push(0);
+		};
+		costMatrix.push(costColumn);
+		backpointerMatrix.push(bpColumn);
+	};
+
+	// Fill the cost and backpointer matrices
+	// i = pitch1
+	// j = pitch2
+	for (var i=0; i<pitch1.length; ++i) {
+		for (var j=0; j<pitch2.length; ++j) {
+			var newCost = 0;
+			// backpointer [i-1][j]=-1, [i][j-1]=1, [i-1][j-1]=0
+			var backpointer = 0;
+			if(j > 0) {
+				if(i > 0) {
+					var newHorCost = costMatrix[i-1][j] + horCost * dtwCostFunction(pitch1[i-1], pitch2[j], voicingCost);
+					var newVerCost = costMatrix[i][j-1] + verCost * dtwCostFunction(pitch1[i], pitch2[j-1], voicingCost);
+					var newDiaCost = costMatrix[i-1][j-1] + diagonalCost * dtwCostFunction(pitch1[i-1], pitch2[j-1], voicingCost);
+					var minCost = Math.min(newHorCost, newVerCost, newDiaCost);
+					if(newDiaCost == minCost) {
+						newCost = newDiaCost;
+						backpointer = 0;
+					} else if (newHorCost == minCost) {
+						newCost = newHorCost;
+						backpointer = -1;
+					} else if (newVerCost == minCost) {
+						newCost = newVerCost;
+						backpointer = 1;
+					} else {
+						console.log("ERROR: No DTW cost");
+					};
+				} else {
+					// i == 0
+					newCost = costMatrix[0][j-1];
+					newCost += horCost * dtwCostFunction(pitch1[0], pitch2[j], voicingCost);
+					backpointer = 1;
+				};
+			} else if (i > 0) {
+				// j == 0
+				newCost = costMatrix[i-1][0];
+				newCost += horCost * dtwCostFunction(pitch1[i], pitch2[0], voicingCost);
+				backpointer = -1;
+			} else {
+				// i == 0 and j == 0, corner case
+				newCost = 0;
+				newCost += horCost * dtwCostFunction(pitch1[0], pitch2[0], voicingCost);
+				backpointer = 0;
+			};
+			costMatrix[i][j] = newCost;
+			backpointerMatrix[i][j] = backpointer;
+		};
+	};
+	dtw.matrix = costMatrix;
+	
+	// Start at upper right corner and trace back the path
+	var i = pitch1.length-1;
+	var j = pitch2.length-1;
+	dtw.distance = costMatrix[i][j];
+	
+	var path = [];
+	while (i > 0 || j > 0) {
+		path.push({i: i, j: j});
+		var step = backpointerMatrix[i][j];
+		if(step == 0) {
+			i -= 1;
+			j -= 1;
+		} else if (step == -1) {
+			i -= 1;
+		} else if (step == 1) {
+			j -= 1;
+		} else {
+			concole.log("ERROR: wrong step");
+			return [];
+		};
+	};
+	path.push({i: 0, j: 0});
+	dtw.path = path.reverse();
 	
 	return dtw;
+};
+
+
+// David Weenink:
+// Dit is de DTW kostenfunctie. hier kan een betere ingevoerd worden.
+// Deze is nu willekeurig gekozen
+function dtwCostFunction (value1, value2, voicingCost) {
+	if(value1 > 0 && value2 > 0)return Math.pow(value1-value2, 2);
+	if(value1 == 0 && value2 == 0)return 0;
+	if(value1 == 0 || value2 == 0)return Math.pow(voicingCost, 2);
 };
 
 // Calculate the (RMS) power in a time window
