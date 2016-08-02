@@ -152,12 +152,12 @@ function toneDuration (prevTone, currentTone, nextTone) {
 }
 
 // The rules to create pitch tracks from tones
-function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, currentTone, nextTone) {
-	
+function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, currentTone, nextTone, toneRange) {
+	if (!toneRange || toneRange <= 0) toneRange = 1;
 	var syllableToneContour = [];
 	var durationFactor = toneDuration (prevTone, currentTone, nextTone);
 	
-	var frequencyRange = toneRules_octave;
+	var frequencyRange = toneRules_octave * toneRange;
 	if(toneRules_range_Factor > 0) {
 		frequencyRange =  frequencyRange * toneRules_range_Factor;
 	}
@@ -434,7 +434,7 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 }
 
 // Create a syllable tone movement
-function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone) {
+function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone, toneRange, speedFactor) {
 	var currentToneContour = [];
 	// Get tone
 	var toneSyllable = getTones(syllable);
@@ -448,7 +448,8 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 
 	// Account for tones in duration
     // Scale the duration of the current syllable
-    var toneFactor = toneDuration (prevTone, toneSyllable, nextTone)
+    var toneFactor = toneDuration (prevTone, toneSyllable, nextTone);
+    toneFactor *= speedFactor;
 
 	// Unvoiced part
 	if (voicingSyllable.match(/U/g)) {
@@ -470,7 +471,7 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	 * sqrt(frequencyRange) is the mid point
 	 * 
 	 */
-    var voicedContour = toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, toneSyllable, nextTone);
+    var voicedContour = toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, toneSyllable, nextTone, toneRange);
     currentToneContour = currentToneContour.concat(voicedContour);
     return currentToneContour;
 }
@@ -478,6 +479,12 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 // Take a word and create tone contour
 // !!! Add addapted highest tone and range !!!
 function word2tones (pinyin, topLine) {
+	var pitchTier = word2scaledTones (pinyin, topLine, 1, 1);
+	
+	return pitchTier;
+};
+
+function word2scaledTones (pinyin, topLine, toneRange, speedFactor) {
 	var toneContour = [];
 	var word;
 
@@ -497,7 +504,7 @@ function word2tones (pinyin, topLine) {
 		var syllable = syllableList[s];
 		if(s-1 >= 0) prevTone = Number(syllableList[s-1].replace(/[^\d]+/g, ""));
 		if(s+1 < syllableList.length) nextTone = Number(syllableList[s+1].replace(/[^\d]+/g, ""));
-		var syllableContour = addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone);
+		var syllableContour = addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone, toneRange, speedFactor);
 		toneContour = toneContour.concat(syllableContour);
 		time = toneContour[(toneContour.length - 1)].t;
 		lastFrequency = toneContour[(toneContour.length - 1)].f;
