@@ -495,6 +495,8 @@ function viterbi (pitchArray) {
 				// Cost added
 				if(prevCandidates[k].x > 0 && pitchCandidates[j].x > 0) {
 					newCost += weight * Math.pow((prevCandidates[k].x - pitchCandidates[j].x), 2);
+				} else {
+					newCost += weight;
 				};
 				if(newCost < minCost) {
 					minCost = newCost;
