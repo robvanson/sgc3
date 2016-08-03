@@ -260,7 +260,7 @@ function cut_silent_margins (typedArray, sampleRate) {
 // You should divide the result by the autocorrelation of the window!!!
 //
 // David Weenink: De autocorrelatie moet gecontroleerd worden.
-// Ik denk dat hij niet veel sneller kan.
+// Ik denk niet dat hij veel sneller kan.
 function autocorrelation (sound, sampleRate, time, window) {
 	// Calculate FFT
 	// This is stil just the power in dB.
@@ -465,7 +465,6 @@ function toPitchTier (sound, sampleRate, fMin, fMax, dT) {
 // David Weenink: 
 // Deze viterbi functie moet versneld en geoptimaliseerd worden.
 // De kostenfunctie is nu willekeurig gekozen.
-// Deze versie heeft ook nogal wat octaaf fouten. 
 function viterbi (pitchArray) {
 	var costsList = [];
 	var backpointerList = [];
@@ -484,7 +483,7 @@ function viterbi (pitchArray) {
 		};
 		// Find best continuation for each candidate
 		for (var j=0; j <pitchCandidates.length; ++j) {
-			weight = pitchCandidates[j].y > 0 ? sumWeights / pitchCandidates[j].y : 1;
+			weight = sumWeights > 0 ? 1 - (pitchCandidates[j].y / sumWeights) : 1;
 			// Initialize to handle voiceless previous frame
 			minCost = Infinity;
 			bestBackpointer = 0;
@@ -494,7 +493,7 @@ function viterbi (pitchArray) {
 				var newCost = previousCosts[k];
 				// Cost added
 				if(prevCandidates[k].x > 0 && pitchCandidates[j].x > 0) {
-					newCost += weight * Math.pow((prevCandidates[k].x - pitchCandidates[j].x), 2);
+					newCost += weight * Math.pow((prevCandidates[k].x - pitchCandidates[j].x)/pitchCandidates[j].x, 2);
 				} else {
 					newCost += weight;
 				};

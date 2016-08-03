@@ -1182,7 +1182,7 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
             minDistance = referenceDistance
         };
     };
-    
+
 	return {distance: minDistance, pinyin: choicePinyin};
 }
 
