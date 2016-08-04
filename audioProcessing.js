@@ -493,7 +493,8 @@ function viterbi (pitchArray) {
 				var newCost = previousCosts[k];
 				// Cost added
 				if(prevCandidates[k].x > 0 && pitchCandidates[j].x > 0) {
-					newCost += weight * Math.pow((prevCandidates[k].x - pitchCandidates[j].x)/pitchCandidates[j].x, 2);
+					// Squared difference relative to average between points.
+					newCost += weight * Math.pow(2*(prevCandidates[k].x - pitchCandidates[j].x)/(prevCandidates[k].x + pitchCandidates[j].x), 2);
 				} else {
 					newCost += weight;
 				};
