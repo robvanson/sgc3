@@ -246,7 +246,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		currentWordlistName.textContent = sgc3_settings.wordList;
 		currentWordlistName.style.color = "gray";
 		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
-		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'blue' : 'black';
 		deleteWordlistButton.style.color = "gray";
 		deleteWordlistButton.disabled = true;
 		if (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) {
@@ -415,7 +415,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	saveAudioButton.onclick = function () {
 		sgc3_settings.saveAudio = ! sgc3_settings.saveAudio;
 		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
-		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'blue' : 'black';
 		store_SGC3_settings ();
 		
 		// Get performance data
