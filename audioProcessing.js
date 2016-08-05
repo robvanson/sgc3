@@ -628,7 +628,7 @@ function toDTW (pitchTier1, pitchTier2) {
 		} else if (step == 1) {
 			j -= 1;
 		} else {
-			concole.log("ERROR: wrong step");
+			console.log("ERROR: wrong step");
 			return [];
 		};
 	};
