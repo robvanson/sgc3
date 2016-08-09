@@ -426,61 +426,62 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		getCurrentMetaData (sgc3_settings.currentCollection, false);
 	};
 	
-	listPerfButton.onclick = function () {
-		if (! sgc3_settings.saveAudio) return;
-		
+	listPerfButton.onclick = function () {		
 		// Get performance data
 		getCurrentMetaData (sgc3_settings.currentCollection, function (list){var performanceRecord = objectList2performanceRecord(list); displayPerformanceRecord(performanceRecord);});
 		
 	};
 	
 	function displayPerformanceRecord (performanceRecord) {
-		var wordLists = Object.getOwnPropertyNames(performanceRecord);
 		var page = "";
-		page += "<h1 align=CENTER>"+config_tables[sgc3_settings.language].ListPerf[0]+"</h1>\n";
+		page += "<h1 align=CENTER>"+config_tables[sgc3_settings.language].ListPerf[0]+": "+sgc3_settings.currentCollection+"</h1>\n";
 		page += "\n";
-		for (var i=0; i<wordLists.length; ++i) {
-			page += "<CENTER><table CELLPADDING='5'><tr><td colspan='9'><h3>"+wordLists[i]+"</h3></td></tr>\n";
-			var table = performanceRecord[wordLists[i]];
-			var pinyin = Object.getOwnPropertyNames(table).sort();
-
-			// Write out header line
-			page += "<tr>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Pinyin+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Character+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Grade+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Correct+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Wrong+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].High+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Low+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Wide+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Narrow+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Level+"</h4></td>";
-			page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Time+"</h4></td>";
-			page += "</tr>";
-			// Write body of table
-			for (var p=0; p<pinyin.length; ++p){
-				page += "<td><strong>"+table[pinyin[p]].Mark+"</strong></td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Character+"</td>";
-				var grade = table[pinyin[p]].Grade == "-1" ? "-" : table[pinyin[p]].Grade
-				page += "<td style='text-align: center' ><em>"+grade+"</em></td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Correct+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Wrong+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].High+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Low+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Wide+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Narrow+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Proficiency+"</td>";
-				page += "<td style='text-align: center' >"+table[pinyin[p]].Date+"</td>";
-				page += "</tr>\n";
+		if (performanceRecord) {
+			var wordLists = Object.getOwnPropertyNames(performanceRecord);
+			for (var i=0; i<wordLists.length; ++i) {
+				page += "<CENTER><table CELLPADDING='5'><tr><td colspan='9'><h3>"+wordLists[i]+"</h3></td></tr>\n";
+				var table = performanceRecord[wordLists[i]];
+				var pinyin = Object.getOwnPropertyNames(table).sort();
+	
+				// Write out header line
+				page += "<tr>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Pinyin+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Character+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Grade+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Correct+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Wrong+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].High+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Low+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Wide+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Narrow+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Level+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Time+"</h4></td>";
+				page += "</tr>";
+				// Write body of table
+				for (var p=0; p<pinyin.length; ++p){
+					page += "<td><strong>"+table[pinyin[p]].Mark+"</strong></td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Character+"</td>";
+					var grade = table[pinyin[p]].Grade == "-1" ? "-" : table[pinyin[p]].Grade
+					page += "<td style='text-align: center' ><em>"+grade+"</em></td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Correct+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Wrong+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].High+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Low+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Wide+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Narrow+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Proficiency+"</td>";
+					page += "<td style='text-align: center; font-size: x-small' >"+table[pinyin[p]].Date+"</td>";
+					page += "</tr>\n";
+				};
+				page += "</table></CENTER>\n";
 			};
-			page += "</table></CENTER>\n";
+			page += "\n&nbsp;\n&nbsp;\n<Center><button type='button' onclick='window.print()' style='font: bold 3vmin \"Helvetica\";background-color: rgb(220,220,220);' >"+evaluation_tables[sgc3_settings.language].Print+"</button></Center>\n\n";
 		};
 		var windowObjectReference;
 		var strWindowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
 		windowObjectReference = window.open("", "", strWindowFeatures);
 		windowObjectReference.document.write(page);	
-		windowObjectReference.document.title = config_tables[sgc3_settings.language].ListPerf[0];
+		windowObjectReference.document.title = config_tables[sgc3_settings.language].ListPerf[0]+": "+sgc3_settings.currentCollection;
 	};
 	
 	function getTTSvoice(){

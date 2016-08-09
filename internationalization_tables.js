@@ -773,6 +773,7 @@ var evaluation_tables = {
 		G8: "8",
 		G9: "9",
 		G10: "10",
+		Print: "打印",
 		},
 	EN: {
 		Pinyin: "Pinyin",
@@ -806,6 +807,7 @@ var evaluation_tables = {
 		G8: "8",
 		G9: "9",
 		G10: "10",
+		Print: "Print",
 		},
 	JA: {
 		Pinyin: "ピンイン",
@@ -839,6 +841,7 @@ var evaluation_tables = {
 		G8: "8",
 		G9: "9",
 		G10: "10",
+		Print: "打印",
 		},
 	DE: {
 		Pinyin: "Pinyin",
@@ -872,6 +875,7 @@ var evaluation_tables = {
 		G8: "8",
 		G9: "9",
 		G10: "10",
+		Print: "Drücken",
 		},
 	NL: {
 		Pinyin: "Pinyin",
@@ -905,6 +909,7 @@ var evaluation_tables = {
 		G8: "8",
 		G9: "9",
 		G10: "10",
+		Print: "Print",
 		},
 };
 
