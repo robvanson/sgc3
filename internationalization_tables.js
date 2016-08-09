@@ -253,8 +253,8 @@ var config_tables = {
 		SaveAudio: ["保存录音 K", "将录音保存到文件夹（只保存每个单词的最后一次发音）。"],
 		ExportAudio: ["输出", "导出录音"],
 		ImportAudio: ["输入", "进口录音"],
-		DeleteAudio: ["Delete", "Delete recordings in storage"],
-		NewCollection: ["New", "Name of new collection of recordings"],
+		DeleteAudio: ["删除", "Delete recordings in storage"],
+		NewCollection: ["新", "Name of new collection of recordings"],
 		ListPerf: ["发音练习的结果", "显示全部发音练习的结果。"],
 		},
 	EN: {
@@ -312,8 +312,8 @@ var config_tables = {
 		SaveAudio: ["録音の保存", "録音データをディレクトリに保存します（各単語の最後の発音を保存）。"],
 		ExportAudio: ["輸出する", "エクスポート保存された録音"],
 		ImportAudio: ["輸入する", "オーディオ録音をインポートします"],
-		DeleteAudio: ["Delete", "Delete recordings in storage"],
-		NewCollection: ["New", "Name of new collection of recordings"],
+		DeleteAudio: ["削除する", "Delete recordings in storage"],
+		NewCollection: ["新", "Name of new collection of recordings"],
 		ListPerf: ["発音練習結果", "発音練習の結果を表示します。"],
 		},
 		
