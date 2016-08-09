@@ -434,7 +434,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	function displayPerformanceRecord (performanceRecord) {
 		var page = "";
+		var date = new Date().toLocaleString();
 		page += "<h1 align=CENTER>"+config_tables[sgc3_settings.language].ListPerf[0]+": "+sgc3_settings.currentCollection+"</h1>\n";
+		page += "<h4 align=CENTER>"+date+"</h4>\n";
 		page += "\n";
 		if (performanceRecord) {
 			var wordLists = Object.getOwnPropertyNames(performanceRecord);
