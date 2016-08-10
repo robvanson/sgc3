@@ -50,6 +50,7 @@ button {
 <script type="text/javascript" src="wordlists.js" ></script>   
 <script type="text/javascript" src="wordlists_plus.js" ></script>   
 <script type="text/javascript" src="audioProcessing.js" ></script>   
+<script type="text/javascript" src="toneprot.js" ></script>   
 <script type="text/javascript" src="jszip.min.js" defer="true" ></script> 
 </head>
 <body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('sgc3_settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
@@ -123,6 +124,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<div title=""><button type="button" style="color: black; bottom: 5%; right: 43%; height: 8%; width: 8% " id="LocalDeleteAudio" ><span id="DeleteAudio" style="font-size: 2vmin;" >Delete</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 5%; right: 33%; height: 8%; width: 8% " id="LocalImportAudio" ><span id="ImportAudio" style="font-size: 2vmin;" >Import</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 5%; right: 23%; height: 8%; width: 8% " id="ExportAudioButton" ><span id="ExportAudio" style="font-size: 2vmin;" >Export</span></button></div>
+
+	<div title=""><button type="button" style="color: black; bottom: 40%; right: 5%; height: 8%; width: 10%; vertical-align: top; " id="ListPerfButton" ><span id="ListPerf" style="font-size: 2vmin;" >---</span></button></div>
 	<div title=""><button type="button" style="color: black; bottom: 25%; right: 5%; height: 14%; width: 10%; vertical-align: top; " id="SaveAudioButton" >
 		<div style="color: gray; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight">&#9679;</div>
 		<span id="SaveAudio" >---</span></button>
@@ -162,6 +165,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var hiddenDownloadLink = document.getElementById('HiddenDownloadLink');
 	var exportAudioButton = document.getElementById('ExportAudioButton');
 	var saveAudioButton = document.getElementById('SaveAudioButton');
+	var listPerfButton = document.getElementById('ListPerfButton');
 	var openWordlistButton = document.getElementById('LocalOpenWordlist');
 	var openAudioButton = document.getElementById('LocalOpenAudio');
 	var deleteAudioButton = document.getElementById('LocalDeleteAudio');
@@ -246,7 +250,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		currentWordlistName.textContent = sgc3_settings.wordList;
 		currentWordlistName.style.color = "gray";
 		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
-		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'blue' : 'black';
 		deleteWordlistButton.style.color = "gray";
 		deleteWordlistButton.disabled = true;
 		if (wordlistExist (sgc3_settings.personalWordlists, sgc3_settings.wordList)) {
@@ -415,11 +419,71 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	saveAudioButton.onclick = function () {
 		sgc3_settings.saveAudio = ! sgc3_settings.saveAudio;
 		document.getElementById('SaveAudioLight').style.color = sgc3_settings.saveAudio ? 'blue' : 'gray';
-		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'red' : 'black';
+		document.getElementById('SaveAudio').style.color = sgc3_settings.saveAudio ? 'blue' : 'black';
 		store_SGC3_settings ();
 		
 		// Get performance data
 		getCurrentMetaData (sgc3_settings.currentCollection, false);
+	};
+	
+	listPerfButton.onclick = function () {		
+		// Get performance data
+		getCurrentMetaData (sgc3_settings.currentCollection, function (list){var performanceRecord = objectList2performanceRecord(list); displayPerformanceRecord(performanceRecord);});
+		
+	};
+	
+	function displayPerformanceRecord (performanceRecord) {
+		var page = "";
+		var date = new Date().toLocaleString();
+		page += "<h1 align=CENTER>"+config_tables[sgc3_settings.language].ListPerf[0]+": "+sgc3_settings.currentCollection+"</h1>\n";
+		page += "<h4 align=CENTER>"+date+"</h4>\n";
+		page += "\n";
+		if (performanceRecord) {
+			var wordLists = Object.getOwnPropertyNames(performanceRecord);
+			for (var i=0; i<wordLists.length; ++i) {
+				page += "<CENTER><table CELLPADDING='5'><tr><td colspan='9'><h3>"+wordLists[i]+"</h3></td></tr>\n";
+				var table = performanceRecord[wordLists[i]];
+				var pinyin = Object.getOwnPropertyNames(table).sort();
+	
+				// Write out header line
+				page += "<tr>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Pinyin+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Character+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Grade+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Correct+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Wrong+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].High+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Low+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Wide+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Narrow+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Level+"</h4></td>";
+				page += "<td><h4>"+evaluation_tables[sgc3_settings.language].Time+"</h4></td>";
+				page += "</tr>";
+				// Write body of table
+				for (var p=0; p<pinyin.length; ++p){
+					page += "<td><strong>"+table[pinyin[p]].Mark+"</strong></td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Character+"</td>";
+					var grade = table[pinyin[p]].Grade == "-1" ? "-" : table[pinyin[p]].Grade
+					page += "<td style='text-align: center' ><em>"+grade+"</em></td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Correct+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Wrong+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].High+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Low+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Wide+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Narrow+"</td>";
+					page += "<td style='text-align: center' >"+table[pinyin[p]].Proficiency+"</td>";
+					page += "<td style='text-align: center; font-size: x-small' >"+table[pinyin[p]].Date+"</td>";
+					page += "</tr>\n";
+				};
+				page += "</table></CENTER>\n";
+			};
+			page += "\n&nbsp;\n&nbsp;\n<Center><button type='button' onclick='window.print()' style='font: bold 3vmin \"Helvetica\";background-color: rgb(220,220,220);' >"+evaluation_tables[sgc3_settings.language].Print+"</button></Center>\n\n";
+		};
+		var windowObjectReference;
+		var strWindowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
+		windowObjectReference = window.open("", "", strWindowFeatures);
+		windowObjectReference.document.write(page);	
+		windowObjectReference.document.title = config_tables[sgc3_settings.language].ListPerf[0]+": "+sgc3_settings.currentCollection;
 	};
 	
 	function getTTSvoice(){

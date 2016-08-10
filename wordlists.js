@@ -205,6 +205,7 @@ function processWordlist (file, allText, delimiter) {
 	for (var c in header) {
 		columnNums [header[c]] = c;
 	};
+
 	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Sound"];
 	for (var r=0; r < rows.length; ++r) {
 		var currentRow = rows[r];

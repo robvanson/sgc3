@@ -152,12 +152,12 @@ function toneDuration (prevTone, currentTone, nextTone) {
 }
 
 // The rules to create pitch tracks from tones
-function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, currentTone, nextTone) {
-	
+function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, currentTone, nextTone, toneRange) {
+	if (!toneRange || toneRange <= 0) toneRange = 1;
 	var syllableToneContour = [];
 	var durationFactor = toneDuration (prevTone, currentTone, nextTone);
 	
-	var frequencyRange = toneRules_octave;
+	var frequencyRange = toneRules_octave * toneRange;
 	if(toneRules_range_Factor > 0) {
 		frequencyRange =  frequencyRange * toneRules_range_Factor;
 	}
@@ -434,7 +434,7 @@ function toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, curr
 }
 
 // Create a syllable tone movement
-function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone) {
+function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone, toneRange, speedFactor) {
 	var currentToneContour = [];
 	// Get tone
 	var toneSyllable = getTones(syllable);
@@ -448,7 +448,8 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 
 	// Account for tones in duration
     // Scale the duration of the current syllable
-    var toneFactor = toneDuration (prevTone, toneSyllable, nextTone)
+    var toneFactor = toneDuration (prevTone, toneSyllable, nextTone);
+    toneFactor *= speedFactor;
 
 	// Unvoiced part
 	if (voicingSyllable.match(/U/g)) {
@@ -470,7 +471,7 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 	 * sqrt(frequencyRange) is the mid point
 	 * 
 	 */
-    var voicedContour = toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, toneSyllable, nextTone);
+    var voicedContour = toneRules (topLine, time, lastFrequency, voicedDuration, prevTone, toneSyllable, nextTone, toneRange);
     currentToneContour = currentToneContour.concat(voicedContour);
     return currentToneContour;
 }
@@ -478,6 +479,12 @@ function addToneMovement (time, lastFrequency, syllable, topLine, prevTone, next
 // Take a word and create tone contour
 // !!! Add addapted highest tone and range !!!
 function word2tones (pinyin, topLine) {
+	var pitchTier = word2scaledTones (pinyin, topLine, 1, 1);
+	
+	return pitchTier;
+};
+
+function word2scaledTones (pinyin, topLine, toneRange, speedFactor) {
 	var toneContour = [];
 	var word;
 
@@ -497,7 +504,7 @@ function word2tones (pinyin, topLine) {
 		var syllable = syllableList[s];
 		if(s-1 >= 0) prevTone = Number(syllableList[s-1].replace(/[^\d]+/g, ""));
 		if(s+1 < syllableList.length) nextTone = Number(syllableList[s+1].replace(/[^\d]+/g, ""));
-		var syllableContour = addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone);
+		var syllableContour = addToneMovement (time, lastFrequency, syllable, topLine, prevTone, nextTone, toneRange, speedFactor);
 		toneContour = toneContour.concat(syllableContour);
 		time = toneContour[(toneContour.length - 1)].t;
 		lastFrequency = toneContour[(toneContour.length - 1)].f;
@@ -805,7 +812,8 @@ function processRecordedSound () {
 		document.getElementById("ResultString").textContent = recognition.Recognition;
 		document.getElementById("ResultString").style.color = (recognition.Label == "Correct") ? "green" : "red";
 		document.getElementById("FeedbackString").textContent = recognition.Feedback;
-		document.getElementById("FeedbackString").style.color = (recognition.Label == "Correct") ? "green" : "red";
+		var feedbackOK = recognition.Label == "Correct" && recognition.Register == "OK" && recognition.Range == "OK";
+		document.getElementById("FeedbackString").style.color = feedbackOK ? "green" : "red";
 
 		// Write out grade
 		if(performanceRecord && performanceRecord [currentLesson] && performanceRecord [currentLesson][currentPinyin].Grade >=0) {
@@ -845,6 +853,8 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 	if (proficiency >= 3) {
 		precision = 1.5
 	};
+	if(pinyin.match(/3/))precision *= 4/3;
+	
 	// Stick to the raw recognition results or not
 	var ultraStrict = (proficiency >= 3);
 
@@ -938,9 +948,9 @@ function sgc_ToneProt (pitchTier, pinyin, register, proficiency, language) {
 		var result = freeToneRecognition(pitchTier, choiceReference, newRegister, newToneRange, speedFactor, proficiency, skipSyllables);
 		skipSyllables += 1
 		choiceReference = result.pinyin;
+		// Get rid of odd symbols
+		choiceReference = choiceReference.replace(/9/g, "3");
 	};
-	// Get rid of odd symbols
-	choiceReference = choiceReference.replace(/9/g, "3");
 	
 	// Special cases (frequent recognition errors)
 	// Not ultra strict and wrong
@@ -1096,6 +1106,8 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
 	
     // Bias Z-normalized value of the distance difference between smallest and correct
     var biasDistance = 1.1;
+    // When doing longer words, relax the proficiency in later syllables
+    if(skipSyllables > 0)--proficiency;
 	if (proficiency <= 0) { // 0
 		biasDistance = 1.7;
 	} else if (proficiency <= 1) { // 1
@@ -1105,7 +1117,7 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
 	} else if (proficiency > 2) { // 3
 		biasDistance = 0.3;
 	};
-	
+
 	// Generate reference tone
 	var referenceDistance = dtwTones (pitchTier, pinyin, register, toneRange, speedFactor, skipSyllables);
 	
@@ -1134,7 +1146,6 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
 			};
 		};
 	};
-
 	// If there is a third tone, test broken third tones (9)
 	if (pinyin.match(/3/g)) {
 		testPinyin = pinyin.replace(/3/g, "9");
@@ -1175,12 +1186,13 @@ function freeToneRecognition(pitchTier, pinyin, register, toneRange, speedFactor
             minDistance = referenceDistance
         };
     };
-    
+
 	return {distance: minDistance, pinyin: choicePinyin};
 }
 
 // Calculate DTW on pitchtiers, create the reference pitchTier
 // Use toneRange and speedFactor to adapt the reference pitchTier.
+// IE. change word2tones
 function dtwTones (pitchTier, pinyin, register, toneRange, speedFactor, skipSyllables) {
 	var dtw = {distance: 0, path: [], matrix: undefined};
 	// USE toneRange and speedFactor !!!
