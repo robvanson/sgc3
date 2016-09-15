@@ -909,14 +909,14 @@ function addAudioBlob(collection, map, name, blob) {
 	addFileBlob(audioDatabaseName, collection, map, name, blob);
 };
 
-function addExamplesBlob(collection, map, name, blob) {
-	addFileBlob(examplesDatabaseName, collection, map, name, blob);
+function addExamplesBlob(wordlist, name, blob) {
+	addFileBlob(examplesDatabaseName, "Wordlists", wordlist, name, blob);
 };
 
 function addFileBlob(databaseName, collection, map, name, blob) {
 	var date = new Date().toLocaleString();
 	var db;
-	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	var request = indexedDB.open(databaseName, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};

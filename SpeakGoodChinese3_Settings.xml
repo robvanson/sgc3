@@ -368,9 +368,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	function openWordlist (files) {
 		var wordlistFile;
 		for (var i=0; i < files.length; ++i) {
-			if (files[i].name.match(/\.(tsv|Table|csv)$/i)) {
+			if (files[i].name.match(/\.(tsv|Table|csv|sgc)$/i)) {
 				wordlistFile = files[i];
-				readWordlist (wordlistFile);
+				if (wordlistFile.name.match(/\.sgc$/ig)) {
+					importExamples (wordlistFile);
+				} else {
+					readWordlist (wordlistFile);
+				};
 			};
 		};
 	};
@@ -667,6 +671,44 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				zip.file(relativePath).async("arraybuffer").then(function (data) {	
 					var blob = new Blob([data], {type : type});
 					addAudioBlob(collection, map, name, blob);
+				}, function(event){console.log("Error", event)});
+			};
+		});
+
+	};
+	
+	// Import examples
+	function importExamples (file) {
+
+		var zipReader = new FileReader();
+		zipReader.onload = function(){
+			var zip = new JSZip();
+			zip.loadAsync(zipReader.result).then(unZipExamples);
+		};
+		zipReader.onerror = function(err) {
+			console.log("Open zip file",err);
+		};
+		zipReader.readAsArrayBuffer(file);
+	};
+	
+	var unZipExamples = function (zip) {
+		var fileList = zip.folder("\/$").files;
+		var collectionName = Object.getOwnPropertyNames(fileList).find(function(name){return name.match(/^[^\/]+\/$/g)});
+		collectionName = collectionName.replace(/\/$/g, "");
+		
+		zip.forEach(function (relativePath, file){
+			if(!relativePath.match(/\/\./ig) && relativePath.match(/\.(wav|flac|mp3|spx|ogg|tsv|csv|txt|Table)$/ig)) {
+				var wordlist = collectionName;
+				var map = "";
+				var name = "Audio.wav";
+				var path = relativePath.split("/");
+				name = path[path.length - 1];
+				wordlist = path[path.length - 2];
+				
+				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
+				zip.file(relativePath).async("arraybuffer").then(function (data) {	
+					var blob = new Blob([data], {type : type});
+					addExamplesBlob(wordlist, name, blob);
 				}, function(event){console.log("Error", event)});
 			};
 		});
