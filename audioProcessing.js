@@ -36,6 +36,7 @@ var windowStart = windowEnd = 0;
 var recordedSampleRate = 0;
 var currentAudioWindow = undefined;
 var audioDatabaseName = "Audio";
+var examplesDatabaseName = "Examples";
 
 var clearRecording = function () { 
 	recordedBlob = undefined;
@@ -905,6 +906,14 @@ function initializeObjectStore (db, collection) {
 // Remove entries that have the same name
 // The structure is: Directory, Filename, Binary data
 function addAudioBlob(collection, map, name, blob) {
+	addFileBlob(audioDatabaseName, collection, map, name, blob);
+};
+
+function addExamplesBlob(collection, map, name, blob) {
+	addFileBlob(examplesDatabaseName, collection, map, name, blob);
+};
+
+function addFileBlob(databaseName, collection, map, name, blob) {
 	var date = new Date().toLocaleString();
 	var db;
 	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
@@ -1011,8 +1020,16 @@ function initializeDataStorage (collection) {
 
 // Remove a collection
 function removeCollection (collection, complete) {
+	removeSubsetInDB (audioDatabaseName, collection, complete);
+};
+
+function removeExamples (wordlistName, complete) {
+	removeSubsetInDB (audioDatabaseName, wordlistName, complete);
+};
+
+function removeSubsetInDB (databaseName, collection, complete) {
 	var db;
-	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	var request = indexedDB.open(databaseName, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};

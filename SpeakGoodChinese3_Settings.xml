@@ -213,6 +213,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		saveAudio: false,
+		examplesDatabaseName: "SGC3 examples",
 		audioDatabaseName: "SGC3 audio",
 		currentCollection: "SGC3",
 		selectedLessons: [],
@@ -258,6 +259,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			deleteWordlistButton.style.color = "black";
 			deleteWordlistButton.disabled = false;
 		};
+		examplesDatabaseName = sgc3_settings.examplesDatabaseName;
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 		add_collections_names_to_select ();
 	};
