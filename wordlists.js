@@ -187,6 +187,8 @@ function processWordlist (file, allText, delimiter) {
 	var wordlistName;
 	if (file.name) {
 		wordlistName = file.name.replace(/\.[^\.]*$/g, "");
+	} else if (sessionStorage.currentWordListName && file.match(/^blob\:/ig)) {
+		wordlistName = JSON.parse(sessionStorage.currentWordListName);
 	} else {
 		var matchRes = file.match(/[^\/\.]+\.(Table|tsv|csv)/g);
 		wordlistName = matchRes[0].replace(/\.[^\.]+/g, "");
@@ -205,7 +207,7 @@ function processWordlist (file, allText, delimiter) {
 	for (var c in header) {
 		columnNums [header[c]] = c;
 	};
-
+console.log(rows);
 	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Part", "Sound"];
 	for (var r=0; r < rows.length; ++r) {
 		var currentRow = rows[r];

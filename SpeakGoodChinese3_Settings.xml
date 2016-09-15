@@ -709,7 +709,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				zip.file(relativePath).async("arraybuffer").then(function (data) {	
 					var blob = new Blob([data], {type : type});
 					addExamplesBlob(wordlist, name, blob);
+					// Read wordlist
+					if(name.match(/^wordlist\.(tsv|csv|txt|Table)$/ig)) {
+						wordlistURL = URL.createObjectURL(blob);
+						// Set wordlistname
+						sessionStorage.currentWordListName = JSON.stringify(wordlist);
+						readWordlist (wordlistURL);
+					};
 				}, function(event){console.log("Error", event)});
+				
 			};
 		});
 
