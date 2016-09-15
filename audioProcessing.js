@@ -824,6 +824,45 @@ function getCurrentAudioWindow (collection, map, name) {
 	};
 };
 
+function getAndPlayExample (wordlist, name) {
+	var request = indexedDB.open(examplesDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var key = "Wordlists"+"/"+wordlist+"/"+name;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.get(key);
+		
+		request.onsuccess = function(event) {
+			var record = this.result;
+			if(record) {
+				if(record.audio){
+					// processAudio is resolved asynchronously, reset retrievedData when it is finished
+					retrievedData = true;
+					processAudio (record.audio);
+				};
+			};
+		};
+		
+		// Data not found
+		request.onerror = function(event) {
+			console.log("Unable to retrieve data: "+map+"/"+name+" cannot be found");
+		};
+		
+	};
+	request.onerror = function(event) {
+		console.log("Error: ", event);
+	}
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection);
+	};
+};
+
 function getCurrentMetaData (collection, processData) {
 	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
 	request.onerror = function(event) {

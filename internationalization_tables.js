@@ -922,7 +922,7 @@ var evaluation_tables = {
 // Read from CSV URL/File.
 // This should handel processing in handleData!!!
 var csvDelimiter = ';';
-function readDelimitedTextFile (file, handleData, delimiter)
+function readDelimitedTextFile (file, handleData, delimiter, name=false)
 {
 	var url = file.name ? window.URL.createObjectURL(file) : file;
 
@@ -935,16 +935,27 @@ function readDelimitedTextFile (file, handleData, delimiter)
 			if(rawFile.status === 200 || rawFile.status == 0)
 			{
 				var allText = rawFile.responseText;
-				handleData(file, allText, delimiter);
+				handleData(file, allText, delimiter, name);
 			}
 		}
 	}
 	rawFile.send(null);
 }
 
-function processCSV (file, allText, delimiter) {
+function processCSV (file, allText, delimiter, name=false) {
 	var del = delimiter? delimiter : csvDelimiter;
 	var allTextLines = allText.split(/\r\n|\n/);
+	// Delimiter is unknown, guess
+	if (del == "?") {
+		del = "\t";
+		if(allTextLines[0].match(/\t/)) {
+			del = "\t";
+		} else if(allTextLines[0].match(/;/)) {
+			del = ";";
+		} else if(allTextLines[0].match(/,/)) {
+			del = ",";
+		};
+	};
 	var lines = [];
 	for (var i=0; i<allTextLines.length; i++) {
 		// Skip comments and empty lines

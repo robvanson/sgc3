@@ -572,6 +572,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	example.onclick = function() {
+		
+		generateExample ();
+	};
+	function generateExample () {
 		var voice = getTTSvoice();
 		if (exampleURL && exampleURL != "-" && ! sgc3_settings.synthesis_eSpeak) {
 			exampleElement.src = exampleURL;

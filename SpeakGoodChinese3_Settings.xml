@@ -704,17 +704,17 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				var path = relativePath.split("/");
 				name = path[path.length - 1];
 				wordlist = path[path.length - 2];
-				
 				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
 				zip.file(relativePath).async("arraybuffer").then(function (data) {	
 					var blob = new Blob([data], {type : type});
-					addExamplesBlob(wordlist, name, blob);
+					var itemName = name.replace(/\.(wav|flac|mp3|spx|ogg)$/ig, "");
+					itemName = add_missing_neutral_tones (itemName)
+					addExamplesBlob(wordlist, itemName, blob);
 					// Read wordlist
 					if(name.match(/^wordlist\.(tsv|csv|txt|Table)$/ig)) {
 						wordlistURL = URL.createObjectURL(blob);
 						// Set wordlistname
-						sessionStorage.currentWordListName = JSON.stringify(wordlist);
-						readWordlist (wordlistURL);
+						readWordlist (wordlistURL, wordlist+(name.match(/\.[^\.]+$/g)[0]));
 					};
 				}, function(event){console.log("Error", event)});
 				

@@ -181,17 +181,23 @@ function numbersToTonemarks (pinyin) {
 };
 
 // file can be a local file or an url
-function processWordlist (file, allText, delimiter) {
+function processWordlist (file, allText, delimiter, optionalName=false) {
+	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Part", "Sound"];
 	var rows = processCSV (file, allText, delimiter);
 	var url = "";
 	var wordlistName;
+	var type = ".tsv";
 	if (file.name) {
+		type = file.name.match(/(tsv|csv|Table|txt)$/)[0];
 		wordlistName = file.name.replace(/\.[^\.]*$/g, "");
-	} else if (sessionStorage.currentWordListName && file.match(/^blob\:/ig)) {
-		wordlistName = JSON.parse(sessionStorage.currentWordListName);
+	} else if (optionalName && file.match(/^blob\:/ig)) {
+		wordlistName = optionalName;
+		type = wordlistName.match(/(tsv|csv|Table|txt)$/)[0];
+		wordlistName = wordlistName.replace(/\.[^\.]*$/g, "");
 	} else {
-		var matchRes = file.match(/[^\/\.]+\.(Table|tsv|csv)/g);
+		var matchRes = file.match(/[^\/\.]+\.(Table|tsv|csv|txt)/g);
 		wordlistName = matchRes[0].replace(/\.[^\.]+/g, "");
+		type = file.match(/(tsv|csv|Table|txt)$/)[0];
 		url = file.replace(/[^\/]+$/g, "");
 		// Embedded wordlist file
 		if (wordlistName == "wordlist") {
@@ -203,12 +209,14 @@ function processWordlist (file, allText, delimiter) {
 	var newWordlist = [wordlistName];
 	var wordlistEntries = [];
 	var header = rows.shift();
-	var columnNums = {Pinyin: -1, Marks: -1, Character: -1, Translation: -1, Sound: -1};
+	if (type == "txt") {
+		header = ["Pinyin", "Character", "Translation", "Part", "Sound", "Marks"].slice(0, header.length);
+	};
+	
+	var columnNums = {Pinyin: -1, Marks: -1, Character: -1, Translation: -1, Part: -1, Sound: -1};
 	for (var c in header) {
 		columnNums [header[c]] = c;
 	};
-console.log(rows);
-	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Part", "Sound"];
 	for (var r=0; r < rows.length; ++r) {
 		var currentRow = rows[r];
 		var newEntry = []
@@ -252,15 +260,19 @@ console.log(rows);
 	load_SGC3_settings ();
 };
 
-function readWordlist (file) {
+function readWordlist (file, name=false) {
 	var delimiter = csvDelimiter;
 	if(file) {
 		if (file.name && file.name.match(/\.(tsv|Table)\s*$/i)) {
 			delimiter = "\t";
 		} else if(file.match(/\.(tsv|Table)\s*$/i)) {
 				delimiter = "\t";
+		} else if(name && name.match(/\.(tsv|Table)\s*$/i)) {
+				delimiter = "\t";
+		} else if(name && name.match(/\.(txt)\s*$/i)) {
+				delimiter = "?";
 		};
-		readDelimitedTextFile(file, processWordlist, delimiter);
+		readDelimitedTextFile(file, processWordlist, delimiter, name);
 	};
 };
 
