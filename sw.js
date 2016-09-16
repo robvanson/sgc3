@@ -25,9 +25,9 @@
 // flow and the old cache(s) will be purged as part of the activate event handler when the
 // updated service worker is activated.
 //
-// commit f209d126618b969a7ca97112add22e9e4421b16c
+// commit 166d622ab1993a5b7fdce009a0bda88890650c0b
 // Author: Rob van Son <R.J.J.H.vanSon@gmail.com>
-// Date:   Fri Sep 16 19:52:23 2016 +0200
+// Date:   Fri Sep 16 22:45:59 2016 +0200
 var CACHE_VERSION = 1;
 var CURRENT_CACHES = {
   prefetch: 'prefetch-cache-v' + CACHE_VERSION
@@ -57,7 +57,7 @@ self.addEventListener('install', function(event) {
 	'wordlists_plus.js',
 	'RecordRTC.min.js',
 	'jszip.min.js',
-	'xhtml-default.css'
+	'xhtml-default.css',
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface
