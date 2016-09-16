@@ -36,6 +36,7 @@ var windowStart = windowEnd = 0;
 var recordedSampleRate = 0;
 var currentAudioWindow = undefined;
 var audioDatabaseName = "Audio";
+var examplesDatabaseName = "Examples";
 
 var clearRecording = function () { 
 	recordedBlob = undefined;
@@ -823,6 +824,47 @@ function getCurrentAudioWindow (collection, map, name) {
 	};
 };
 
+function getAndPlayExample (wordlist, name, playBlob, otherPlay) {
+	var request = indexedDB.open(examplesDatabaseName, indexedDBversion);
+	request.onerror = function(event) {
+	  alert("Use of IndexedDB not allowed");
+	};
+	request.onsuccess = function(event) {
+		db = this.result;
+		var key = "Wordlists"+"/"+wordlist+"/"+name;
+		var request = db.transaction(["Recordings"], "readwrite")
+			.objectStore("Recordings")
+			.get(key);
+		
+		request.onsuccess = function(event) {
+			var record = this.result;
+			if(record) {
+				if(record.audio){
+					// playBlob is run asychronously
+					playBlob(record.audio);
+				};
+			};
+			if((!record || !record.audio) && otherPlay) otherPlay();
+		};
+		
+		// Data not found
+		request.onerror = function(event) {
+			console.log(otherPlay);
+			if(otherPlay) otherPlay();
+			console.log("Unable to retrieve data: "+map+"/"+name+" cannot be found");
+		};
+		
+	};
+	request.onerror = function(event) {
+		console.log("Error: ", event);
+	}
+	request.onupgradeneeded = function(event) {
+		var db = this.result;
+		// Create an objectStore to hold audio blobs.
+		initializeObjectStore (db, collection);
+	};
+};
+
 function getCurrentMetaData (collection, processData) {
 	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
 	request.onerror = function(event) {
@@ -905,9 +947,17 @@ function initializeObjectStore (db, collection) {
 // Remove entries that have the same name
 // The structure is: Directory, Filename, Binary data
 function addAudioBlob(collection, map, name, blob) {
+	addFileBlob(audioDatabaseName, collection, map, name, blob);
+};
+
+function addExamplesBlob(wordlist, name, blob) {
+	addFileBlob(examplesDatabaseName, "Wordlists", wordlist, name, blob);
+};
+
+function addFileBlob(databaseName, collection, map, name, blob) {
 	var date = new Date().toLocaleString();
 	var db;
-	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	var request = indexedDB.open(databaseName, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};
@@ -1011,19 +1061,33 @@ function initializeDataStorage (collection) {
 
 // Remove a collection
 function removeCollection (collection, complete) {
+	removeSubsetInDB (audioDatabaseName, collection, false, complete);
+};
+
+// Remove a wordlist
+function removeExamples (wordlistName, complete) {
+	removeSubsetInDB (examplesDatabaseName, false, wordlistName, complete);
+};
+
+function removeSubsetInDB (databaseName, collection, map, complete) {
 	var db;
-	var request = indexedDB.open(audioDatabaseName, indexedDBversion);
+	var request = indexedDB.open(databaseName, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
 	};
 	request.onsuccess = function(event) {
 		db = this.result;
 		var objectStore = db.transaction("Recordings", "readwrite").objectStore("Recordings");
-		var index = objectStore.index("collection");
+		var index = collection ? objectStore.index("collection") : objectStore.index("map");
 		index.openCursor().onsuccess = function(event) {
 		  var cursor = event.target.result;
 		  if (cursor) {
-			if (!collection || cursor.value.collection == collection) {
+			  var deleteCursor = false;
+			  deleteCursor = deleteCursor || !(collection || map);
+			  deleteCursor = deleteCursor || (!map && (collection && cursor.value.collection == collection));
+			  deleteCursor = deleteCursor || (!collection && (map && cursor.value.map == map));
+			  deleteCursor = deleteCursor || ((collection && cursor.value.collection == collection) && (map && cursor.value.map == map));
+			if (deleteCursor) {
 				var value = cursor.value;
 		        var request = cursor.delete();
 		        request.onsuccess = function() {

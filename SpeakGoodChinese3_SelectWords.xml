@@ -117,6 +117,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		saveAudio: false,
+		examplesDatabaseName: "SGC3 examples",
 		audioDatabaseName: "SGC3 audio",
 		currentCollection: "SGC3",
 		selectedLessons: [],
@@ -140,6 +141,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				sgc3_settings[x] = JSON.parse(localStorage["sgc3_"+x]);
 			};
 		};
+		examplesDatabaseName = sgc3_settings.examplesDatabaseName;
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 		
 		wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);

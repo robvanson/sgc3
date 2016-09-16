@@ -290,6 +290,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		saveAudio: false,
+		examplesDatabaseName: "SGC3 examples",
 		audioDatabaseName: "SGC3 audio",
 		currentCollection: "SGC3",
 		selectedLessons: [],
@@ -346,8 +347,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// update display
 		write_CurrentString ();
+		examplesDatabaseName = sgc3_settings.examplesDatabaseName;
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
-		
+
 		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){performanceRecord = objectList2performanceRecord(list);});
 	};
 	
@@ -570,15 +572,29 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	};
 	
 	example.onclick = function() {
+		if(! sgc3_settings.synthesis_eSpeak) {
+			getAndPlayExample (sgc3_settings.wordList, currentPinyin, playBlob, generateExample);
+		} else {
+			meSpeakExample (currentPinyin);
+		};
+	};
+	
+	function playBlob (blob) {
+		var exampleElement = document.getElementById('ExampleAudio');
+		exampleElement.src = URL.createObjectURL(blob);
+		exampleElement.play();
+	};
+	
+	function generateExample () {
 		var voice = getTTSvoice();
-		if (exampleURL && exampleURL != "-" && ! sgc3_settings.synthesis_eSpeak) {
+		if (exampleURL && exampleURL != "-") {
 			exampleElement.src = exampleURL;
 			exampleElement.onerror = function (event) {
 			    currentText = currentWordlist[currentWord][2];
 			    speakExample (voice, currentText, currentPinyin)
 			};
 			exampleElement.play();
-		} else if (voiceZH_CN >= 0 && ! sgc3_settings.synthesis_eSpeak) {
+		} else if (voiceZH_CN >= 0) {
 		    currentText = currentWordlist[currentWord][2];
 		    speakExample (voice, currentText, currentPinyin)
 		} else {

@@ -213,6 +213,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		displayChar: true,
 		displayTrans: true,
 		saveAudio: false,
+		examplesDatabaseName: "SGC3 examples",
 		audioDatabaseName: "SGC3 audio",
 		currentCollection: "SGC3",
 		selectedLessons: [],
@@ -258,6 +259,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			deleteWordlistButton.style.color = "black";
 			deleteWordlistButton.disabled = false;
 		};
+		examplesDatabaseName = sgc3_settings.examplesDatabaseName;
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 		add_collections_names_to_select ();
 	};
@@ -366,9 +368,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	function openWordlist (files) {
 		var wordlistFile;
 		for (var i=0; i < files.length; ++i) {
-			if (files[i].name.match(/\.(tsv|Table|csv)$/i)) {
+			if (files[i].name.match(/\.(tsv|Table|csv|sgc)$/i)) {
 				wordlistFile = files[i];
-				readWordlist (wordlistFile);
+				if (wordlistFile.name.match(/\.sgc$/ig)) {
+					importExamples (wordlistFile);
+				} else {
+					readWordlist (wordlistFile);
+				};
 			};
 		};
 	};
@@ -385,6 +391,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 					canBeDeleted = true;
 				};
 			};
+			
+			// Remove example audio
+			removeExamples (sgc3_settings.wordList, function () {});
+			
 			// rebuild wordlist;
 			wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 			wordlistNumber = (wordlistNumber < wordlists.length) ? wordlistNumber : 0;
@@ -392,7 +402,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			localStorage.sgc3_currentWord = JSON.stringify(0);
 			store_SGC3_settings ();
 			load_SGC3_settings ();
-			// Remove last recording
 		};
 	};
 	
@@ -619,7 +628,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	
 	// Import audio
 	function importAudio (files) {
-
+		
 		var zipReader = new FileReader();
 		zipReader.onload = function(){
 			var zip = new JSZip();
@@ -638,9 +647,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// Ask whether to override the collection of the import.
 		var collectionName = defaultCollection;
+		/*
+		 * This is not accepted here anymore. But moving it out of this microtask is a problem.
 		var promptText = config_tables[sgc3_settings.language]["NewCollection"][1];
 		var newCollectionName = prompt(promptText, defaultCollection);
 		if (newCollectionName && newCollectionName.length > 0 && newCollectionName != defaultCollection) collectionName = newCollectionName;
+		*/
 		// Set new current collection
 		sgc3_settings.currentCollection = collectionName;
 		localStorage.sgc3_currentCollection = JSON.stringify(sgc3_settings.currentCollection);
@@ -666,6 +678,52 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 					var blob = new Blob([data], {type : type});
 					addAudioBlob(collection, map, name, blob);
 				}, function(event){console.log("Error", event)});
+			};
+		});
+
+	};
+	
+	// Import examples
+	function importExamples (file) {
+
+		var zipReader = new FileReader();
+		zipReader.onload = function(){
+			var zip = new JSZip();
+			zip.loadAsync(zipReader.result).then(unZipExamples);
+		};
+		zipReader.onerror = function(err) {
+			console.log("Open zip file",err);
+		};
+		zipReader.readAsArrayBuffer(file);
+	};
+	
+	var unZipExamples = function (zip) {
+		var fileList = zip.folder("\/$").files;
+		var collectionName = Object.getOwnPropertyNames(fileList).find(function(name){return name.match(/^[^\/]+\/$/g)});
+		collectionName = collectionName.replace(/\/$/g, "");
+		
+		zip.forEach(function (relativePath, file){
+			if(!relativePath.match(/\/\./ig) && relativePath.match(/\.(wav|flac|mp3|spx|ogg|tsv|csv|txt|Table)$/ig)) {
+				var wordlist = collectionName;
+				var map = "";
+				var name = "Audio.wav";
+				var path = relativePath.split("/");
+				name = path[path.length - 1];
+				wordlist = path[path.length - 2];
+				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
+				zip.file(relativePath).async("arraybuffer").then(function (data) {	
+					var blob = new Blob([data], {type : type});
+					var itemName = name.replace(/\.(wav|flac|mp3|spx|ogg)$/ig, "");
+					itemName = add_missing_neutral_tones (itemName)
+					addExamplesBlob(wordlist, itemName, blob);
+					// Read wordlist
+					if(name.match(/^wordlist\.(tsv|csv|txt|Table)$/ig)) {
+						wordlistURL = URL.createObjectURL(blob);
+						// Set wordlistname
+						readWordlist (wordlistURL, wordlist+(name.match(/\.[^\.]+$/g)[0]));
+					};
+				}, function(event){console.log("Error", event)});
+				
 			};
 		});
 
