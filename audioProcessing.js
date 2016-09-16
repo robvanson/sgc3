@@ -849,7 +849,6 @@ function getAndPlayExample (wordlist, name, playBlob, otherPlay) {
 		
 		// Data not found
 		request.onerror = function(event) {
-			console.log(otherPlay);
 			if(otherPlay) otherPlay();
 			console.log("Unable to retrieve data: "+map+"/"+name+" cannot be found");
 		};
@@ -861,7 +860,7 @@ function getAndPlayExample (wordlist, name, playBlob, otherPlay) {
 	request.onupgradeneeded = function(event) {
 		var db = this.result;
 		// Create an objectStore to hold audio blobs.
-		initializeObjectStore (db, collection);
+		initializeObjectStore (db, "Worklists");
 	};
 };
 
