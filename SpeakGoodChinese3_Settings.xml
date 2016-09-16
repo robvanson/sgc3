@@ -391,6 +391,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 					canBeDeleted = true;
 				};
 			};
+			
+			// Remove example audio
+			removeExamples (sgc3_settings.wordList, function () {});
+			
 			// rebuild wordlist;
 			wordlists = combineWordlistLists(global_wordlists, sgc3_settings.personalWordlists);
 			wordlistNumber = (wordlistNumber < wordlists.length) ? wordlistNumber : 0;
@@ -398,7 +402,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 			localStorage.sgc3_currentWord = JSON.stringify(0);
 			store_SGC3_settings ();
 			load_SGC3_settings ();
-			// Remove last recording
 		};
 	};
 	

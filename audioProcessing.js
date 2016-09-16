@@ -1059,14 +1059,15 @@ function initializeDataStorage (collection) {
 
 // Remove a collection
 function removeCollection (collection, complete) {
-	removeSubsetInDB (audioDatabaseName, collection, complete);
+	removeSubsetInDB (audioDatabaseName, collection, false, complete);
 };
 
+// Remove a wordlist
 function removeExamples (wordlistName, complete) {
-	removeSubsetInDB (audioDatabaseName, wordlistName, complete);
+	removeSubsetInDB (examplesDatabaseName, false, wordlistName, complete);
 };
 
-function removeSubsetInDB (databaseName, collection, complete) {
+function removeSubsetInDB (databaseName, collection, map, complete) {
 	var db;
 	var request = indexedDB.open(databaseName, indexedDBversion);
 	request.onerror = function(event) {
@@ -1075,11 +1076,16 @@ function removeSubsetInDB (databaseName, collection, complete) {
 	request.onsuccess = function(event) {
 		db = this.result;
 		var objectStore = db.transaction("Recordings", "readwrite").objectStore("Recordings");
-		var index = objectStore.index("collection");
+		var index = collection ? objectStore.index("collection") : objectStore.index("map");
 		index.openCursor().onsuccess = function(event) {
 		  var cursor = event.target.result;
 		  if (cursor) {
-			if (!collection || cursor.value.collection == collection) {
+			  var deleteCursor = false;
+			  deleteCursor = deleteCursor || !(collection || map);
+			  deleteCursor = deleteCursor || (!map && (collection && cursor.value.collection == collection));
+			  deleteCursor = deleteCursor || (!collection && (map && cursor.value.map == map));
+			  deleteCursor = deleteCursor || ((collection && cursor.value.collection == collection) && (map && cursor.value.map == map));
+			if (deleteCursor) {
 				var value = cursor.value;
 		        var request = cursor.delete();
 		        request.onsuccess = function() {
