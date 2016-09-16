@@ -824,7 +824,7 @@ function getCurrentAudioWindow (collection, map, name) {
 	};
 };
 
-function getAndPlayExample (wordlist, name) {
+function getAndPlayExample (wordlist, name, playBlob, otherPlay) {
 	var request = indexedDB.open(examplesDatabaseName, indexedDBversion);
 	request.onerror = function(event) {
 	  alert("Use of IndexedDB not allowed");
@@ -840,15 +840,17 @@ function getAndPlayExample (wordlist, name) {
 			var record = this.result;
 			if(record) {
 				if(record.audio){
-					// processAudio is resolved asynchronously, reset retrievedData when it is finished
-					retrievedData = true;
-					processAudio (record.audio);
+					// playBlob is run asychronously
+					playBlob(record.audio);
 				};
 			};
+			if((!record || !record.audio) && otherPlay) otherPlay();
 		};
 		
 		// Data not found
 		request.onerror = function(event) {
+			console.log(otherPlay);
+			if(otherPlay) otherPlay();
 			console.log("Unable to retrieve data: "+map+"/"+name+" cannot be found");
 		};
 		
