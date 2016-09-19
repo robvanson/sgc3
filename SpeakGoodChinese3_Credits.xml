@@ -36,6 +36,7 @@ pre {
 	margin-right: 20%;
 	}
 </style>
+<script type="text/javascript" src="audioProcessing.js" ></script>  
 </head>
 <body>
 <h1 style='text-align: center'>
@@ -89,7 +90,66 @@ GNU General Public License for more details.
  
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses</a>.
-</pre>   
+</pre> 
 <div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: 166d622ab1 Fri Sep 16 22:45:59 2016</div> 
+<script type="text/javascript" src="audioProcessing.js" >	// Global settings
+	var sgc3_settings = {
+		settingsRead: false,
+		recSecs: 3,
+		ttsSpeed: 110,
+		ttsVariant: "f3",
+		shuffleLists: true,
+		register: 249, // Must match Register_249 Id
+		wordList: "20 basic tone combinations",
+		language: "",
+		synthesis_eSpeak: false,
+		strict: 1,
+		personalWordlists: [],
+		displayNumbers: false,
+		displayPinyin: true,
+		displayChar: true,
+		displayTrans: true,
+		saveAudio: false,
+		examplesDatabaseName: "SGC3 examples",
+		audioDatabaseName: "SGC3 audio",
+		currentCollection: "SGC3",
+		selectedLessons: [],
+		selectedTones: [],
+		deselectedWords: []
+	};
+	
+	// Store settings
+	function store_SGC3_settings () {
+		for (x in sgc3_settings) {
+			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
+		};
+	};
+	
+	// Factory Reset
+	function factoryReset () {
+		store_SGC3_settings ();
+		deleteDatabase (sgc3_settings.examplesDatabaseName);
+		deleteDatabase (sgc3_settings.audioDatabaseName);
+	};
+	
+	function factoryResetClick () {
+		var reset=document.getElementById('FactoryResetButton'); 
+		reset.hidden=reset.disabled=true;
+		var definite=document.getElementById('DefiniteFactoryResetButton'); 
+		definite.hidden=definite.disabled=false;
+		
+	};
+	function definiteResetClick () {
+		var reset=document.getElementById('FactoryResetButton'); 
+		reset.hidden=reset.disabled=false;
+		var definite=document.getElementById('DefiniteFactoryResetButton'); 
+		definite.hidden=definite.disabled=true;
+		
+	};
+</script>
+<div style="text-align: center">
+	<button type="button" style="color: black" onclick="factoryResetClick ();" id="FactoryResetButton" ><span id="FactoryReset" >Factory Reset</span></button>
+	<button type="button" style="color: red" onclick="" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >SKULL and Bones</button>
+</div>
 </body>
 </html>
