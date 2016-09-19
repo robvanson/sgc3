@@ -92,7 +92,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses</a>.
 </pre> 
 <div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: 166d622ab1 Fri Sep 16 22:45:59 2016</div> 
-<script type="text/javascript" src="audioProcessing.js" >	// Global settings
+<div style="text-align: center">
+	<p >&nbsp;</p>
+	<button type="button" style="color: black; height: 15%; width: 15%; font-size: 3vmin; text-align: center;" id="FactoryResetButton" ><span id="FactoryReset" style="text-align: center" >Factory Reset</span></button>
+	<button type="button" style="color: black; background-color: red; height: 15%; width: 15%; font-size: 3vmin; text-align: center;" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >SKULL and Bones</button>
+</div>
+<script type="text/javascript" >	// Global settings
 	var sgc3_settings = {
 		settingsRead: false,
 		recSecs: 3,
@@ -133,10 +138,6 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 	};
 	
 	function factoryResetClick () {
-		var reset=document.getElementById('FactoryResetButton'); 
-		reset.hidden=reset.disabled=true;
-		var definite=document.getElementById('DefiniteFactoryResetButton'); 
-		definite.hidden=definite.disabled=false;
 		
 	};
 	function definiteResetClick () {
@@ -146,10 +147,20 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 		definite.hidden=definite.disabled=true;
 		
 	};
+
+	var factoryResetButton = document.getElementById('FactoryResetButton');
+	var definiteResetButton = document.getElementById('DefiniteFactoryResetButton');
+
+	factoryResetButton.onclick = function () {
+		this.hidden=this.disabled=true;
+		definiteResetButton.hidden=definiteResetButton.disabled=false;
+	};
+	definiteResetButton.onclick = function () {
+		this.hidden=this.disabled=true;
+		factoryResetButton.hidden=factoryResetButton.disabled=false;
+	};
+
 </script>
-<div style="text-align: center">
-	<button type="button" style="color: black" onclick="factoryResetClick ();" id="FactoryResetButton" ><span id="FactoryReset" >Factory Reset</span></button>
-	<button type="button" style="color: red" onclick="" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >SKULL and Bones</button>
-</div>
+
 </body>
 </html>
