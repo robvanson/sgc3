@@ -36,6 +36,7 @@ pre {
 	margin-right: 20%;
 	}
 </style>
+<script type="text/javascript" src="internationalization_tables.js" ></script>   
 <script type="text/javascript" src="audioProcessing.js" ></script>  
 </head>
 <body onload="factoryResetButton.hidden=false; factoryResetButton.disabled=false;">
@@ -94,7 +95,7 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 <div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: 166d622ab1 Fri Sep 16 22:45:59 2016</div> 
 <div style="text-align: center">
 	<p >&#160;</p>
-	<button type="button" style="color: black; height: 10%; width: 10%; font-size: 3vmin; text-align: center;" id="FactoryResetButton" hidden="true" disabled="true" ><span id="FactoryReset" style="text-align: center" >Factory Reset</span></button>
+	<button type="button" style="color: black; height: 10%; width: 10%; font-size: 2vmin; text-align: center; text-overflow: clip;" id="FactoryResetButton" hidden="true" disabled="true" ><span id="FactoryReset" style="text-align: center" >Factory Reset</span></button>
 	<button type="button" style="color: black; background-color: red; height: 10%; width: 10%; font-size: 5vmin; text-align: center;" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >&#9760;</button>
 </div>
 <script type="text/javascript" >	// Global settings
@@ -161,6 +162,7 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 		factoryResetButton.hidden=factoryResetButton.disabled=false;
 	};
 
+	set_configLanguage (JSON.parse(localStorage.sgc3_language));
 </script>
 
 </body>
