@@ -814,6 +814,7 @@ function processRecordedSound () {
 		document.getElementById("FeedbackString").textContent = recognition.Feedback;
 		var feedbackOK = recognition.Label == "Correct" && recognition.Register == "OK" && recognition.Range == "OK";
 		document.getElementById("FeedbackString").style.color = feedbackOK ? "green" : "red";
+		document.getElementById("FeedbackString").style.fontSize = recognition.Feedback.length > 100 ? "3vmin" : (recognition.Feedback.length > 70 ? "3.5vmin" : "4vmin");
 
 		// Write out grade
 		if(performanceRecord && performanceRecord [currentLesson] && performanceRecord [currentLesson][currentPinyin].Grade >=0) {

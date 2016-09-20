@@ -102,10 +102,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
 	<div id="DisplayText" title="" >
-	<div style="color: black; position: fixed; top: 60%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
+	<div style="color: black; position: fixed; top: 60%; left: 10%; width: 70%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span></div>
-	<div style="color: green; position: fixed; top: 68%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
-	<div style="color: green; position: fixed; top: 73%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
+	<div style="color: green; position: fixed; top: 68%; left: 20%; width: 60%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
+	<div style="color: green; position: fixed; top: 73%; left: 20%; width: 60%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
 	</div>
 	
 	
@@ -475,9 +475,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		document.getElementById('Translation').style.fontSize = "6vmin";
 		if (document.getElementById('Translation').textContent.length > 50) {
-			document.getElementById('Translation').style.fontSize = "4vmin";
+			document.getElementById('Translation').style.fontSize = "3.5vmin";
 		} else if (document.getElementById('Translation').textContent.length > 30) {
-			document.getElementById('Translation').style.fontSize = "5vmin";
+			document.getElementById('Translation').style.fontSize = "4.5vmin";
 		};
 		
 		document.getElementById("ResultString").textContent = "";
