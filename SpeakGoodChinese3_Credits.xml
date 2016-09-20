@@ -96,7 +96,8 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 <div style="text-align: center">
 	<p >&#160;</p>
 	<button type="button" style="color: black; height: 10%; width: 10%; font-size: 2vmin; text-align: center; text-overflow: clip;" id="FactoryResetButton" hidden="true" disabled="true" ><span id="FactoryReset" style="text-align: center" >Factory Reset</span></button>
-	<button type="button" style="color: black; background-color: red; height: 10%; width: 10%; font-size: 5vmin; text-align: center;" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >&#9760;</button>
+	<button type="button" style="color: black; background-color: red; height: 10%; width: 10%; font-size: 5vmin; text-align: center;" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >&#9760;</button><br />
+	<span id="DeleteWordlistConfirm" style="font-size: 3vmin; text-align: center" hidden="true" >Are you sure?</span>
 </div>
 <script type="text/javascript" >	// Global settings
 	var sgc3_settings = {
@@ -126,6 +127,11 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 	
 	// Store settings
 	function store_SGC3_settings () {
+		// Reset the language
+		if (!sgc3_settings.language) {
+			sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+		};
+		
 		for (x in sgc3_settings) {
 			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
 		};
@@ -136,6 +142,7 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 		store_SGC3_settings ();
 		deleteDatabase (sgc3_settings.examplesDatabaseName);
 		deleteDatabase (sgc3_settings.audioDatabaseName);
+		localStorage.removeItem("sgc3_reload");
 	};
 	
 	function factoryResetClick () {
@@ -151,15 +158,19 @@ along with this program.  If not, see <a href="http://www.gnu.org/licenses/">htt
 
 	var factoryResetButton = document.getElementById('FactoryResetButton');
 	var definiteResetButton = document.getElementById('DefiniteFactoryResetButton');
+	var warningText = document.getElementById('DeleteWordlistConfirm');
 
 	factoryResetButton.onclick = function () {
 		this.hidden=this.disabled=true;
 		definiteResetButton.hidden=definiteResetButton.disabled=false;
+		warningText.hidden=false;
 	};
 	definiteResetButton.onclick = function () {
 		factoryReset ();
 		this.hidden=this.disabled=true;
 		factoryResetButton.hidden=factoryResetButton.disabled=false;
+		warningText.hidden=true;
+		set_configLanguage (JSON.parse(localStorage.sgc3_language));
 	};
 
 	set_configLanguage (JSON.parse(localStorage.sgc3_language));

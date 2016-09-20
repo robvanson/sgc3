@@ -351,6 +351,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 
 		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){performanceRecord = objectList2performanceRecord(list);});
+		
+		// Reset the language
+		if (!sgc3_settings.language) {
+			sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+		};
+		set_mainpageLanguage (sgc3_settings.language);
 	};
 	
 	// Initialize to stored settings

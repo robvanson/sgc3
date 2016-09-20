@@ -53,7 +53,7 @@ button {
 <script type="text/javascript" src="toneprot.js" ></script>   
 <script type="text/javascript" src="jszip.min.js" defer="true" ></script> 
 </head>
-<body onfocus="load_SGC3_settings (); " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('sgc3_settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
+<body onfocus="if(localStorage.sgc3_reload == '1'){location.reload();}else{load_SGC3_settings ()}; " onblur="store_SGC3_settings ();" onunload="store_SGC3_settings (); localStorage.removeItem('sgc3_settingsWindow'); if(creditsWindow)creditsWindow.close(); " >
 <!--
 SpeakGoodChinese 3
 Copyright (C) 2016 R.J.J.H. van Son (r.j.j.h.vanson@gmail.com)
@@ -196,6 +196,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	var currentWordlistName = document.getElementById('CurrentWordlist');
 	
 	// Global settings
+	localStorage.removeItem("sgc3_reload");
 	var sgc3_settings = {
 		settingsRead: false,
 		recSecs: 3,
@@ -262,6 +263,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		examplesDatabaseName = sgc3_settings.examplesDatabaseName;
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 		add_collections_names_to_select ();
+		
+		// Reset the language
+		if (!sgc3_settings.language) {
+			sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+		};
 	};
 	
 	// Initialize to stored settings
