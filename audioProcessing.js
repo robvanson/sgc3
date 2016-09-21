@@ -990,6 +990,7 @@ function addFileBlob(databaseName, collection, map, name, blob) {
 		objectStore.transaction.oncomplete = function(event) {
 			// Store values in the newly created objectStore.
 			var date = new Date().toLocaleString();
+			if (!(name && collection)) return;
 			var customerObjectStore = db.transaction(["Recordings"], "readwrite").objectStore("Recordings");
 			
 			var request2 = customerObjectStore.add({ collection: collection, map: map, name: name, date: date, audio: blob }, collection+"/"+map+"/"+name);

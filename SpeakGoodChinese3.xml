@@ -77,8 +77,8 @@ GNU General Public License for more details.
 You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-	<menu type="context" id="mymenu" >
-		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
+	<menu type="context" id="mymenu" hidden='true' >
+		<menu type="context" id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
 			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
 			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="2" ></menuitem>
 			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="3" ></menuitem>
@@ -94,7 +94,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	<div style="color: rgb(220,220,220); position: fixed; bottom: 36%; right: 2%; width: 17%; height: 5%; font-size: 3vmin; text-align: center; text-overflow: clip; vertical-align: bottom; " id="CollectionString" align="center"></div>
  	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 2%; height: 14%; width: 17%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" contextmenu="mymenu" ><a href="javascript:gradePrompt()" id='GradePrompt' style="color: inherit; text-decoration:none; " >&#9679; <br/>
- 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></a></div>
+ 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></a>
+ 	</div>
  	
  		
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 15vmin" id="RecordingLight">&#9679;</div>
