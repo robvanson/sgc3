@@ -21,6 +21,12 @@ h1 {
 h2 {
 	text-align: center;
 	}
+h4 {
+	text-align: left; 
+	margin-left: 20%; 
+	margin-right: 20%;
+	margin-bottom: 0em;
+	}
 p {
 	text-align: left; 
 	margin-left: 20%; 
@@ -39,7 +45,7 @@ pre {
 <p>To load, or read, a new word list go to the Settings page and click on 
 the Open List button. You can then select the file that contains the 
 word list. It will automatically open and be stored in your local word 
-list directory.</p>
+list map.</p>
 
 <h2 align="center">Very simple word lists</h2>
 
@@ -48,7 +54,8 @@ text file (.txt, or DOS file). The file should have the name of the
 word list and the extention should be .txt. Each line should countain a 
 single pinyin word.</p>
 
-<p style="font-family:'Lucida Console', monospace">Example: SGC2example1.txt<br />
+<h4>Example: <em>SGC2example1.txt</em></h4>
+<p style="font-family:'Lucida Console', monospace; margin-top: 0.5em;">
 chi1<br />
 ta1<br />
 jin1tian1<br />
@@ -67,10 +74,11 @@ with the .txt extention. Each line should start with a pinyin word.
 Next, follow the pinyin by a tab or ';' character and the characters 
 that correspond to the pinyin, again a tab or ';' character and the 
 translation in free text. Translations can be in any language. For 
-instance, 吃 can be entered as to eat, कालो, 食べる, ჭამა or any other 
-transcription in UTF8.</p>
+instance, 吃 can be entered as <em>to eat</em>, कालो, 食べる, ჭამა or any other 
+transcription in <a href="https://en.wikipedia.org/wiki/UTF-8">UTF8</a>.</p>
 
-<p style="font-family:'Lucida Console', monospace">Example: SGC2example2.txt<br />
+<h4>Example: <em>SGC2example2.txt</em></h4>
+<p style="font-family:'Lucida Console', monospace; margin-top: 0.5em;">
 chi1;吃;to eat<br />
 ta1;他;he, she, it<br />
 jin1tian1;今天;today<br />
@@ -81,10 +89,10 @@ duo1shao3;多少;how many<br />
 zhi3you3;只有;only<br />
 </p>
 
-<p>Audio files can be added in the same manner. Just add an item with the 
-extention of an audio file to the line (between tabs or ';' 
-characters). For instance, chi1.mp3 will be interpreted as an audio 
-example.</p>
+<p>Audio files can be added in the same manner. Just add an URL to an 
+audio file to the line (between tabs or ';' characters). For instance, 
+<em>http://speakgoodchinese.org/articles/chi1.mp3</em> will be used as 
+an audio example.</p>
 
 <p>These simple word lists do not contain information about the order and 
 nature of the items. There can be errors in distinguishing characters, 
@@ -103,7 +111,8 @@ starts with a header line which contains the column headers Pinyin,
 Character, Sound, Translation. Then the column values are written on a 
 line with tabs separating them.</p>
 
-<p style="font-family:'Lucida Console', monospace">Example: SGC2example3.tsv<br />
+<h4>Example: <em>SGC2example3.tsv</em></h4>
+<p style="font-family:'Lucida Console', monospace; margin-top: 0.5em;">
 Pinyin	Character	Sound	Translation<br />
 chi1	吃	-	to eat<br />
 ta1	他	-	he, she, it<br />
@@ -117,11 +126,13 @@ zhi3you3	只有	-	only<br />
 
 <h2 align="center">Word lists with associated audio files</h2>
 
-<p>These word list distributions are simple flat ZIP files with the name 
-&lt;list name&gt;.sgc. They contain a list of all the words in pinyin with 
-the name wordlist.txt or wordlist.Table as is discussed above. Except 
-that the name of the word list file should be either wordlist.txt or 
-wordlist.Table. Other names are not allowed. The sound files should be 
+<p>Wordlists can be combined with audio examples in zip archives with
+an <em>.sgc</em> extension. These word list distributions are simple 
+flat ZIP files with the name &lt;list name&gt;.sgc. They contain a 
+list of all the words in pinyin with the name <em>wordlist.txt</em> or 
+<em>wordlist.Table</em> as is discussed above. Except 
+that the name of the word list file should be either <em>wordlist.txt</em> or 
+<em>wordlist.Table</em>. Other names are not allowed. The sound files should be 
 named &lt;pinyin word&gt;.ext, where &lt;pinyin word&gt; is the pinyin 
 transcription, eg, sheng1zi4, and ext the sound extension type (eg, 
 wav). Note that SpeakGoodChinese uses Praat to process the sound files. 
@@ -158,7 +169,8 @@ for each line. The words are sorted and displayed with lesson numbers
 in the word selection window. The student can select the lessons to 
 study when starting.</p>
 
-<p style="font-family:'Lucida Console', monospace">Example: SGC2example4.tsv<br />
+<h4>Example: <em>SGC2example4.tsv</em></h4>
+<p style="font-family:'Lucida Console', monospace; margin-top: 0.5em;">
 Pinyin	Character	Sound	Translation	Lesson<br />
 chi1	吃	-	to eat	1<br />
 ta1	他	-	he, she, it	1<br />
@@ -171,7 +183,7 @@ zhi3you3	只有	-	only	2<br />
 </p>
 
 <p>The entries in the Lesson column do not have to be numbers. Any string 
-is allowed, Lesson 2, पाठ 2, レッスン2 and 第二课 are all valid lesson labels.</p>
+is allowed, <em>Lesson 2</em>, पाठ 2, レッスン2 and 第二课 are all valid lesson labels.</p>
 
 </body>
 </html>
