@@ -180,6 +180,67 @@ function numbersToTonemarks (pinyin) {
 	return intermediatePinyin;
 };
 
+// Convert unicode Pinyin into tone numbers
+function tonemarksToNumbers (pinyin) {
+	intermediatePinyin = pinyin;
+	// Convert all special characters to numbers
+	// Tone 1
+	intermediatePinyin = intermediatePinyin.replace(/(ā)([iaeouü]*)/ig, "a$11$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ē)([iaeouü]*)/ig, "e$11$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ū)([iaeouü]*)/ig, "u$11$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ī)([iaeouü]*)/ig, "i$11$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ō)([iaeouü]*)/ig, "o$11$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǖ)([iaeouü]*)/ig, "v$11$2");
+	
+	// Tone 2;
+	intermediatePinyin = intermediatePinyin.replace(/(á)([iaeouü]*)/ig, "a$12$2");
+	intermediatePinyin = intermediatePinyin.replace(/(é)([iaeouü]*)/ig, "e$12$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ú)([iaeouü]*)/ig, "u$12$2");
+	intermediatePinyin = intermediatePinyin.replace(/(í)([iaeouü]*)/ig, "i$12$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ó)([iaeouü]*)/ig, "o$12$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǘ)([iaeouü]*)/ig, "v$12$2");
+	
+	// Tone 3
+	intermediatePinyin = intermediatePinyin.replace(/(ǎ)([iaeouü]*)/ig, "a$13$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ě)([iaeouü]*)/ig, "e$13$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǔ)([iaeouü]*)/ig, "u$13$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǐ)([iaeouü]*)/ig, "i$13$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǒ)([iaeouü]*)/ig, "o$13$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǚ)([iaeouü]*)/ig, "v$13$2");
+
+	// Tone 4
+	intermediatePinyin = intermediatePinyin.replace(/(à)([iaeouü]*)/ig, "a$14$2");
+	intermediatePinyin = intermediatePinyin.replace(/(è)([iaeouü]*)/ig, "e$14$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ù)([iaeouü]*)/ig, "u$14$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ì)([iaeouü]*)/ig, "i$14$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ò)([iaeouü]*)/ig, "o$14$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ǜ)([iaeouü]*)/ig, "v$14$2");
+	
+	// Tone 0
+	// Add tone 0
+	intermediatePinyin = intermediatePinyin.replace(/(å)([iaeouü]*)/ig, "a$10$2");
+	intermediatePinyin = intermediatePinyin.replace(/"e̊([iaeouü]*)/ig, "e$10$2");
+	intermediatePinyin = intermediatePinyin.replace(/(ů)([iaeouü]*)/ig, "u$10$2");
+	intermediatePinyin = intermediatePinyin.replace(/"i̊([iaeouü]*)/ig, "i$10$2");
+	intermediatePinyin = intermediatePinyin.replace(/"o̊([iaeouü]*)/ig, "o$10$2");
+	intermediatePinyin = intermediatePinyin.replace(/"ü̊([iaeouü]*)/ig, "v$10$2");
+
+	// Syllables without a tone symbol are tone 0;
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov]+)([^0-9aeuiov]|\W|$)/g, "$10$2");
+
+	// Move numbers to the end of the syllable.
+	// Syllables ending in n and start with g. Note that a syllable cannot start with an u or i
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([0-9])(n)(g[aeuiov])/ig, "$1$3$2$4");
+	// Syllables ending in (ng?) followed by something that is not a valid vowel 
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([0-9])(ng?)([^aeuiov]|$W|$)/ig, "$1$3$2$4");
+	// Syllables ending in r
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([0-9])(r)([^aeuiov]|$W|$)/ig, "$1$3$2$4");
+	// Remove quotes etc
+	//intermediatePinyin = intermediatePinyin.replace("[\\'\\`]", "", 0)
+	
+	return intermediatePinyin;
+};
+
 // file can be a local file or an url
 function processWordlist (file, allText, delimiter, optionalName=false) {
 	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Part", "Sound"];

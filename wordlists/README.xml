@@ -169,6 +169,11 @@ target wordlist directory for inclusion.</p>
 
 <h2 align="center">Word selection and Lessons</h2>
 
+<p>The words for a course can be listed in a single word list where the words
+are assigned to numbered or named <em>Part</em>s or <em>Lesson</em>s. The 
+wordlist table can contain a collumn with the label <em>Part</em> or <em>Lesson</em> 
+and a lesson number or name for each line. 
+</p>
 <p>Students can select the words to practise on the Main page. In the 
 <em>Word List</em> menu on the right, select the <em>Words</em> choice 
 (above the <em>Word List</em> entry). This will open a new tab with the
