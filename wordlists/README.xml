@@ -167,6 +167,24 @@ grades 1-10).</p>
 Select those recordings you consider good enough as examples and copy them to the 
 target wordlist directory for inclusion.</p>
 
+
+<h2 align="center">Word lists with "real" Pinyin</h2>
+
+<p>It is often inconvennient to compile lists using a number scheme for 
+pinyin. SGC3 will recognize standard UTF8 pinyin. But we do advice to 
+use the numbered tone scheme as this is much less prone to errors.</p>
+
+<h4>Example: <em>SGC2example4.tsv</em></h4>
+<p style="font-family:'Lucida Console', monospace; margin-top: 0.5em;">
+Pinyin	Character	Sound	Translation	Lesson<br />
+chī	吃	-	to eat	1<br />
+zhǐ​yǒu	只有	-	only	2<br />
+</p>
+
+<p>In this type of pinyin, the syllable boundaries can be 
+ambiguous, as in the combination <em>nán​gōng</em> or <em>xīngān</em>. To prevent 
+errors in SGC3, place a '-quote at the boundary, e.g., "Xīng'ān".</p>
+
 <h2 align="center">Word selection and Lessons</h2>
 
 <p>The words for a course can be listed in a single word list where the words
@@ -183,7 +201,7 @@ to practice in the menu on the left. If the word list has <em>Part</em>s,
 named or numbered lessons, you can select them in the menu next to that.
 </p>
 
-<h4>Example: <em>SGC2example4.tsv</em></h4>
+<h4>Example: <em>SGC2example5.tsv</em></h4>
 <p style="font-family:'Lucida Console', monospace; margin-top: 0.5em;">
 Pinyin	Character	Sound	Translation	Lesson<br />
 chi1	吃	-	to eat	1<br />
