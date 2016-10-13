@@ -651,6 +651,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		var defaultCollection = Object.getOwnPropertyNames(fileList).find(function(name){return name.match(/^[^\/]+\/$/g)});
 		defaultCollection = defaultCollection.replace(/\/$/g, "");
 		
+		
 		// Ask whether to override the collection of the import.
 		var collectionName = defaultCollection;
 		/*
@@ -676,7 +677,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				} else if (path.length == 2) {
 					origCollection = path[path.length - 2];
 				};
-				// Change the name of hte TSV file
+				// Change the name of the TSV file
 				if (origCollection != collection && name == origCollection+".tsv") name = collection+".tsv";
 				
 				var type = mimeTypes[name.match(/[^\.]+$/g)[0]];
