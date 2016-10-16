@@ -654,12 +654,36 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		// Ask whether to override the collection of the import.
 		var collectionName = defaultCollection;
+		
+		/* Check whether collection name already "exists", ie, is in the list */
+		var selector = document.getElementById('AudioName');
+		// Note: The selector option list might not have been updated with the currentCollection yet!
+		var collectionList = [sgc3_settings.currentCollection];
+		if(selector && selector.options) {
+			var numOptions = selector.options.length;
+			for(var i=0; i < numOptions; ++i) {
+				collectionList.push(selector.options[i].text);
+			};
+		};
+		while (collectionList.indexOf(collectionName) >= 0) {
+			var num;
+			if(collectionName.match(/\[\d+\]$/)) {
+				num = collectionName.match(/\[\d+\]$/)[0];
+				num = num.replace(/[^0-9]/ig, "");
+				++num;
+				collectionName = collectionName.replace(/ \[([0-9]+)\]$/g, " ["+num+"]");
+			} else {
+				collectionName += " [1]";
+			};
+		};
+		
 		/*
 		 * This is not accepted here anymore. But moving it out of this microtask is a problem.
 		var promptText = config_tables[sgc3_settings.language]["NewCollection"][1];
 		var newCollectionName = prompt(promptText, defaultCollection);
 		if (newCollectionName && newCollectionName.length > 0 && newCollectionName != defaultCollection) collectionName = newCollectionName;
 		*/
+		
 		// Set new current collection
 		sgc3_settings.currentCollection = collectionName;
 		localStorage.sgc3_currentCollection = JSON.stringify(sgc3_settings.currentCollection);
