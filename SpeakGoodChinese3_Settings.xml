@@ -711,7 +711,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 				}, function(event){console.log("Error", event)});
 			};
 		});
-
+		
+		// Update selection list
+		add_collections_names_to_select ();
 	};
 	
 	// Import examples
