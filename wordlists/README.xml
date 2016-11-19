@@ -4,6 +4,8 @@
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <head>
+<link rel="shortcut icon" href="../sgc.png" />
+<link rel="icon" sizes="192x192" href="../sgc.png" />
 <meta name="viewport" content="width=device-width" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta http-equiv="Content-Language" content="en" />
@@ -91,7 +93,7 @@ zhi3you3;只有;only<br />
 
 <p>Audio files can be added in the same manner. Just add an URL to an 
 audio file to the line (between tabs or ';' characters). For instance, 
-<em>http://speakgoodchinese.org/articles/chi1.mp3</em> will be used as 
+<em>http://speakgoodchinese.org/articles/chi1.mp3</em> can be entered as 
 an audio example.</p>
 
 <p>These simple word lists do not contain information about the order and 
@@ -131,12 +133,12 @@ an <em>.sgc</em> extension. These word list distributions are simple
 flat ZIP files with the name &lt;list name&gt;.sgc. They contain maps named
 after the wordlist and a list of all the words in pinyin. This list <em>must</em> 
 have the name <em>wordlist.txt</em> or <em>wordlist.Table</em>. 
-Other names are not allowed. The audio files should be named &lt;pinyin word&gt;.ext, 
+Other names are not allowed. The audio files should be named &lt;pinyin word&gt;.&lt;ext&gt;, 
 where &lt;pinyin word&gt; is the pinyin transcription, eg, <em>sheng1zi4</em>, 
-and ext the sound extension type (eg, <em>wav</em>). Note that SpeakGoodChinese 
+and &lt;ext&gt; the sound extension type (eg, <em>wav</em>). Note that SpeakGoodChinese 
 uses the web browser to process the audio files. So only those audio files 
 recognized by the web browser can be used. Most web browsers seem to recognize 
-WAV (<em>.wav</em>) and MP3 (<em>.mp3</em>)audio, so these would be safe choices 
+WAV (<em>.wav</em>) and MP3 (<em>.mp3</em>) audio, so these would be safe choices 
 for audio examples. Audio files are stored inside inside the browser. Storage size
 inside the browser is limited, so small compressed files are prefered. 
 Don't forget to include a LICENSE.txt file with the copyright and licensing 
