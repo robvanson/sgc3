@@ -76,7 +76,7 @@ We also want to thank Tristian van Berkom, J.E. Raaijmakers, R. van Rijsselt and
 Translations: Japanese - Takahiro Higashi (東孝拓); Chinese - Takahiro Higashi (東孝拓) and Wang Huiting(王慧婷) 
 </p>   
 <p>
-Copyrights © 2007-2016 by Hogeschool Rotterdam, Rob van Son (ACLC/UvA/NKI) - R.J.J.H.vanSon@gmail.com
+Copyrights © 2007-2017 by Hogeschool Rotterdam, Rob van Son (ACLC/UvA/NKI) - R.J.J.H.vanSon@gmail.com
 </p>   
 <pre>
 This program is free software: you can redistribute it and/or modify
@@ -92,7 +92,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses</a>.
 </pre> 
-<div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: f571a7e28b Mon Oct 10 17:20:41 2016</div> 
+<div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: 4b25e9c4f0 Sat Nov 19 16:42:33 2016</div> 
 <div style="text-align: center">
 	<p >&#160;</p>
 	<button type="button" style="color: black; height: 10%; width: 10%; font-size: 2vmin; text-align: center; text-overflow: clip;" id="FactoryResetButton" hidden="true" disabled="true" ><span id="FactoryReset" style="text-align: center" >Factory Reset</span></button>
