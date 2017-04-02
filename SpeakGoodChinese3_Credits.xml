@@ -36,8 +36,10 @@ pre {
 	margin-right: 20%;
 	}
 </style>
+<script type="text/javascript" src="internationalization_tables.js" ></script>   
+<script type="text/javascript" src="audioProcessing.js" ></script>  
 </head>
-<body>
+<body onload="factoryResetButton.hidden=false; factoryResetButton.disabled=false;">
 <h1 style='text-align: center'>
 		SpeakGoodChinese 3 <br />
 		Shuō hǎo Zhōngwén <br />
@@ -74,7 +76,7 @@ We also want to thank Tristian van Berkom, J.E. Raaijmakers, R. van Rijsselt and
 Translations: Japanese - Takahiro Higashi (東孝拓); Chinese - Takahiro Higashi (東孝拓) and Wang Huiting(王慧婷) 
 </p>   
 <p>
-Copyrights © 2007-2016 by Hogeschool Rotterdam, Rob van Son (ACLC/UvA/NKI) - R.J.J.H.vanSon@gmail.com
+Copyrights © 2007-2017 by Hogeschool Rotterdam, Rob van Son (ACLC/UvA/NKI) - R.J.J.H.vanSon@gmail.com
 </p>   
 <pre>
 This program is free software: you can redistribute it and/or modify
@@ -89,7 +91,90 @@ GNU General Public License for more details.
  
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses</a>.
-</pre>   
-<div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: 166d622ab1 Fri Sep 16 22:45:59 2016</div> 
+</pre> 
+<div id="VERSION" style='font-style: italic; font-size: 1vm; text-align: left; margin-left: 20%; margin-right: 20%;' >V: 81a4ffeafc Sun Apr 2 14:40:45 2017</div> 
+<div style="text-align: center">
+	<p >&#160;</p>
+	<button type="button" style="color: black; height: 10%; width: 10%; font-size: 2vmin; text-align: center; text-overflow: clip;" id="FactoryResetButton" hidden="true" disabled="true" ><span id="FactoryReset" style="text-align: center" >Factory Reset</span></button>
+	<button type="button" style="color: black; background-color: red; height: 10%; width: 10%; font-size: 5vmin; text-align: center;" id="DefiniteFactoryResetButton" hidden="true" disabled="true" >&#9760;</button><br />
+	<span id="DeleteWordlistConfirm" style="font-size: 3vmin; text-align: center" hidden="true" >Are you sure?</span>
+</div>
+<script type="text/javascript" >	// Global settings
+	var sgc3_settings = {
+		settingsRead: false,
+		recSecs: 3,
+		ttsSpeed: 110,
+		ttsVariant: "f3",
+		shuffleLists: true,
+		register: 249, // Must match Register_249 Id
+		wordList: "20 basic tone combinations",
+		language: "",
+		synthesis_eSpeak: false,
+		strict: 1,
+		personalWordlists: [],
+		displayNumbers: false,
+		displayPinyin: true,
+		displayChar: true,
+		displayTrans: true,
+		saveAudio: false,
+		examplesDatabaseName: "SGC3 examples",
+		audioDatabaseName: "SGC3 audio",
+		currentCollection: "SGC3",
+		selectedLessons: [],
+		selectedTones: [],
+		deselectedWords: []
+	};
+	
+	// Store settings
+	function store_SGC3_settings () {
+		// Reset the language
+		if (!sgc3_settings.language) {
+			sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+		};
+		
+		for (x in sgc3_settings) {
+			localStorage["sgc3_"+x] = JSON.stringify(sgc3_settings[x]);
+		};
+	};
+	
+	// Factory Reset
+	function factoryReset () {
+		store_SGC3_settings ();
+		deleteDatabase (sgc3_settings.examplesDatabaseName);
+		deleteDatabase (sgc3_settings.audioDatabaseName);
+		localStorage.removeItem("sgc3_reload");
+	};
+	
+	function factoryResetClick () {
+		
+	};
+	function definiteResetClick () {
+		var reset=document.getElementById('FactoryResetButton'); 
+		reset.hidden=reset.disabled=false;
+		var definite=document.getElementById('DefiniteFactoryResetButton'); 
+		definite.hidden=definite.disabled=true;
+		
+	};
+
+	var factoryResetButton = document.getElementById('FactoryResetButton');
+	var definiteResetButton = document.getElementById('DefiniteFactoryResetButton');
+	var warningText = document.getElementById('DeleteWordlistConfirm');
+
+	factoryResetButton.onclick = function () {
+		this.hidden=this.disabled=true;
+		definiteResetButton.hidden=definiteResetButton.disabled=false;
+		warningText.hidden=false;
+	};
+	definiteResetButton.onclick = function () {
+		factoryReset ();
+		this.hidden=this.disabled=true;
+		factoryResetButton.hidden=factoryResetButton.disabled=false;
+		warningText.hidden=true;
+		set_configLanguage (JSON.parse(localStorage.sgc3_language));
+	};
+
+	set_configLanguage (JSON.parse(localStorage.sgc3_language));
+</script>
+
 </body>
 </html>

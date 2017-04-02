@@ -256,6 +256,7 @@ var config_tables = {
 		DeleteAudio: ["删除", "Delete recordings in storage"],
 		NewCollection: ["新", "Name of new collection of recordings"],
 		ListPerf: ["发音练习的结果", "显示全部发音练习的结果。"],
+		FactoryReset: ["擦除和复位", "Reset to original settings and delete all data"],
 		},
 	EN: {
 		Wordlists: ["Word lists", "Word lists"],
@@ -285,6 +286,7 @@ var config_tables = {
 		DeleteAudio: ["Delete", "Delete recordings in storage"],
 		NewCollection: ["New", "Name of new collection of recordings"],
 		ListPerf: ["Performance", "Show performance during this session"],
+		FactoryReset: ["Factory Reset", "Reset to original settings and delete all data"],
 		},
 			
 	JA: {
@@ -315,6 +317,7 @@ var config_tables = {
 		DeleteAudio: ["削除する", "Delete recordings in storage"],
 		NewCollection: ["新", "Name of new collection of recordings"],
 		ListPerf: ["発音練習結果", "発音練習の結果を表示します。"],
+		FactoryReset: ["ワイプとリセット", "Reset to original settings and delete all data"],
 		},
 		
 	DE: {
@@ -345,6 +348,7 @@ var config_tables = {
 		DeleteAudio: ["Lössche", "Lössche Aufnahmen"],
 		NewCollection: ["Neu", "Name einer neuen Collection von Aufnahmen"],
 		ListPerf: ["Ergebnisse", "Ergebnisse dieser Sitzung zeigen"],
+		FactoryReset: ["Werksreset", "Originaleinstellungen wiederherstellen und all Daten lösschen"],
 		},		
 	NL: {
 		Wordlists: ["Woordenlijsten", "Woordenlijsten"],
@@ -374,6 +378,7 @@ var config_tables = {
 		DeleteAudio: ["Verwijder", "Verwijder opnamen"],
 		NewCollection: ["Nieuw", "Naam van nieuwe opnamengroep"],
 		ListPerf: ["Resultaten", "Toon de resultaten van deze sessie"],
+		FactoryReset: ["Wis alles", "Zet terug naar originele instellingen en verwijder alle data"],
 		}
 };
 

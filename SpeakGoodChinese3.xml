@@ -77,8 +77,8 @@ GNU General Public License for more details.
 You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-	<menu type="context" id="mymenu" >
-		<menu id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
+	<menu type="context" id="mymenu" hidden='true' >
+		<menu type="context" id="GRADE" label="Grade" icon="sgc.png" title="Grade" >
 			<menuitem id="GRADE1" label="1" onclick="setGRADE(currentPinyin, 1);" icon="sgc.png" title="1" ></menuitem>
 			<menuitem id="GRADE2" label="2" onclick="setGRADE(currentPinyin,2);" icon="sgc.png" title="2" ></menuitem>
 			<menuitem id="GRADE3" label="3" onclick="setGRADE(currentPinyin,3);" icon="sgc.png" title="3" ></menuitem>
@@ -94,7 +94,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 	<div style="color: rgb(220,220,220); position: fixed; bottom: 36%; right: 2%; width: 17%; height: 5%; font-size: 3vmin; text-align: center; text-overflow: clip; vertical-align: bottom; " id="CollectionString" align="center"></div>
  	<div style="color: rgb(220,220,220); position: fixed; bottom: 24%; right: 2%; height: 14%; width: 17%; font-size: 6vmin; text-align: center; vertical-align: top; " id="SaveAudioLight" contextmenu="mymenu" ><a href="javascript:gradePrompt()" id='GradePrompt' style="color: inherit; text-decoration:none; " >&#9679; <br/>
- 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></a></div>
+ 	<span id="GradeString" style="font-style: italic; font-size: 5vmin; "></span></a>
+ 	</div>
  	
  		
 	<div style="color: gray; position: fixed; top: 5%; left: 5%; font-size: 15vmin" id="RecordingLight">&#9679;</div>
@@ -102,10 +103,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	<canvas id="TonePlot" width="1000" height="1000" style="position: fixed; top: 5%; left: 22.5%; width: 55%; height: 55%; "></canvas> 	
 	
 	<div id="DisplayText" title="" >
-	<div style="color: black; position: fixed; top: 60%; left: 5%; width: 90%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
+	<div style="color: black; position: fixed; top: 60%; left: 10%; width: 70%; font-size: 6vmin; text-align: center; " id="DisplayString" align="center" >
 		<span id="Pinyin">-</span>&#8195;<span id="Character">-</span>&#8195;<span id="Translation" style="font-style: italic; font-size: 6vmin; ">-</span></div>
-	<div style="color: green; position: fixed; top: 68%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
-	<div style="color: green; position: fixed; top: 73%; left: 5%; width: 90%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
+	<div style="color: green; position: fixed; top: 68%; left: 20%; width: 60%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="ResultString" align="center">---</div>
+	<div style="color: green; position: fixed; top: 73%; left: 20%; width: 60%; font-size: 4vmin; text-align: center; text-overflow: clip; " id="FeedbackString" align="center">---</div>
 	</div>
 	
 	
@@ -351,6 +352,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		audioDatabaseName = sgc3_settings.audioDatabaseName;
 
 		if(sgc3_settings.saveAudio) getCurrentMetaData (sgc3_settings.currentCollection, function (list){performanceRecord = objectList2performanceRecord(list);});
+		
+		// Reset the language
+		if (!sgc3_settings.language) {
+			sgc3_settings.language = (userLanguage) ? userLanguage : "EN";
+		};
+		set_mainpageLanguage (sgc3_settings.language);
 	};
 	
 	// Initialize to stored settings
@@ -469,9 +476,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		
 		document.getElementById('Translation').style.fontSize = "6vmin";
 		if (document.getElementById('Translation').textContent.length > 50) {
-			document.getElementById('Translation').style.fontSize = "4vmin";
+			document.getElementById('Translation').style.fontSize = "3.5vmin";
 		} else if (document.getElementById('Translation').textContent.length > 30) {
-			document.getElementById('Translation').style.fontSize = "5vmin";
+			document.getElementById('Translation').style.fontSize = "4.5vmin";
 		};
 		
 		document.getElementById("ResultString").textContent = "";

@@ -180,6 +180,67 @@ function numbersToTonemarks (pinyin) {
 	return intermediatePinyin;
 };
 
+// Convert unicode Pinyin into tone numbers
+function tonemarksToNumbers (pinyin) {
+	intermediatePinyin = pinyin;
+	// Convert all special characters to numbers
+	// Tone 1
+	intermediatePinyin = intermediatePinyin.replace(/(ā)([iaeouü]*)/ig, "a$21");
+	intermediatePinyin = intermediatePinyin.replace(/(ē)([iaeouü]*)/ig, "e$21");
+	intermediatePinyin = intermediatePinyin.replace(/(ū)([iaeouü]*)/ig, "u$21");
+	intermediatePinyin = intermediatePinyin.replace(/(ī)([iaeouü]*)/ig, "i$21");
+	intermediatePinyin = intermediatePinyin.replace(/(ō)([iaeouü]*)/ig, "o$21");
+	intermediatePinyin = intermediatePinyin.replace(/(ǖ)([iaeouü]*)/ig, "v$21");
+	
+	// Tone 2;
+	intermediatePinyin = intermediatePinyin.replace(/(á)([iaeouü]*)/ig, "a$22");
+	intermediatePinyin = intermediatePinyin.replace(/(é)([iaeouü]*)/ig, "e$22");
+	intermediatePinyin = intermediatePinyin.replace(/(ú)([iaeouü]*)/ig, "u$22");
+	intermediatePinyin = intermediatePinyin.replace(/(í)([iaeouü]*)/ig, "i$22");
+	intermediatePinyin = intermediatePinyin.replace(/(ó)([iaeouü]*)/ig, "o$22");
+	intermediatePinyin = intermediatePinyin.replace(/(ǘ)([iaeouü]*)/ig, "v$22");
+	
+	// Tone 3
+	intermediatePinyin = intermediatePinyin.replace(/(ǎ)([iaeouü]*)/ig, "a$23");
+	intermediatePinyin = intermediatePinyin.replace(/(ě)([iaeouü]*)/ig, "e$23");
+	intermediatePinyin = intermediatePinyin.replace(/(ǔ)([iaeouü]*)/ig, "u$23");
+	intermediatePinyin = intermediatePinyin.replace(/(ǐ)([iaeouü]*)/ig, "i$23");
+	intermediatePinyin = intermediatePinyin.replace(/(ǒ)([iaeouü]*)/ig, "o$23");
+	intermediatePinyin = intermediatePinyin.replace(/(ǚ)([iaeouü]*)/ig, "v$23");
+
+	// Tone 4
+	intermediatePinyin = intermediatePinyin.replace(/(à)([iaeouü]*)/ig, "a$24");
+	intermediatePinyin = intermediatePinyin.replace(/(è)([iaeouü]*)/ig, "e$24");
+	intermediatePinyin = intermediatePinyin.replace(/(ù)([iaeouü]*)/ig, "u$24");
+	intermediatePinyin = intermediatePinyin.replace(/(ì)([iaeouü]*)/ig, "i$24");
+	intermediatePinyin = intermediatePinyin.replace(/(ò)([iaeouü]*)/ig, "o$24");
+	intermediatePinyin = intermediatePinyin.replace(/(ǜ)([iaeouü]*)/ig, "v$24");
+	
+	// Tone 0
+	// Add tone 0
+	intermediatePinyin = intermediatePinyin.replace(/(å)([iaeouü]*)/ig, "a$20");
+	intermediatePinyin = intermediatePinyin.replace(/"e̊([iaeouü]*)/ig, "e$20");
+	intermediatePinyin = intermediatePinyin.replace(/(ů)([iaeouü]*)/ig, "u$20");
+	intermediatePinyin = intermediatePinyin.replace(/"i̊([iaeouü]*)/ig, "i$20");
+	intermediatePinyin = intermediatePinyin.replace(/"o̊([iaeouü]*)/ig, "o$20");
+	intermediatePinyin = intermediatePinyin.replace(/"ü̊([iaeouü]*)/ig, "v$20");
+
+	// Syllables without a tone symbol are tone 0;
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov]+)([^0-9aeuiov]|\W|$)/g, "$10$2");
+
+	// Move numbers to the end of the syllable.
+	// Syllables ending in n and start with g. Note that a syllable cannot start with an u or i
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([0-9])(n)(g[aeuiov])/ig, "$1$3$2$4");
+	// Syllables ending in (ng?) followed by something that is not a valid vowel 
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([0-9])(ng?)([^aeuiov]|$W|$)/ig, "$1$3$2$4");
+	// Syllables ending in r
+	intermediatePinyin = intermediatePinyin.replace(/([aeuiov])([0-9])(r)([^aeuiov]|$W|$)/ig, "$1$3$2$4");
+	// Remove quotes etc
+	intermediatePinyin = intermediatePinyin.replace(/[\'\`]/, "", 0)
+	
+	return intermediatePinyin;
+};
+
 // file can be a local file or an url
 function processWordlist (file, allText, delimiter, optionalName=false) {
 	var nameList = ["Pinyin", "Marks", "Character", "Translation", "Part", "Sound"];
@@ -231,7 +292,10 @@ function processWordlist (file, allText, delimiter, optionalName=false) {
 			};
 			newEntry.push(value)
 		};
-		if (newEntry[1] == "-") {
+		if (!newEntry[0].match(/\d/)) {
+			newEntry[1] = newEntry[0];
+			newEntry[0] = tonemarksToNumbers (newEntry[1]);
+		} else if (newEntry[1] == "-") {
 			newEntry[1] = numbersToTonemarks(newEntry[0]);
 		};
 		wordlistEntries.push(newEntry);
@@ -649,7 +713,7 @@ var global_wordlists = [
 			["ying1wen2","yīngwén","英文","English language","9","-"],
 			["xue2xi2","xuéxí","学习","to study","9","-"],
 			["zai4","zài","在","to be (in, on, at, etc.)","9","-"],
-			["na3r","nǎr","哪儿","where","9","-"],
+			["nar3","nǎr","哪儿","where","9","-"],
 			["re4","rè","热","hot","9","-"],
 			["shang4wu3","shàngwǔ","上午","morning","10","-"],
 			["you3","yǒu","有","to have, there be","10","-"],
@@ -672,8 +736,8 @@ var global_wordlists = [
 			["na4","nà","那","that","11","-"],
 			["shang1dian4","shāngdiàn","商店","shop","11","-"],
 			["tu2shu1guan3","túshūguǎn","图书馆","library","11","-"],
-			["zhe4r","zhèr","这儿","here","11","-"],
-			["na4r","nàr","那儿","there","11","-"],
+			["zher4","zhèr","这儿","here","11","-"],
+			["nar4","nàr","那儿","there","11","-"],
 			["xian4zai4","xiànzài","现在","now","11","-"],
 			["duan4lian4","duànliàn","锻炼","to do physical training","11","-"],
 			["da3","dǎ","打","to play, to beat, to hit","11","-"],

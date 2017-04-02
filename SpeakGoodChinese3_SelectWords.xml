@@ -62,7 +62,7 @@ You can find a copy of the GNU General Public License at
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <h1 style='text-align: center' id="SelectWords"><span id="SelectWordsCaption" title="" >Words</span>:
-<span id="WordListName" style='text-align: center; color: blue;'>wordlist</span></h1>
+<a href="wordlists/README.xml"><span id="WordListName" style='text-align: center; color: blue;'>wordlist</span></a></h1>
 	<div style="position: fixed; color: black; bottom: 75%; left: 5%; height: 8%; width: 17%; font: 'Helvetica'; font-size: 3vmin; text-align: center " id="TonesCaption">---</div>	
 	<select id="Tones" style="position: fixed; color: black; bottom: 65%; left: 5%; height: 15%; width: 17%; font: 'Helvetica'; font-size: 3vmin ; background-color: rgb(220,220,220); " onchange="selectedTones(this.selectedOptions); store_SGC3_settings (); " size="5" multiple="multiple" >
 		<option value="---" >---</option>

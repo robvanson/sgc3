@@ -1,11 +1,9 @@
-Place SpeakGoodfChinese wordlists here. 
-
 How to create word lists
 
 To load, or read, a new word list go to the Settings page and click on 
 the Open List button. You can then select the file that contains the 
 word list. It will automatically open and be stored in your local word 
-list directory.
+list map.
 
 Very simple word lists
 
@@ -23,6 +21,7 @@ huan1ying2
 zhong1guo2
 duo1shao3
 zhi3you3
+
 
 Simple word lists with characters and translations
 
@@ -45,14 +44,15 @@ zhong1guo2;中国;China
 duo1shao3;多少;how many
 zhi3you3;只有;only
 
-Audio files can be added in the same manner. Just add an item with the 
-extention of an audio file to the line (between tabs or ';' 
-characters). For instance, chi1.mp3 will be interpreted as an audio 
-example.
+Audio files can be added in the same manner. Just add an URL to an 
+audio file to the line (between tabs or ';' characters). For instance, 
+http://speakgoodchinese.org/articles/chi1.mp3 will be used as 
+an audio example.
 
 These simple word lists do not contain information about the order and 
 nature of the items. There can be errors in distinguishing characters, 
 translations, and audio examples.
+
 
 Word list tables
 
@@ -78,63 +78,83 @@ zhong1guo2	中国	-	China
 duo1shao3	多少	-	how many
 zhi3you3	只有	-	only
 
+
 Word lists with associated audio files
 
-These word list distributions are simple flat ZIP files with the name 
-<list name>.sgc. They contain a list of all the words in pinyin with 
-the name wordlist.txt or wordlist.Table as is discussed above. Except 
-that the name of the word list file should be either wordlist.txt or 
-wordlist.Table. Other names are not allowed. The sound files should be 
-named <pinyin word>.ext, where <pinyin word> is the pinyin 
-transcription, eg, sheng1zi4, and ext the sound extension type (eg, 
-wav). Note that SpeakGoodChinese uses Praat to process the sound files. 
-So only those sound files recognized by Praat can be used (see Praat: 
-Read from file...). SpeakGoodChinese will use WAV (.wav), Flac (.flac), 
-MP3 (.mp3), and Speex (.spx) files as examples if they are present . 
-Don't forget to include a LICENSE.txt file with the copyright and 
-licensing information. If you use one of the Creative Commons licenses 
-or the GNU GPL, we might be willing to put your list on our web-site.
+Wordlists can be combined with audio examples in zip archives with
+an .sgc extension. These word list distributions are simple 
+flat ZIP files with the name <list name>.sgc. They contain maps named
+after the wordlist and a list of all the words in pinyin. This list must 
+have the name wordlist.txt or wordlist.Table. 
+Other names are not allowed. The audio files should be named <pinyin word>.ext, 
+where <pinyin word> is the pinyin transcription, eg, sheng1zi4, 
+and ext the sound extension type (eg, wav). Note that SpeakGoodChinese 
+uses the web browser to process the audio files. So only those audio files 
+recognized by the web browser can be used. Most web browsers seem to recognize 
+WAV (.wav) and MP3 (.mp3)audio, so these would be safe choices 
+for audio examples. Audio files are stored inside inside the browser. Storage size
+inside the browser is limited, so small compressed files are prefered. 
+Don't forget to include a LICENSE.txt file with the copyright and licensing 
+information.
 
-It is possible to use SpeakGoodChinese to record example audio files 
-for wordlists and student evaluation. On the Settings page, press the 
-Save Audio button and select a folder to store the recordings. A blue 
+It is possible to use SpeakGoodChinese to record student audio  
+for evaluation. On the Settings page, select an existing or new 
+Archive and press the Save Audio button. A blue 
 dot will be displayed in the lower right corner of the Main page as 
-long as recordigns are stored. While the blue dot is visible on the 
-Main page, all audio is stored! The recorded files have file-names 
+long as recordings are stored. While the blue dot is visible on the 
+Main page, all audio is stored! Recorded audio can also be listened to
+as long as the Save Audio button is on, by clicking Play.
+Recordings are overwritten when the same pinyin word is recorded.
+
+The recorded audio segments have names 
 constructed of the pinyin spelling of the word and the extention .wav. 
 Every recording will overwrite existing recordings of the same pinyin 
-word. The storage of recordings can be terminated by pressing the Save 
-Audio button again. Select those recordings you consider good enough as 
-examples and copy them to the target wordlist directory for inclusion 
-in the distribution. When available, SpeakGoodChinese will display the 
-stored recordings for evaluation until a new one is recorded.
+word. The storage of recordings can be terminated by pressing the 
+Save Audio button again. The Archive containing the recorded 
+audio can be exported by clicking the Export button. A zip 
+archive with the name of the Archive will be stored in the default 
+download directory of your browser. This archive can be send to the teacher
+who can load it using the Import button. While the Save Audio
+button is on, the recorded audio can be played back and evaluated (press 1-0 for
+grades 1-10).
 
-Word lists with "real" Pinyin (builds from 2015-06-10)
+The recorded audio can also be used as examples for a wordlist (see above).
+Select those recordings you consider good enough as examples and copy them to the 
+target wordlist directory for inclusion.
+
+
+Word lists with "real" Pinyin
 
 It is often inconvennient to compile lists using a number scheme for 
-pinyin. SGC2 will recognize standard UTF8 pinyin.
-Example:
+pinyin. SGC3 will recognize standard UTF8 pinyin. But we do advice to 
+use the numbered tone scheme as this is much less prone to errors.
+
+Example: SGC2example4.tsv
 Pinyin	Character	Sound	Translation	Lesson
 chī	吃	-	to eat	1
 zhǐ​yǒu	只有	-	only	2
 
-However, in this type of pinyin, the syllable boundaries can be 
-ambiguous, as in the combination "nán​gōng" or "xīngān". To prevent 
-errors in SGC2, place a '-quote at the boundary, e.g., "Xīng'ān".
+In this type of pinyin, the syllable boundaries can be 
+ambiguous, as in the combination nán​gōng or xīngān. To prevent 
+errors in SGC3, place a '-quote at the boundary, e.g., "Xīng'ān".
+
 
 Word selection and Lessons
 
-Students can select the words to practise on the Main page. Click the 
-Words button on the right between the buttons to navigate the word 
-lists. A form with a list of all the words currently available will be 
-displayed. Students can add words from other word lists or by hand. 
-They can select words based on tones and the lesson Part. The wordlist 
-table can contain a collumn with the label Lesson and a lesson number 
-for each line. The words are sorted and displayed with lesson numbers 
-in the word selection window. The student can select the lessons to 
-study when starting.
+The words for a course can be listed in a single word list where the words
+are assigned to numbered or named Parts or Lessons. The 
+wordlist table can contain a collumn with the label Part or Lesson 
+and a lesson number or name for each line. 
 
-Example: SGC2example4.tsv
+Students can select the words to practise on the Main page. In the 
+Word List menu on the right, select the Words choice 
+(above the Word List entry). This will open a new tab with the
+name Select Words. Note that this tab will close automatically 
+if you leave the page. On this tab, you can select which tones you want 
+to practice in the menu on the left. If the word list has Parts, 
+named or numbered lessons, you can select them in the menu next to that.
+
+Example: SGC2example5.tsv
 Pinyin	Character	Sound	Translation	Lesson
 chi1	吃	-	to eat	1
 ta1	他	-	he, she, it	1
@@ -147,3 +167,4 @@ zhi3you3	只有	-	only	2
 
 The entries in the Lesson column do not have to be numbers. Any string 
 is allowed, Lesson 2, पाठ 2, レッスン2 and 第二课 are all valid lesson labels.
+
