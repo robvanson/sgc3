@@ -2,7 +2,7 @@
 
 # SpeakGoodChinese 3
 
-<div style='text-align: center;'>说好中文 - Shuō hǎo Zhōngwén</div>
+### 说好中文 - Shuō hǎo Zhōngwén
 
 ## Dedicated to the memory of Guanqin Chen
 
