@@ -5,10 +5,13 @@ Shuō hǎo Zhōngwén
 
 ## Dedicated to the memory of Guanqin Chen
 
+*SpeakGoodChinese* is a web based application that allows you or your students to train their Mandarin tone pronunciation. Our speech technology is based on technology developed at the [Institute of Phonetic Sciences](http://www.fon.hum.uva.nl/) of the [University of Amsterdam](http://www.uva.nl/).
+
 For more information, visit our website: [http://www.speakgoodchinese.org](http://www.speakgoodchinese.org)
 
-SpeakGoodChinese was supported by grant 6046 from the Digitale Universiteit  
-The SpeakGoodChinese Team:
+This project was supported by grant 6046 from the [Digitale Universiteit](http://www.surffoundation.nl/smartsite.dws?id=12418).
+
+### The SpeakGoodChinese Team:
 
 - **Guanqin Chen** (HRO) - Founder and project manager, Language and Teaching
 - **Zongyan Chen** (HvA) - Language and Teaching
@@ -19,11 +22,15 @@ The SpeakGoodChinese Team:
 - **Dennis Vierkant** (UT) - User Interface and Language
 - **David Weenink** (UvA) - Praat programming, Algorithms
 
+### Acknowledgements
+
 SpeakGoodChinese 3 would not have been possible without the extensive help of Paul Boersma. We would like to thank Zhao Ran (赵冉) and Yitna Firdyiwek of the University of Virginia and Takahiro Higashi (東孝拓) of Peking University for their help in integrating SGC in the classroom and their many suggestions and tests. We also want to thank Tristian van Berkom, J.E. Raaijmakers, R. van Rijsselt and S. Verhagen.
 
 Translations: Japanese - Takahiro Higashi (東孝拓); Chinese - Takahiro Higashi (東孝拓) and Wang Huiting(王慧婷)
 
 Copyrights © 2007-2017 by Hogeschool Rotterdam, Rob van Son (ACLC/UvA/NKI) - R.J.J.H.vanSon@gmail.com
+
+### License
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
