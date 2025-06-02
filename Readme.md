@@ -1,4 +1,6 @@
-# ![SpeakGoodChinese logo](./sgc.png)  SpeakGoodChinese 3
+# ![SpeakGoodChinese logo](./sgc.png)
+
+# SpeakGoodChinese 3
 
 <div style='text-align: center;'>说好中文 - Shuō hǎo Zhōngwén</div>
 
