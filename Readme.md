@@ -1,7 +1,6 @@
-# SpeakGoodChinese 3
+# ![SpeakGoodChinese logo](./sgc.png)  SpeakGoodChinese 3
 
-Shuō hǎo Zhōngwén  
-说好中文
+<div style='text-align: center;'>说好中文 - Shuō hǎo Zhōngwén</div>
 
 ## Dedicated to the memory of Guanqin Chen
 
@@ -43,5 +42,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see [http://www.gnu.org/licenses](http://www.gnu.org/licenses/).
-
-
