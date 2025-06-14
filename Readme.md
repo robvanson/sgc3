@@ -1,12 +1,15 @@
 
 
-<p style="text-align: center;">
+
+<div style="text-align: center;">
+
 
 
 # ![SpeakGoodChinese logo](./sgc.png)
 
 
-</p>
+
+</div>
 
 
 
