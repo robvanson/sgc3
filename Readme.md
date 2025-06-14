@@ -5,9 +5,9 @@
 
 # ![SpeakGoodChinese logo](./sgc.png)
 
-# SpeakGoodChinese 3
+<H1 style='text-align: center;'>SpeakGoodChinese 3</H1>
 
-### 说好中文 - Shuō hǎo Zhōngwén
+<h3 style='text-align: center;'>说好中文 - Shuō hǎo Zhōngwén</h3>
 
 [Start Speak Good Chinese](https://robvanson.github.io/sgc3/SpeakGoodChinese3.xml)
 
