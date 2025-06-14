@@ -1,9 +1,7 @@
 
 <p style='text-align: center;'>
-<img src='./sgc.png' alt='Speak Good Chinese logo'>
+<img src='./sgc.png' alt='SpeakGoodChinese logo'>
 </p>
-
-# ![SpeakGoodChinese logo](./sgc.png)
 
 <H1 style='text-align: center;'>SpeakGoodChinese 3</H1>
 
@@ -11,7 +9,7 @@
 
 [Start Speak Good Chinese](https://robvanson.github.io/sgc3/SpeakGoodChinese3.xml)
 
-## *Dedicated to the memory of Guanqin Chen*
+<h3 style='text-align: center;font-style: italic;'>Dedicated to the memory of Guanqin Chen</h3>
 
 
 *SpeakGoodChinese* is a web based application that allows you or your students to train their Mandarin tone pronunciation. Our speech technology is based on technology developed at the [Institute of Phonetic Sciences](http://www.fon.hum.uva.nl/) of the [University of Amsterdam](http://www.uva.nl/).
