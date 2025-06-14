@@ -1,12 +1,12 @@
 
 
-<div align="center">
+<p align="center">
 
 
 # ![SpeakGoodChinese logo](./sgc.png)
 
 
-</div>
+</p>
 
 
 
