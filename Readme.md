@@ -1,4 +1,8 @@
 
+<p style='text-align: center;'>
+<img src='./sgc.png' alt='Speak Good Chinese logo'>
+</p>
+
 # ![SpeakGoodChinese logo](./sgc.png)
 
 # SpeakGoodChinese 3
