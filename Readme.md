@@ -9,6 +9,8 @@
 
 <h3 style='text-align: center;font-style: italic;'>Dedicated to the memory of Guanqin Chen</h3>
 
+*Due to changes in the latest browsers, recording sounds in SpeakGoodChinese and, therfore, SpeakGoodChinese itself, does not work anymore. I am working to fix this, but this will take some time. My appologies for this inconvenience.*
+
 [Start Speak Good Chinese](https://robvanson.github.io/sgc3/SpeakGoodChinese3.xml)
 
 *SpeakGoodChinese* is a web based application that allows you or your students to train their Mandarin tone pronunciation. Our speech technology is based on technology developed at the [Institute of Phonetic Sciences](http://www.fon.hum.uva.nl/) of the [University of Amsterdam](http://www.uva.nl/).
