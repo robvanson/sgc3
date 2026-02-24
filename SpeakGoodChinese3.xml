@@ -704,10 +704,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	    record.style.color = "red";
 		
 		var recordRTC = RecordRTC(mediaStream, {
-			recorderType: StereoAudioRecorder // optionally force WebAudio API to record audio
-			
-		}); 
-		recordRTC.mimeType = {audio: 'audio/wav'};
+			recorderType: MediaStreamRecorder,
+			type: "audio",
+			mimeType: "audio/webm"
+		});
 		
 		clearRecordedData = function () {
 			play.disabled = true;

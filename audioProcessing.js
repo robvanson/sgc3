@@ -219,6 +219,8 @@ function cut_silent_margins (typedArray, sampleRate) {
 	while (firstNonZero < typedArray.length && (isNaN(typedArray[firstNonZero]) || typedArray[firstNonZero] == 0)) {
 		++firstNonZero
 	};
+	// Guard: if the entire buffer is zeros/NaN, do not skip anything
+	if (firstNonZero >= typedArray.length) firstNonZero = 0;
 	
 	// Calculation intensity
 	var currentIntensity = calculate_Intensity (typedArray, sampleRate, 75, 600, 0.01);
