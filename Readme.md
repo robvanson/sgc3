@@ -32,7 +32,7 @@ This project was supported by grant 6046 from the [Digitale Universiteit](http:/
 
 ### Acknowledgements
 
-SpeakGoodChinese 3 would not have been possible without the extensive help of Paul Boersma. We would like to thank Zhao Ran (赵冉) and Yitna Firdyiwek of the University of Virginia and Takahiro Higashi (東孝拓) of Peking University for their help in integrating SGC in the classroom and their many suggestions and tests. We also want to thank Tristian van Berkom, J.E. Raaijmakers, R. van Rijsselt and S. Verhagen.
+SpeakGoodChinese 3 would not have been possible without the extensive help of Paul Boersma. We would like to thank Zhao Ran (赵冉) and Yitna Firdyiwek of the University of Virginia and Takahiro Higashi (東孝拓) of Peking University for their help in integrating SGC in the classroom and their many suggestions and tests. We also want to thank [xdadrm](https://github.com/xdadrm), Tristian van Berkom, J.E. Raaijmakers, R. van Rijsselt and S. Verhagen.
 
 Translations: Japanese - Takahiro Higashi (東孝拓); Chinese - Takahiro Higashi (東孝拓) and Wang Huiting(王慧婷)
 
