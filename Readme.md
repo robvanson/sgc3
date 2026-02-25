@@ -9,7 +9,7 @@
 
 <h3 style='text-align: center;font-style: italic;'>Dedicated to the memory of Guanqin Chen</h3>
 
-*Due to changes in the latest browsers, recording sounds in SpeakGoodChinese and, therfore, SpeakGoodChinese itself, does not work anymore. I am working to fix this, but this will take some time. My appologies for this inconvenience.*
+*25th Feb 2026: A pull request by xdadrm solved the audio recorder problem. Many thanks to xdadrm. SpeakGoodChinese3 works again (but not on Safari)!*
 
 [Start Speak Good Chinese](https://robvanson.github.io/sgc3/SpeakGoodChinese3.xml)
 
