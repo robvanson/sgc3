@@ -704,9 +704,21 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	    record.style.color = "red";
 		
 		var recordRTC = RecordRTC(mediaStream, {
-			recorderType: MediaStreamRecorder,
 			type: "audio",
-			mimeType: "audio/webm"
+			// Pick the best available recorder at runtime:
+			//   Chrome/Edge: MediaStreamRecorder + audio/webm
+			//   Safari:      MediaStreamRecorder + audio/mp4
+			//   Fallback:    StereoAudioRecorder + audio/wav
+			recorderType: (function() {
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) return MediaStreamRecorder;
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4"))  return MediaStreamRecorder;
+				return StereoAudioRecorder;
+			})(),
+			mimeType: (function() {
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm";
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4"))  return "audio/mp4";
+				return "audio/wav";
+			})()
 		});
 		
 		clearRecordedData = function () {
