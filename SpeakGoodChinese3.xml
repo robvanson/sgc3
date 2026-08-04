@@ -706,18 +706,23 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 		var recordRTC = RecordRTC(mediaStream, {
 			type: "audio",
 			// Pick the best available recorder at runtime:
-			//   Chrome/Edge: MediaStreamRecorder + audio/webm
-			//   Safari:      MediaStreamRecorder + audio/mp4
-			//   Fallback:    StereoAudioRecorder + audio/wav
+			//   Chrome, Firefox, Edge, Safari 18.4+: MediaStreamRecorder + audio/webm; codecs=opus
+			//   Safari 14.1 - 18.3 (AAC):      MediaStreamRecorder + audio/mp4a.40.2
+			//   Firefox: MediaStreamRecorder + audio/ogg;codecs=opus
+			//   Fallback:    StereoAudioRecorder + ""
 			recorderType: (function() {
-				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) return MediaStreamRecorder;
-				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4"))  return MediaStreamRecorder;
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm; codecs=opus")) return MediaStreamRecorder;     // Chrome, Firefox, Edge, Safari 18.4+
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4;codecs=mp4a.40.2"))  return MediaStreamRecorder;  // Safari 14.1 - 18.3 (AAC)
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4"))  return MediaStreamRecorder;   // Safari, looser form
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/ogg;codecs=opus")) return MediaStreamRecorder;  // Firefox
 				return StereoAudioRecorder;
 			})(),
 			mimeType: (function() {
-				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm";
-				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4"))  return "audio/mp4";
-				return "audio/wav";
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm; codecs=opus")) return "audio/webm; codecs=opus";     // Chrome, Firefox, Edge, Safari 18.4+
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4;codecs=mp4a.40.2"))  return "audio/mp4";  // Safari 14.1 - 18.3 (AAC)
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/mp4"))  return "audio/mp4";  // Safari, looser form
+				if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm";  // Firefox
+				return "";
 			})()
 		});
 		
